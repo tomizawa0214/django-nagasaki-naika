@@ -1,0 +1,120 @@
+//////////////////////////////////
+// メインコンテンツ
+//////////////////////////////////
+
+@use 'sass:map';
+@use '../foundation/mixins' as mix;
+@use '../foundation/colors' as color;
+
+.l-step {
+  margin: 1.5rem 0 2rem;
+  @include mix.mq('sp-tb') {
+    padding: 0 calc(10 / 375) * 100vw;
+    margin: 0 0 calc(20 / 375) * 100vw;
+  }
+
+  &__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem 6rem;
+    justify-content: center;
+    counter-reset: li;
+    @include mix.mq('sp-tb') {
+      gap: calc(10 / 375) * 100vw calc(20 / 375) * 100vw;
+    }
+  }
+}
+
+.l-contents {
+  max-width: 117rem;
+  padding: 2.5rem 0 8rem;
+  margin: 0 auto;
+  
+  @include mix.mq('sp-tb') {
+    max-width: none;
+    padding: 0 0 calc(40 / 375) * 100vw;
+  }
+
+  &__section {
+    margin: 0 0 2rem;
+
+    &:nth-last-child(1 of .l-contents__section) {
+      margin: 0
+    }
+  }
+
+  &__signup {
+    padding: 4rem 0 0;
+    border-top: 0.1rem solid map.get(color.$theme-colors, 'border');
+    @include mix.mq('sp-tb') {
+      padding: calc(40 / 375) * 100vw 0 0;
+      border-top: calc(1 / 375) * 100vw solid map.get(color.$theme-colors, 'border');
+    }
+  }
+
+  &__title {
+    margin: 0 0 4rem;
+    text-align: center;
+    @include mix.mq('sp-tb') {
+      margin: 0 0 calc(40 / 375) * 100vw;
+    }
+  }
+
+  &__page-title {
+    margin: 0 0 3rem;
+    text-align: center;
+    @include mix.mq('sp-tb') {
+      margin: 0 0 calc(30 / 375) * 100vw;
+    }
+  }
+
+  &__lead {
+    margin: 0 0 4rem;
+    text-align: center;
+    @include mix.mq('sp-tb') {
+      margin: 0 0 calc(40 / 375) * 100vw;
+    }
+  }
+
+  &__inner {
+    max-width: 84rem;
+    padding: 6rem 10rem;
+    margin: 0 auto;
+    background-color: map.get(color.$theme-colors, 'base');
+    @include mix.mq('sp-tb') {
+      max-width: none;
+      padding: calc(40 / 375) * 100vw calc(20 / 375) * 100vw;
+    }
+    
+    &--only-text {
+      padding: 6rem 10rem 3rem;
+      @include mix.mq('sp-tb') {
+        padding: calc(40 / 375) * 100vw calc(20 / 375) * 100vw calc(1 / 375) * 100vw;
+      }
+    }
+  }
+
+  &__button {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    justify-content: center;
+    max-width: 52rem;
+    margin: 0 auto;
+    @include mix.mq('sp-tb') {
+      flex-direction: column-reverse;
+      gap: calc(15 / 375) * 100vw;
+      max-width: none;
+    }
+    
+    &--withdraw {
+      @include mix.mq('sp-tb') {
+        flex-direction: column;
+      }
+    }
+
+    &--vertical {
+      flex-direction: column;
+    }
+  }
+}

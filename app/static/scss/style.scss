@@ -1,0 +1,11 @@
+// 基本的なスタイルや変数/mixin
+@use 'foundation';
+
+// ページ骨格
+@use 'layout';
+
+// 複数箇所で使用される共通パーツ
+@use 'component';
+
+// ページ単位
+@use 'pages';

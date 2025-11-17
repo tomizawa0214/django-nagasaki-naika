@@ -1,0 +1,30 @@
+//////////////////////////////////
+// ヘッダー
+//////////////////////////////////
+
+@use '../foundation/mixins' as mix;
+
+.l-header {
+  width: 100%;
+  height: 30rem;
+  padding: 7rem 0;
+  text-align: center;
+  background-image: image-set(
+    url("../img/bg_header.avif") type("image/avif"),
+    url("../img/bg_header.jpg") type("image/jpg")
+  );
+  background-position: center;
+  background-size: cover;
+
+  @include mix.mq('sp-tb') {
+    height: auto;
+    padding: calc((40 / 375) * 100vw) 0;
+  }
+
+  &__logo {
+    display: inline-block;
+    @include mix.hover-on {
+      @include mix.hover;
+    }
+  }
+}

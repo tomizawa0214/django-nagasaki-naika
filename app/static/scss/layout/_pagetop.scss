@@ -1,0 +1,36 @@
+//////////////////////////////////
+// ページTOP
+//////////////////////////////////
+
+@use '../foundation/mixins' as mix;
+
+.l-pagetop {
+  position: fixed;
+  right: 3rem;
+  bottom: 3rem;
+  z-index: 999;
+
+  @include mix.mq('sp-tb') {
+    display: none;
+  }
+
+  &__button {
+    padding: 0.5rem 0.5rem 0.2rem;
+    background-color: #FFF;
+    border-radius: 0.4rem;
+    @include mix.hover-on {
+      @include mix.hover;
+    }
+
+    &::before {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      width: 10rem;
+      height: 9.7rem;
+      content: "";
+      background: #FFF url("../img/icon_pagetop.svg") center center / cover no-repeat;
+      transform: translateX(-50%);
+    }
+  }
+}

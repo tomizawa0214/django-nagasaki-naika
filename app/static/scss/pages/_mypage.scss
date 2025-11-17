@@ -1,0 +1,301 @@
+//////////////////////////////////
+// マイページ
+//////////////////////////////////
+
+@use 'sass:map';
+@use '../foundation/fonts' as font;
+@use '../foundation/colors' as color;
+@use '../foundation/mixins' as mix;
+
+.p-mypage {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 5rem;
+  @include mix.mq('sp-tb') {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: calc(40 / 375) * 100vw;
+  }
+  
+  &__section {
+    @include mix.mq('sp-tb') {
+      margin: 0 calc(20 / 375) * 100vw;
+    }
+  }
+
+  &__menu {
+    @include mix.mq('sp-tb') {
+      border-top: calc(4 / 375) * 100vw solid map.get(color.$theme-colors, 'main');
+    }
+  }
+
+  &__menu-group {
+    display: grid;
+    gap: 2.5rem;
+    padding: 0 0 4rem;
+    margin: 0 0 4rem;
+    border-bottom: 0.1rem solid map.get(color.$theme-colors, 'border');
+    @include mix.mq('sp-tb') {
+      gap: 0;
+      padding: 0;
+      margin: 0;
+      border-bottom: none;
+    }
+    
+    &:nth-last-child(1 of .p-mypage__menu-group) {
+      padding: 0;
+      margin: 0;
+      border-bottom: none;
+    }
+    
+  }
+  
+  &__menu-link {
+    display: flex;
+    align-items: center;
+    transition: mix.$hover-transition;
+    @include mix.mq('sp-tb') {
+      position: relative;
+      padding: calc(20 / 375) * 100vw;
+      border-bottom: calc(1 / 375) * 100vw solid map.get(color.$theme-colors, 'border');
+
+      &::after {
+        position: absolute;
+        top: 50%;
+        right: calc(20 / 375) * 100vw;
+        width: calc(10 / 375) * 100vw;
+        height: calc(10 / 375) * 100vw;
+        content: "";
+        border-top: solid calc(3 / 375) * 100vw map.get(color.$theme-colors, 'main'); 
+        border-right: solid calc(3 / 375) * 100vw map.get(color.$theme-colors, 'main');
+        transform: translateY(-50%) rotate(45deg); 
+      }
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        color: map.get(color.$theme-colors, 'main');
+      }
+    }
+
+    &::before {
+      display: inline-block;
+      width: 3rem;
+      height: 3rem;
+      margin: 0 1rem 0 0;
+      content: "";
+      background-color: currentcolor;
+      @include mix.mq('sp-tb') {
+        width: calc(30 / 375) * 100vw;
+        height: calc(30 / 375) * 100vw;
+        margin: 0 calc(10 / 375) * 100vw 0 0;
+      }
+    }
+
+    &--appointment {
+      &::before {
+        mask: url("../img/icon_appointment.svg") center center / contain no-repeat;
+      }
+    }
+
+    &--checkup {
+      &::before {
+        mask: url("../img/icon_checkup.svg") center center / contain no-repeat;
+      }
+    }
+
+    &--vaccine {
+      &::before {
+        mask: url("../img/icon_vaccine.svg") center center / contain no-repeat;
+      }
+    }
+
+    &--password {
+      &::before {
+        mask: url("../img/icon_password.svg") center center / contain no-repeat;
+      }
+    }
+
+    &--email {
+      &::before {
+        mask: url("../img/icon_email.svg") center center / contain no-repeat;
+      }
+    }
+
+    &--phone {
+      &::before {
+        mask: url("../img/icon_phone.svg") center center / contain no-repeat;
+      }
+    }
+
+    &--logout {
+      &::before {
+        mask: url("../img/icon_logout.svg") center center / contain no-repeat;
+      }
+    }
+
+    &--withdraw {
+      &::before {
+        mask: url("../img/icon_withdraw.svg") center center / contain no-repeat;
+      }
+    }
+  }
+  
+  &__title {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin: 0 0 4rem;
+    @include mix.mq('sp-tb') {
+      gap: calc(10 / 375) * 100vw;
+      margin: 0 0 calc(40 / 375) * 100vw;
+    }
+
+    &::before {
+      display: inline-block;
+      width: 11rem;
+      height: 11rem;
+      margin: 0;
+      content: "";
+      background: url("../img/icon_user.svg") center center / contain no-repeat;
+      @include mix.mq('sp-tb') {
+        width: calc(80 / 375) * 100vw;
+        height: calc(80 / 375) * 100vw;
+      }
+    }
+  }
+
+  &__user-name {
+    margin: 0 0 0.5rem;
+    @include mix.mq('sp-tb') {
+      margin: 0 0 calc(5 / 375) * 100vw;
+    }
+  }
+
+  &__tablist {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin: 0 0 2rem;
+    @include mix.mq('sp-tb') {
+      gap: calc(20 / 375) * 100vw;
+      margin: 0 0 calc(20 / 375) * 100vw;
+    }
+  }
+
+  &__tab-radio {
+    position: absolute;
+    opacity:0;
+  }
+
+  &__tab-label {
+    padding: 0 0 1rem;
+    color: map.get(color.$theme-colors, 'sub');
+    text-align: center;
+    border-bottom: 0.4rem solid map.get(color.$theme-colors, 'sub');
+    @include mix.mq('sp-tb') {
+      padding: 0 0 calc(10 / 375) * 100vw;
+      border-bottom: calc(4 / 375) * 100vw solid map.get(color.$theme-colors, 'sub');
+    }
+  }
+  
+  #panel-schedule, #panel-done {
+    display: none;
+  }
+
+  &:has(#tab-schedule:checked) {
+    #panel-schedule {
+      display: block;
+    }
+    
+    #tab-schedule:checked + .p-mypage__tab-label {
+      color: map.get(color.$theme-colors, 'main');
+      border-bottom: 0.4rem solid map.get(color.$theme-colors, 'main');
+      @include mix.mq('sp-tb') {
+        border-bottom: calc(4 / 375) * 100vw solid map.get(color.$theme-colors, 'main');
+      }
+    }
+  }
+  
+  &:has(#tab-done:checked) {
+    #panel-done {
+      display: block;
+    }
+
+    #tab-done:checked + .p-mypage__tab-label {
+      color: map.get(color.$theme-colors, 'main');
+      border-bottom: 0.4rem solid map.get(color.$theme-colors, 'main');
+      @include mix.mq('sp-tb') {
+        border-bottom: calc(4 / 375) * 100vw solid map.get(color.$theme-colors, 'main');
+      }
+    }
+  }
+
+  &__card {
+    padding: 3rem 5rem 4rem;
+    margin: 0 0 2rem;
+    background-color: map.get(color.$theme-colors, 'base');
+    border-radius: 0.8rem;
+    @include mix.mq('sp-tb') {
+      padding: calc(30 / 375) * 100vw calc(20 / 375) * 100vw;
+      margin: 0 0 calc(10 / 375) * 100vw;
+      border-radius: calc(8 / 375) * 100vw;
+    }
+    
+    &--done {
+      padding: 3rem 5rem;
+      background-color: map.get(color.$theme-colors, 'gray');
+      @include mix.mq('sp-tb') {
+        padding: calc(30 / 375) * 100vw calc(20 / 375) * 100vw;
+      }
+    }
+
+    &:nth-last-child(1 of .p-mypage__card) {
+      margin: 0;
+    }
+  }
+
+  &__list {
+    display: grid;
+    gap: 1rem;
+    @include mix.mq('sp-tb') {
+      gap: calc(20 / 375) * 100vw;
+    }
+  }
+  
+  &__list-group {
+    display: grid;
+    grid-template-columns: 15rem 1fr;
+    @include mix.mq('sp-tb') {
+      grid-template-columns: 1fr;
+    }
+
+    dt {
+      color: map.get(color.$theme-colors, 'sub');
+      @include mix.mq('sp-tb') {
+        font-size: map.get(map.get(font.$font-sizes, 'sp'), 'sm');
+      }
+    }
+
+    dd {
+      font-weight: bold;
+    }
+  }
+  
+  &__button {
+    max-width: none;
+    margin: 3rem 0 0;
+    @include mix.mq('sp-tb') {
+      flex-direction: column;
+      margin: calc(30 / 375) * 100vw 0 0;
+    }
+  }
+
+  &__empty {
+    margin: 6rem 0 0;
+    text-align: center;
+    @include mix.mq('sp-tb') {
+      margin: calc(40 / 375) * 100vw;
+    }
+  }
+}

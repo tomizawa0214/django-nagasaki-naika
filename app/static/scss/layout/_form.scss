@@ -1,0 +1,225 @@
+//////////////////////////////////
+// フォーム
+//////////////////////////////////
+
+@use 'sass:map';
+@use '../foundation/fonts' as font;
+@use '../foundation/colors' as color;
+@use '../foundation/mixins' as mix;
+
+.l-form {
+  &--signup {
+    padding: 0 0 6rem;
+    @include mix.mq('sp-tb') {
+      padding: 0 0 calc(40 / 375) * 100vw;
+    }
+  }
+
+  &__group {
+    margin: 0 0 3rem;
+    @include mix.mq('sp-tb') {
+      margin: 0 0 calc(30 / 375) * 100vw;
+    }
+
+    &--two {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0 2rem;
+      @include mix.mq('sp-tb') {
+        grid-template-columns: 1fr;
+        gap: calc(30 / 375) * 100vw;
+      }
+    }
+    
+    &--registered {
+      dt {
+        color: map.get(color.$theme-colors, 'sub');
+        @include mix.mq('sp-tb') {
+          font-size: map.get(map.get(font.$font-sizes, 'sp'), 'sm');
+        }
+      }
+      
+      dd {
+        font-weight: bold;
+        color: map.get(color.$theme-colors, 'main');
+      }
+    }
+    
+    &--questionnaire {
+      margin: 0 0 4rem;
+      @include mix.mq('sp-tb') {
+        margin: 0 0 calc(30 / 375) * 100vw
+      }
+    }
+    
+    &:nth-last-child(1 of .l-form__group) {
+      margin: 0 0 5rem;
+      @include mix.mq('sp-tb') {
+        margin: 0 0 calc(40 / 375) * 100vw;
+      }
+    }
+  }
+
+  &__radio-checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 3rem;
+    margin: 1rem 0 0;
+    @include mix.mq('sp-tb') {
+      flex-direction: column;
+      gap: calc(15 / 375) * 100vw calc(20 / 375) * 100vw;
+      margin: calc(10 / 375) * 100vw 0 0;
+    }
+
+    &--alcohol {
+      margin: 3rem 0 0;
+      @include mix.mq('sp-tb') {
+        margin: calc(20 / 375) * 100vw 0 0;
+      }
+    }
+
+    &--one {
+      justify-content: center;
+      margin: 0;
+      @include mix.mq('sp-tb') {
+        flex-direction: row;
+      }
+    }
+  }
+  
+  &__checkbox {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin: 1rem 0 0;
+    @include mix.mq('sp-tb') {
+      gap: calc(5 / 375) * 100vw;
+      margin: calc(10 / 375) * 100vw;
+    }
+  }
+
+  &__link {
+    display: block;
+    width: max-content;
+    margin: 0.5rem 0 0 auto;
+    font-size: map.get(map.get(font.$font-sizes, 'pc'), 'sm');
+    @include mix.mq('sp-tb') {
+      margin: calc(10 / 375) * 100vw 0 0 auto;
+      font-size: map.get(map.get(font.$font-sizes, 'sp'), 'sm');
+    }
+  }
+
+  &__has-alcohol {
+    display: grid;
+    flex: 0 0 100%;
+    gap: 1rem;
+    @include mix.mq('sp-tb') {
+      gap: calc(15 / 375) * 100vw;
+    }
+  }
+  
+  &__smoking,
+  &__alcohol {
+    display: flex;
+    flex: 0 0 100%;
+    gap: 1rem;
+    align-items: center;
+    @include mix.mq('sp-tb') {
+      gap: calc(10 / 375) * 100vw;
+    }
+
+    &--vertical {
+      display: grid;
+      gap: 1.5rem;
+      @include mix.mq('sp-tb') {
+        gap: calc(15 / 375) * 100vw;
+      }
+    }
+
+    &--quit {
+      display: grid;
+      grid-template-columns: 7rem 15rem 1fr;
+      @include mix.mq('sp-tb') {
+        grid-template-columns: calc(70 / 375) * 100vw calc(150 / 375) * 100vw 1fr;
+      }
+    }
+    
+    &--detail {
+      display: grid;
+      grid-template-columns: 4.5rem 1fr;
+      gap: 1rem;
+      @include mix.mq('sp-tb') {
+        grid-template-columns: calc(45 / 375) * 100vw 1fr;
+        gap: calc(10 / 375) * 100vw;
+      }
+    }
+  }
+}
+
+.l-confirm {
+  margin: 0 0 3rem;
+  @include mix.mq('sp-tb') {
+    margin: 0 0 calc(20 / 375) * 100vw;
+  }
+
+  &__edit-date {
+    .l-confirm__group {
+      margin: 0 auto;
+    }
+  }
+
+  &__edit-contact {
+    margin: 4rem 0 2rem;
+    @include mix.mq('sp-tb') {
+      margin: calc(40 / 375) * 100vw 0 calc(20 / 375) * 100vw;
+    }
+  }
+
+  &__group {
+    display: grid;
+    grid-template-columns: 20rem 32rem;
+    justify-content: center;
+    width: fit-content;
+    padding: 1rem 1rem 2rem;
+    margin: 0 auto 1rem;
+    border-bottom: 0.1rem solid map.get(color.$theme-colors, 'border');
+    @include mix.mq('sp-tb') {
+      grid-template-columns: 1fr;
+      width: 100%;
+      padding: 0 0 calc(20 / 375) * 100vw;
+      margin: 0 0 calc(20 / 375) * 100vw;
+      border-bottom: calc(1 / 375) * 100vw solid map.get(color.$theme-colors, 'border');
+    }
+
+    &--vertical {
+      grid-template-columns: 1fr;
+      width: 100%;
+    }
+
+    &:nth-last-child(1 of .l-confirm__group) {
+      border-bottom: none;
+    }
+
+    dt {
+      color: map.get(color.$theme-colors, 'sub');
+      @include mix.mq('sp-tb') {
+        font-size: map.get(map.get(font.$font-sizes, 'sp'), 'sm');
+      }
+    }
+
+    dd {
+      font-weight: bold;
+    }
+  }
+}
+
+.js-symptom-other-field,
+.js-has-medical-history-field,
+.js-has-under-treatment-field,
+.js-has-current-medication-field,
+.js-has-smoking,
+.js-has-quit-smoking,
+.js-has-alcohol,
+.js-has-allergy-field {
+  display: none;
+}

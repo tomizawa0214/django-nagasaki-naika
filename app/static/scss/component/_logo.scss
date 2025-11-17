@@ -1,0 +1,20 @@
+//////////////////////////////////
+// ロゴ
+//////////////////////////////////
+
+@use '../foundation/mixins' as mix;
+
+.c-logo-h {
+  width: 15.1rem;
+  @include mix.mq('sp-tb') {
+    width: calc(120 / 375) * 100vw;
+  }
+}
+
+.c-logo-w {
+  width: 20rem;
+  @include mix.mq('sp-tb') {
+    width: calc(200 / 375) * 100vw;
+    margin: 0 0 calc(15 / 375) * 100vw;
+  }
+}

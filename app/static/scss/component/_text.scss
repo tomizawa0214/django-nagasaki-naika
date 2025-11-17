@@ -1,0 +1,114 @@
+//////////////////////////////////
+// テキスト
+//////////////////////////////////
+
+@use 'sass:map';
+@use '../foundation/fonts' as font;
+@use '../foundation/colors' as color;
+@use '../foundation/mixins' as mix;
+
+.c-text {
+  font-size: map.get(map.get(font.$font-sizes, 'pc'), 'base');
+  line-height: map.get(font.$line-heights, 'base');
+  @include mix.mq('sp-tb') {
+    font-size: map.get(map.get(font.$font-sizes, 'sp'), 'base');
+  }
+  
+  &--xs {
+    font-size: map.get(map.get(font.$font-sizes, 'pc'), 'xs');
+    line-height: map.get(font.$line-heights, 'base');
+    @include mix.mq('sp-tb') {
+      font-size: map.get(map.get(font.$font-sizes, 'sp'), 'xs');
+    }
+  }
+
+  &--sm {
+    font-size: map.get(map.get(font.$font-sizes, 'pc'), 'sm');
+    @include mix.mq('sp-tb') {
+      font-size: map.get(map.get(font.$font-sizes, 'sp'), 'sm');
+    }
+  }
+
+  &--bold {
+    font-weight: bold;
+  }
+
+  &--alert {
+    font-weight: bold;
+    color: map.get(color.$theme-colors, 'alert');
+  }
+  
+  &--saturday {
+    color: map.get(color.$theme-colors, 'link');
+  }
+  
+  &--sunday, &--holiday {
+    color: map.get(color.$theme-colors, 'alert');
+  }
+
+  &--help {
+    display: block;
+    padding: 0 0 0 1em;
+    margin: 0.5rem 0 0;
+    font-size: map.get(map.get(font.$font-sizes, 'pc'), 'xs');
+    font-weight: 500;
+    text-indent: -1em;
+    @include mix.mq('sp-tb') {
+      margin: calc(5 / 375) * 100vw 0 0;
+      font-size: map.get(map.get(font.$font-sizes, 'sp'), 'xs');
+      text-align: left;
+    }
+
+    &::before {
+      content: "※";
+    }
+
+    &:not(:first-of-type) {
+      margin: 0;
+    }
+  }
+}
+
+.c-title {
+  font-family: map.get(font.$font-families, 'title');
+  font-size: map.get(map.get(font.$font-sizes, 'pc'), 'lg');
+  line-height: map.get(font.$line-heights, 'sm');
+  letter-spacing: map.get(font.$letter-spacings, 'md');
+  @include mix.mq('sp-tb') {
+    font-size: map.get(map.get(font.$font-sizes, 'sp'), 'lg');
+  }
+  
+  &--mypage {
+    font-size: map.get(map.get(font.$font-sizes, 'pc'), 'xl');
+    @include mix.mq('sp-tb') {
+      font-size: map.get(map.get(font.$font-sizes, 'sp'), 'xl');
+    }
+  }
+}
+
+.c-heading {
+  padding: .5rem 1em;
+  margin: 0 0 1rem;
+  font-family: map.get(font.$font-families, 'title');
+  font-size: map.get(map.get(font.$font-sizes, 'pc'), 'md');
+  font-weight: bold;
+  line-height: map.get(font.$line-heights, 'sm');
+  color: #fff;
+  letter-spacing: map.get(font.$letter-spacings, 'md');
+  background-color: map.get(color.$theme-colors, 'main');
+  @include mix.mq('sp-tb') {
+    padding: calc(5 / 375) * 100vw 1em;
+    margin: 0 0 calc(20 / 375) * 100vw;
+    font-size: map.get(map.get(font.$font-sizes, 'sp'), 'base');
+  }
+  
+}
+
+.c-link {
+  color: map.get(color.$theme-colors, 'link');
+  text-decoration: underline;
+
+  @include mix.hover-on {
+    @include mix.hover;
+  }
+}

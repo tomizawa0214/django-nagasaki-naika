@@ -1,0 +1,73 @@
+//////////////////////////////////
+// 各要素の基本設定を定義
+//////////////////////////////////
+
+@use 'sass:map';
+@use 'fonts' as font;
+@use 'colors' as color;
+@use 'mixins' as mix;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+  font-weight: 500;
+
+  @include mix.mq('sp-xs') {
+    font-size: calc((10 / 375) * 100vw);
+  }
+
+  @include mix.mq('pc-sm') {
+    font-size: calc((10 / 1224) * 100vw);
+  }
+}
+
+body {
+  font-family: map.get(font.$font-families, 'base');
+  font-feature-settings: 'palt';
+  line-height: 1;
+  color: map.get(color.$theme-colors, 'black');
+  letter-spacing: map.get(font.$letter-spacings, 'base');
+  line-break: strict;
+  overflow-wrap: anywhere;  
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+// telリンク：PCでは無効、タッチ環境では有効
+@media (hover: hover) {
+  a[href^='tel:'] {
+    pointer-events: none;
+  }
+}
+@media (hover: none) {
+  a[href^='tel:'] {
+    pointer-events: auto;
+  }
+}
+
+// 改行ユーティリティ
+.only-sp {
+  display: none;
+}
+
+.only-pc {
+  display: block;
+}
+@include mix.mq('sp-tb') {
+  .only-sp {
+    display: block;
+  }
+
+  .only-pc {
+    display: none;
+  }
+}

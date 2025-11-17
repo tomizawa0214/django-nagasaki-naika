@@ -1,0 +1,59 @@
+//////////////////////////////////
+// ヘッダー
+//////////////////////////////////
+
+@use 'sass:map';
+@use '../foundation/mixins' as mix;
+
+.l-footer {
+  position: relative;
+  width: 100%;
+  padding: 0 0 16rem;
+  @include mix.mq('sp-tb') {
+    padding: 0 0 calc(120 / 375) * 100vw;
+  }
+  
+  &::after {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 12rem;
+    content: "";
+    background: url("../img/bg_footer.svg") center center / cover no-repeat;
+    transform: translateX(-50%);
+    @include mix.mq('sp-tb') {
+      height: calc(80 / 375) * 100vw;
+    }
+  }
+
+  &__inner {
+    display: grid;
+    grid-template-columns: 20rem auto;
+    gap: 0 5rem;
+    align-items: center;
+    justify-content: center;
+    @include mix.mq('sp-tb') {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+  }
+
+  &__logo {
+    grid-row: 1 / 3;
+    @include mix.hover-on {
+      @include mix.hover;
+    }
+  }
+
+  &__tel {
+    grid-column: 2 / 3;
+  }
+
+  &__address {
+    grid-column: 2 / 3;
+  }
+}

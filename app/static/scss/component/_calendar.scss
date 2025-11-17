@@ -1,0 +1,341 @@
+//////////////////////////////////
+// 日時選択フォーム
+//////////////////////////////////
+
+@use 'sass:map';
+@use '../foundation/fonts' as font;
+@use '../foundation/colors' as color;
+@use '../foundation/mixins' as mix;
+
+.c-calendar {
+  padding: 4rem 6rem 3rem;
+  margin: 0 0 5rem;
+  background-color: #FFF;
+  border-radius: 1rem;
+  @include mix.mq('sp-tb') {
+    width: calc(100% + calc(40 / 375) * 100vw);
+    padding: 0 calc(20 / 375) * 100vw;
+    margin: 0 0 calc(40 / 375) * 100vw calc(-20 / 375) * 100vw;
+    background-color: transparent;
+    border-radius: calc(10 / 375) * 100vw;
+  }
+
+  &__text {
+    font-size: map.get(map.get(font.$font-sizes, 'pc'), 'base');
+    @include mix.mq('sp-tb') {
+      font-size: map.get(map.get(font.$font-sizes, 'sp'), 'sm');
+    }
+  }
+
+  &__header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    margin: 0 0 2rem;
+    @include mix.mq('sp-tb') {
+      margin: 0 0 calc(30 / 375) * 100vw
+    }
+  }
+
+  &__prev, &__next {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    transition: mix.$hover-transition;
+    @include mix.mq('sp-tb') {
+      gap: calc(5 / 375) * 100vw
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        color: map.get(color.$theme-colors, 'main');
+      }
+    }
+  }
+  
+  &__prev {
+    &::before {
+      width: 1rem;
+      height: 1rem;
+      content: "";
+      border-top: solid 0.2rem map.get(color.$theme-colors, 'main'); 
+      border-right: solid 0.2rem map.get(color.$theme-colors, 'main'); 
+      transform: rotate(225deg);
+      @include mix.mq('sp-tb') {
+        width: calc(8 / 375) * 100vw;
+        height: calc(8 / 375) * 100vw;
+        border-top: solid calc(2 / 375) * 100vw map.get(color.$theme-colors, 'main'); 
+        border-right: solid calc(2 / 375) * 100vw map.get(color.$theme-colors, 'main'); 
+      }
+    }
+  }
+  
+  &__next {
+    grid-column: 3 / 4;
+    justify-self: flex-end;
+    
+    &::after {
+      width: 1rem;
+      height: 1rem;
+      content: "";
+      border-top: solid 0.2rem map.get(color.$theme-colors, 'main'); 
+      border-right: solid 0.2rem map.get(color.$theme-colors, 'main'); 
+      transform: rotate(45deg);
+      @include mix.mq('sp-tb') {
+        width: calc(8 / 375) * 100vw;
+        height: calc(8 / 375) * 100vw;
+        border-top: solid calc(2 / 375) * 100vw map.get(color.$theme-colors, 'main'); 
+        border-right: solid calc(2 / 375) * 100vw map.get(color.$theme-colors, 'main'); 
+      }
+    }
+  }
+  
+  &__month {
+    position: relative;
+    display: flex;
+    grid-column: 2 / 3;
+    align-items: center;
+    justify-self: center;
+    margin: 0 0 0 2rem;
+    @include mix.mq('sp-tb') {
+      margin: 0;
+    }
+
+    &::after {
+      position: absolute;
+      top: 50%;
+      right: 1rem;
+      width: 1.5rem;
+      height: 1rem;
+      pointer-events: none;
+      content: "";
+      background-color: map.get(color.$theme-colors, 'main');
+      clip-path: polygon(0 0, 100% 0%, 50% 100%);
+      transform: translateY(-50%);
+      @include mix.mq('sp-tb') {
+        right: calc(10 / 375) * 100vw;
+        width: calc(12 / 375) * 100vw;
+        height: calc(8 / 375) * 100vw;
+      }
+    }
+  }
+
+  &__select {
+    padding: 1rem 3.5rem 1rem 1rem;
+    font-size: map.get(map.get(font.$font-sizes, 'pc'), 'lg');
+    font-weight: bold;
+    border: 0.2rem solid transparent;
+    border-radius: 0.4rem;
+    @include mix.mq('sp-tb') {
+      padding: calc(15 / 375) * 100vw calc(30 / 375) * 100vw calc(15 / 375) * 100vw calc(10 / 375) * 100vw;
+      font-size: map.get(map.get(font.$font-sizes, 'sp'), 'base');
+      background-color: #FFF;
+      border: calc(1 / 375) * 100vw solid map.get(color.$theme-colors, 'border');
+      border-radius: calc(4 / 375) * 100vw;
+    }
+
+    &:focus {
+      outline: none;
+      border: 0.2rem solid map.get(color.$theme-colors, 'accent');
+      @include mix.mq('sp-tb') {
+        border: calc(2 / 375) * 100vw solid map.get(color.$theme-colors, 'accent');
+      }
+    }
+  }
+
+  &__contents {
+    margin: 0 0 3rem;
+    background-color: #FFF;
+    @include mix.mq('sp-tb') {
+      margin: 0 0 calc(30 / 375) * 100vw;
+    }
+  }
+
+  &__table {
+    width:100%;
+    caret-color: transparent;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border: 0.1rem solid map.get(color.$theme-colors, 'border');
+    @include mix.mq('sp-tb') {
+      border: calc(1 / 375) * 100vw solid map.get(color.$theme-colors, 'border');
+    }
+    
+    th {
+      height: 6rem;
+      vertical-align: middle;
+      text-align: center;
+      @include mix.mq('sp-tb') {
+        height: calc(50 / 375) * 100vw;
+      }
+    }
+  }
+  
+  &__table-header {
+    background-color: map.get(color.$theme-colors, 'base');
+    border-bottom: 0.2rem solid map.get(color.$theme-colors, 'border');
+    @include mix.mq('sp-tb') {
+      border-bottom: calc(2 / 375) * 100vw solid map.get(color.$theme-colors, 'border');
+    }
+    
+    th {
+      border-left: 0.1rem solid map.get(color.$theme-colors, 'border');
+      @include mix.mq('sp-tb') {
+        border-left: calc(1 / 375) * 100vw solid map.get(color.$theme-colors, 'border');
+      }
+
+      &:first-of-type {
+        width: 10rem;
+        caret-color: transparent;
+        @include mix.mq('sp-tb') {
+          width: calc(70 / 375) * 100vw;
+        }
+      }
+    }
+  }
+
+  &__date {
+    display: block;
+  }
+
+  &__weekday {
+    display: block;
+    margin: 0.2rem 0 0;
+    font-size: map.get(map.get(font.$font-sizes, 'pc'), 'xs');
+    @include mix.mq('sp-tb') {
+      margin: calc(5 / 375) * 100vw 0 0;
+      font-size: map.get(map.get(font.$font-sizes, 'sp'), 'xs');
+    }
+  }
+  
+  &__table-body {
+    tr {
+      border-bottom: 0.1rem solid map.get(color.$theme-colors, 'border');
+      @include mix.mq('sp-tb') {
+        border-bottom: calc(1 / 375) * 100vw solid map.get(color.$theme-colors, 'border');
+      }
+    }
+    
+    th {
+      height: 5rem;
+      @include mix.mq('sp-tb') {
+        height: calc(50 / 375) * 100vw;
+        font-size: map.get(map.get(font.$font-sizes, 'sp'), 'sm');
+      }
+    }
+    
+    td {
+      border-left: 0.1rem solid map.get(color.$theme-colors, 'border');
+      @include mix.mq('sp-tb') {
+        border-left: calc(1 / 375) * 100vw solid map.get(color.$theme-colors, 'border');
+      }
+    }
+  }
+
+  &__status-cell {
+    &--closed {
+      background-color: map.get(color.$theme-colors, 'gray');
+    }
+  }
+  
+  &__status {
+    position: relative;
+    z-index: 2;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    transition: mix.$hover-transition;
+    
+    &--open {
+      background-color: map.get(color.$theme-colors, 'main');
+      mask-image: url("../img/icon_open.svg"); 
+      mask-size: 2.4rem 2.4rem;
+      @include mix.mq('sp-tb') {
+        mask-size: calc(20 / 375) * 100vw calc(20 / 375) * 100vw;
+      }
+    }
+    
+    &--limited {
+      background-color: map.get(color.$theme-colors, 'main');
+      mask-image: url("../img/icon_limited.svg"); 
+      mask-size: 2.4rem 2.4rem; 
+      @include mix.mq('sp-tb') {
+        mask-size: calc(20 / 375) * 100vw calc(20 / 375) * 100vw; 
+      }
+    }
+    
+    &--closed {
+      background-color: map.get(color.$theme-colors, 'border');
+      mask-image: url("../img/icon_closed.svg"); 
+      mask-size: 2rem 2rem;
+      @include mix.mq('sp-tb') {
+        mask-size: calc(18 / 375) * 100vw calc(18 / 375) * 100vw;
+      }
+    }
+  }
+  
+  &__status-radio {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+  }
+  
+  &__status-label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 5rem;
+    cursor: pointer;
+    @include mix.mq('sp-tb') {
+      height: calc(50 / 375) * 100vw;
+    }
+
+    &--closed {
+      cursor: auto;
+    }
+  }
+
+  &__status-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transition: mix.$hover-transition;
+  }
+
+  &__status-radio:checked + &__status {
+    background-color: #FFF;
+  }
+
+  &__status-radio:checked ~ &__status-box {
+    background-color: map.get(color.$theme-colors, 'accent');
+  }
+
+  &__checked {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 2rem;
+    justify-content: center;
+    @include mix.mq('sp-tb') {
+      grid-template-columns: 1fr;
+      gap: 0;
+      text-align: center;
+    }
+
+    dt {
+      color: map.get(color.$theme-colors, 'sub');
+      @include mix.mq('sp-tb') {
+        font-size: map.get(map.get(font.$font-sizes, 'sp'), 'sm');
+      }
+    }
+
+    dd {
+      font-weight: bold;
+    }
+  }
+}

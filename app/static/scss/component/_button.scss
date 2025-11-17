@@ -1,0 +1,53 @@
+//////////////////////////////////
+// ボタン
+//////////////////////////////////
+
+@use 'sass:map';
+@use '../foundation/fonts' as font;
+@use '../foundation/colors' as color;
+@use '../foundation/mixins' as mix;
+
+.c-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  width: 100%;
+  min-width: 25rem;
+  max-width: 35rem;
+  height: 5.6rem;
+  font-size: map.get(map.get(font.$font-sizes, 'pc'), 'base');
+  font-weight: bold;
+  letter-spacing: map.get(font.$letter-spacings, 'md');
+  border-radius: 0.4rem;
+  @include mix.mq('sp-tb') {
+    max-width: none;
+    height: calc(56 / 375) * 100vw;
+    font-size: map.get(map.get(font.$font-sizes, 'sp'), 'base');
+    border-radius: calc(4 / 375) * 100vw;
+  }
+  @include mix.hover-on {
+    @include mix.hover;
+  }
+
+  &--primary {
+    color: #FFF;
+    background-color: map.get(color.$theme-colors, 'main');
+  }
+  
+  &--secondary {
+    color: map.get(color.$theme-colors, 'main');
+    background-color: #FFF;
+    border: 0.1rem solid map.get(color.$theme-colors, 'main');
+    @include mix.mq('sp-tb') {
+      border: calc(1 / 375) * 100vw solid map.get(color.$theme-colors, 'main');
+    }
+  }
+
+  &--alert {
+    color: #FFF;
+    background-color: map.get(color.$theme-colors, 'alert');
+  }
+}
+
+

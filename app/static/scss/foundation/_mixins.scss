@@ -1,0 +1,41 @@
+//////////////////////////////////
+// メディアクエリの定義
+//////////////////////////////////
+
+@use 'sass:map';
+
+$breakpoints: (
+  'sp-xs': 'screen and (max-width: 375px)',
+  'sp-tb': 'screen and (max-width: 1023px)',
+  'pc-sm': 'screen and (min-width: 1024px) and (max-width: 1224px)',
+  'pc': 'screen and (min-width: 1225px)',
+);
+
+@mixin mq($breakpoint) {
+  @media #{map.get($breakpoints, $breakpoint)} {
+    @content;
+  }
+}
+
+
+//////////////////////////////////
+// ホバーアクションの定義
+//////////////////////////////////
+
+$hover-transition: 0.3s ease-in-out;
+$hover-opacity: 0.65;
+
+@mixin hover {
+  transition: $hover-transition;
+  
+  &:hover {
+    opacity: $hover-opacity;
+  }
+}
+
+// ホバー可能デバイスにだけホバー効果を適用
+@mixin hover-on {
+  @media (hover: hover) {
+    @content;
+  }
+}

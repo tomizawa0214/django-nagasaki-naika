@@ -1,0 +1,73 @@
+//////////////////////////////////
+// ステップフォーム
+//////////////////////////////////
+
+@use 'sass:map';
+@use '../foundation/fonts' as font;
+@use '../foundation/colors' as color;
+@use '../foundation/mixins' as mix;
+
+.c-step {
+  position: relative;
+  font-size: map.get(map.get(font.$font-sizes, 'pc'), 'sm');
+  line-height: map.get(font.$line-heights, 'sm');
+  color: map.get(color.$theme-colors, 'border');
+  text-align: center;
+  @include mix.mq('sp-tb') {
+    font-size: map.get(map.get(font.$font-sizes, 'sp'), 'xs');
+  }
+
+  &::before {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 5rem;
+    height: 5rem;
+    margin: 0 auto 0.5rem;
+    font-size: map.get(map.get(font.$font-sizes, 'pc'), 'lg');
+    color: #FFF;
+    content: counter(li);
+    counter-increment: li;
+    background-color: map.get(color.$theme-colors, 'border');
+    border-radius: 50%;
+    @include mix.mq('sp-tb') {
+      width: calc(38 / 375) * 100vw;
+      height: calc(38 / 375) * 100vw;
+      margin: 0 auto calc(5 / 375) * 100vw;
+      font-size: map.get(map.get(font.$font-sizes, 'sp'), 'lg');
+    }
+  }
+
+  &:not(:last-of-type)::after {
+    position: absolute;
+    top: 2.4rem;
+    right: -4rem;
+    z-index: -1;
+    width: 2rem;
+    height: 0.2rem;
+    content: "";
+    background-color: map.get(color.$theme-colors, 'border');
+    @include mix.mq('sp-tb') {
+      top: calc(18 / 375) * 100vw;
+      right: calc(-15 / 375) * 100vw;
+      width: calc(10 / 375) * 100vw;
+      height: calc(2 / 375) * 100vw;
+    }
+  }
+
+  &.current {
+    font-weight: bold;
+    color: map.get(color.$theme-colors, 'main');
+    
+    &::before {
+      background-color: map.get(color.$theme-colors, 'main');
+    }
+  }
+
+  &.done {
+    &::before {
+      font-weight: bold;
+      content: "\2713";
+    }
+  }
+}

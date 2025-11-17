@@ -1,0 +1,78 @@
+//////////////////////////////////
+// プライバシーポリシー
+//////////////////////////////////
+
+@use 'sass:map';
+@use '../foundation/fonts' as font;
+@use '../foundation/colors' as color;
+@use '../foundation/mixins' as mix;
+
+.p-privacy {
+  padding: 6rem 5rem 3rem;
+  margin: 0 auto;
+  background-color: map.get(color.$theme-colors, 'base');
+  @include mix.mq('sp-tb') {
+    padding: calc(40 / 375) * 100vw calc(20 / 375) * 100vw;
+  }
+
+  &__lead {
+    margin: 0 0 4rem;
+    @include mix.mq('sp-tb') {
+      margin: 0 0 calc(40 / 375) * 100vw
+    }
+  }
+
+  &__contents {
+    margin: 0 0 3rem;
+    @include mix.mq('sp-tb') {
+      margin: 0 0 calc(30 / 375) * 100vw;
+    }
+  }
+
+  &__heading {
+    padding: 0.5rem 1em;
+    margin: 0 0 1rem;
+    font-weight: bold;
+    color: #FFF;
+    background-color: map.get(color.$theme-colors, 'main');
+    @include mix.mq('sp-tb') {
+      padding: calc(5 / 375) * 100vw 1em;
+      margin: 0 0 calc(10 / 375) * 100vw;
+    }
+  }
+
+  &__reference {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    margin: 0.5rem 0 0;
+    @include mix.mq('sp-tb') {
+      margin: calc(5 / 375) * 100vw 0 0;
+    }
+
+    span {
+      grid-column: 1 / 2;
+    }
+
+    a {
+      grid-column: 2 / 3;
+    }
+  }
+
+  ul {
+    padding: 0 0 0 2em;
+    margin: 0.5rem 0;
+    list-style-type: disc;
+    @include mix.mq('sp-tb') {
+      margin: calc(5 / 375) * 100vw 0;
+    }
+  }
+  
+  ol {
+    padding: 0 0 0 2em;
+    margin: 0.5rem 0;
+    list-style-type: decimal;
+    @include mix.mq('sp-tb') {
+      margin: calc(5 / 375) * 100vw 0;
+    }
+  }
+}

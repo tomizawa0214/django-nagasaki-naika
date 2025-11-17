@@ -1,0 +1,57 @@
+//////////////////////////////////
+// フォントの定義
+//////////////////////////////////
+
+$font-families: (
+  'base': (
+    'Yu Gothic',
+    '游ゴシック体',
+    'Hiragino Sans',
+    'Hiragino Kaku Gothic ProN',
+    'Meiryo',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    arial,
+    sans-serif,
+  ),
+  'title': (
+    'M PLUS Rounded 1c',
+    'Yu Gothic',
+    '游ゴシック体',
+    'Hiragino Sans',
+    'Hiragino Kaku Gothic ProN',
+    'Meiryo',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    arial,
+    sans-serif,
+  ),
+);
+$font-sizes: (
+  'pc': (
+    'xs': 1.2rem,
+    'sm': 1.5rem,
+    'base': 1.8rem,
+    'md': 2rem,
+    'lg': 2.4rem,
+    'xl': 3.2rem,
+  ),
+  'sp': (
+    'xs': clamp(1.2rem, calc(12 / 375) * 100vw, 2.4rem),
+    'sm': clamp(1.5rem, calc(15 / 375) * 100vw, 3rem),
+    'base': clamp(1.6rem, calc(16 / 375) * 100vw, 3.2rem),
+    'md': clamp(2rem, calc(20 / 375) * 100vw, 4rem),
+    'lg': clamp(2rem, calc(20 / 375) * 100vw, 4rem),
+    'xl': clamp(2.4rem, calc(24 / 375) * 100vw, 4.8rem),
+  ),
+);
+$line-heights: (
+  'sm': 1.5,
+  'base': 1.8,
+);
+$letter-spacings: (
+  'base': 0.05em,
+  'md': 0.08em,
+);
