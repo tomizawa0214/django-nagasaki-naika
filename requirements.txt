@@ -1,0 +1,9 @@
+Django~=5.2.8                    # LTS版
+django-environ~=0.12.0           # 環境変数
+gunicorn~=23.0.0                 # アプリケーションサーバー
+jpholiday~=1.0.2                 # 祝日を取得
+psycopg~=3.2.12                  # PostgreSQLへ接続するためのライブラリ
+pytz~=2025.2                     # タイムゾーンを扱う
+isort~=7.0.0                     # import文の自動整形
+django-admin-rangefilter~=0.13.3 # 管理画面の期間絞り込み機能
+django-allauth~=65.13.0          # ログイン認証機能

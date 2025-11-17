@@ -1,1 +1,1 @@
-# django-nagasaki-naika
+# 長﨑医院様 Web予約システム
