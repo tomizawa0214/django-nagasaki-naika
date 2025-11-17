@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="l-contents">
+  <h1 class="l-contents__lead c-text">こちらは長﨑医院のオンライン予約サイトです。</h1>
+  <div class="l-contents__inner">
+    <section>
+      <h2 class="l-contents__title c-title">マイページへログイン</h2>
+      <form class="l-form l-form--signup" action="#" method="post">
+        <div class="l-form__group">
+          <label class="c-text c-label" for="email">メールアドレス</label>
+          <input class="c-text c-input" type="email" id="email" name="email" placeholder="nagasaki@example.jp" required autocomplete="email">
+        </div>
+        <div class="l-form__group">
+          <label class="c-text c-label" for="password">パスワード</label>
+          <input class="c-text c-input" type="password" id="password" name="password" placeholder="8～20文字 半角の英字と数字をまぜて入力" required autocomplete="current-password">
+          <a class="l-form__link c-link" href="/password-reset/">パスワードをお忘れの方</a>
+        </div>
+        <div class="l-contents__button">
+          <a class="c-button c-button--secondary" href="https://nagasaki-naika.com/" target="_blank" rel="noopener" aria-label="長崎医院ホームページへ">戻る</a>
+          <button class="c-button c-button--primary" type="submit">ログイン</button>
+        </div>
+      </form>
+    </section>
+    <section class="l-contents__signup">
+      <h2 class="l-contents__title c-title">初めてご利用の方へ</h2>
+      <a class="c-button c-button--primary" href="/signup/">ご利用登録</a>
+    </section>
+  </div>
+</main>
+{% endblock %}

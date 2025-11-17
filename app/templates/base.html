@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ja">
+{% include "include/_head.html" with meta_robots=meta_robots meta_title=meta_title meta_description=meta_description url=url %}
+
+<body>
+  {# Header #}
+  {% include "include/_header.html" %}
+  {# Contents #}
+  {% block content %}
+  {% endblock %}
+  {# Pagetop #}
+  {% include "include/_pagetop.html" %}
+  {# Footer #}
+  {% include "include/_footer.html" %}
+</body>
+
+</html>

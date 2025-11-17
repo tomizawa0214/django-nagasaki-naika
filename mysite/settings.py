@@ -36,6 +36,10 @@ INSTALLED_APPS = [
     "app.apps.AppConfig",
     "django.contrib.humanize",
     "rangefilter",
+    "django.contrib.sites",
+    "app.accounts.apps.AccountsConfig",
+    "allauth",
+    "allauth.account",
 ]
 
 MIDDLEWARE = [
@@ -44,6 +48,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -116,7 +121,32 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-NUMBER_GROUPING = 3  # 数字のカンマ区切り
+# 数字のカンマ区切り
+NUMBER_GROUPING = 3
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+SITE_ID = 1
+
+# ユーザー認証にメールアドレスを使用
+ACCOUNT_LOGIN_METHODS = {"email"}
+
+# 利用登録の必須項目
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*"]
+
+# 利用登録においてメールアドレスの確認が必須
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+
+# ログイン回数制限（10分間に5回まで）
+ACCOUNT_RATE_LIMITS = {
+    "login_failed": "5/10m",
+}
+
+# カスタムユーザーを認証に指定
+AUTH_USER_MODEL = "accounts.CustomUser"
 
 try:
     from .local_settings import *
