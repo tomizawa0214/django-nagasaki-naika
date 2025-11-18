@@ -62,9 +62,14 @@
     &::before {
       content: "※";
     }
-
+    
     &:not(:first-of-type) {
       margin: 0;
+    }
+    
+    &--row {
+      display: inline-block;
+      margin: 0 0 0 0.5rem;
     }
   }
 }

@@ -60,8 +60,8 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            os.path.join(BASE_DIR, "templates"),
-        ],  # 変更
+            os.path.join(BASE_DIR, "admin", "templates"),
+        ],
         "OPTIONS": {
             "context_processors": [
                 "app.context_processors.settings_context",  # 追加
@@ -96,6 +96,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
+    {
+        "NAME": "app.accounts.validators.CustomPasswordValidator",
     },
 ]
 
@@ -163,6 +166,9 @@ try:
 except ImportError:
     pass
 
+# 既定のメール送信アドレス
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
@@ -213,7 +219,7 @@ else:
     env.read_env(os.path.join(BASE_DIR, ".env"))
 
     SECRET_KEY = env("SECRET_KEY")
-    BASE_URL = env("DOMAIN")
+    BASE_URL = env("BASE_URL")
     ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
     STATIC_ROOT = env("STATIC_ROOT")
 

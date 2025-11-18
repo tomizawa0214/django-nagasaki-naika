@@ -675,6 +675,10 @@ img {
 .c-text--help:not(:first-of-type) {
   margin: 0;
 }
+.c-text--help--row {
+  display: inline-block;
+  margin: 0 0 0 0.5rem;
+}
 
 .c-title {
   font-family: "M PLUS Rounded 1c", "Yu Gothic", "游ゴシック体", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", system-ui, -apple-system, "Segoe UI", arial, sans-serif;

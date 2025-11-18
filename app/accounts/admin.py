@@ -1,9 +1,11 @@
 import datetime
 
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from django.utils import timezone
 from rangefilter.filters import DateRangeFilterBuilder
 
+from .admin_forms import *
 from .models import *
 
 
@@ -34,9 +36,10 @@ class IsActiveFilter(admin.SimpleListFilter):
 # =====================================================================================================
 # ユーザー情報
 # =====================================================================================================
-class CustomUserAdmin(admin.ModelAdmin):
+class CustomUserAdmin(UserAdmin):
+    form = CustomUserChangeForm
+    add_form = CustomUserCreateForm
 
-    # 一覧画面: 表示項目
     list_display = (
         "name",
         "email",
@@ -44,18 +47,12 @@ class CustomUserAdmin(admin.ModelAdmin):
         "birthdate_with_age",
         "gender",
         "card_number",
-        "formatted_created_at",
-        "formatted_updated_at",
+        "display_created_at",
+        "display_updated_at",
         "is_active",
     )
-
-    # 一覧画面: 並び替え（登録日時の直近順）
     ordering = ("-created_at",)
-
-    # 一覧画面: 検索ボックス
     search_fields = ("name", "email", "phone", "card_number")
-
-    # 一覧画面: 絞り込み
     list_filter = (
         (
             "created_at",
@@ -67,21 +64,30 @@ class CustomUserAdmin(admin.ModelAdmin):
         ),
         IsActiveFilter,
     )
-
-    # 一覧画面: 日付ナビゲーション
     date_hierarchy = "created_at"
-
-    # 一覧画面: 1ページあたりの表示件数
     list_per_page = 10000
 
-    # 編集画面: 表示項目
+    # 表示項目の定数
     account = ("name", "email", "phone", "password", "birthdate", "gender", "card_number")
     auth = ("is_active", "is_staff")
+    access = ("display_last_login", "display_created_at", "display_updated_at")
 
+    # 編集画面: 表示項目
     fieldsets = (
         ("登録情報", {"fields": account}),
         ("権限管理", {"fields": auth}),
+        ("アクセス", {"fields": access}),
     )
+
+    # 新規登録画面: 表示項目
+    add_fieldsets = (
+        ("登録情報", {"fields": account}),
+        ("権限管理", {"fields": auth}),
+        ("アクセス", {"fields": access}),
+    )
+
+    # 編集画面: 表示のみ（編集不可）
+    readonly_fields = ("display_last_login", "display_created_at", "display_updated_at")
 
     # 生年月日の表示形式を変更
     def birthdate_with_age(self, model):
@@ -96,18 +102,27 @@ class CustomUserAdmin(admin.ModelAdmin):
     birthdate_with_age.short_description = "生年月日"
 
     # 登録日時の表示形式を変更
-    def formatted_created_at(self, model):
+    def display_created_at(self, model):
         dt = timezone.localtime(model.created_at)
-        return dt.strftime("%Y/%m/%d %H:%M")
+        return dt.strftime("%Y年%m月%d日 %H:%M")
 
-    formatted_created_at.short_description = "登録日時"
+    display_created_at.short_description = "登録日時"
 
     # 更新日時の表示形式を変更
-    def formatted_updated_at(self, model):
+    def display_updated_at(self, model):
         dt = timezone.localtime(model.updated_at)
-        return dt.strftime("%Y/%m/%d %H:%M")
+        return dt.strftime("%Y年%m月%d日 %H:%M")
 
-    formatted_updated_at.short_description = "更新日時"
+    display_updated_at.short_description = "更新日時"
+
+    # 最終ログイン日時の表示形式を変更
+    def display_last_login(self, model):
+        if not model.last_login:
+            return "-"
+        dt = timezone.localtime(model.last_login)
+        return dt.strftime("%Y年%m月%d日 %H:%M")
+
+    display_last_login.short_description = "最終ログイン"
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
