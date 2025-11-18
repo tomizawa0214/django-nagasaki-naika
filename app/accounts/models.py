@@ -39,14 +39,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     gender = models.CharField("性別", max_length=10, choices=GENDER_CHOICES)
     card_number = models.CharField("診察券番号", max_length=10, blank=True, null=True)
     is_active = models.BooleanField(
-        "本登録",
+        "ログイン権限",
         default=True,
-        help_text=("※Web予約システムにログインできるかを指定します。" "※退会の場合は選択を解除します。"),
+        help_text=("※Web予約システムにログインできるかを指定します。<br>""※退会の場合はチェックを解除します。"),
     )
     is_staff = models.BooleanField(
         "管理画面のアクセス権限",
         default=False,
-        help_text="※この管理画面にログインできるかを指定します。"
+        help_text="※この管理画面にログインできるかを指定します。<br>""※ログイン権限にもチェックが付いていることが必須です。"
     )
     created_at = models.DateTimeField("登録日時", default=timezone.now)
     updated_at = models.DateTimeField("更新日時", auto_now=True)

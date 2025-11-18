@@ -11,14 +11,14 @@ from .models import *
 # フィルターのテキスト変更
 # =====================================================================================================
 class IsActiveFilter(admin.SimpleListFilter):
-    title = "本登録ステータス"  # サイドバーに表示される見出し
+    title = "登録ステータス"  # サイドバーに表示される見出し
     parameter_name = "is_active"  # URLクエリに使われるパラメータ名
 
     def lookups(self, request, model_admin):
         # 左側に表示する選択肢 (value, ラベル)
         return (
-            ("1", "本登録済み"),
-            ("0", "仮登録"),
+            ("1", "利用可"),
+            ("0", "利用不可"),
         )
 
     def queryset(self, request, queryset):
