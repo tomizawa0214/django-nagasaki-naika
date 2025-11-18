@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.urls import include, path
 
-admin.site.site_header = "長﨑医院Web予約システム"
-admin.site.index_title = "長﨑医院Web予約システム"
+admin.site.site_header = "長﨑医院ネット予約"
+admin.site.index_title = "長﨑医院ネット予約"
 
 urlpatterns = [
     path("management/", admin.site.urls),

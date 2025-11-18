@@ -41,7 +41,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(
         "ログイン権限",
         default=True,
-        help_text=("※Web予約システムにログインできるかを指定します。<br>""※退会の場合はチェックを解除します。"),
+        help_text=("※ネット予約にログインできるかを指定します。<br>" "※退会の場合はチェックを解除します。"),
     )
     is_staff = models.BooleanField(
         "管理画面のアクセス権限",
