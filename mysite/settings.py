@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "app.accounts.apps.AccountsConfig",
     "allauth",
     "allauth.account",
+    "widget_tweaks",
 ]
 
 MIDDLEWARE = [
@@ -131,6 +132,9 @@ AUTHENTICATION_BACKENDS = [
 
 SITE_ID = 1
 
+# ユーザーモデルにusernameフィールドは無いことを明示
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None  
+
 # ユーザー認証にメールアドレスを使用
 ACCOUNT_LOGIN_METHODS = {"email"}
 
@@ -147,6 +151,12 @@ ACCOUNT_RATE_LIMITS = {
 
 # カスタムユーザーを認証に指定
 AUTH_USER_MODEL = "accounts.CustomUser"
+
+# ログイン後のリダイレクトページ
+LOGIN_REDIRECT_URL = "/mypage/"
+
+# ログアウト後のリダイレクトページ
+ACCOUNT_LOGOUT_REDIRECT_URL = "/logout/"
 
 try:
     from .local_settings import *

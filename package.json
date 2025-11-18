@@ -1,0 +1,27 @@
+{
+  "name": "django-nagasaki-naika",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomizawa0214/django-nagasaki-naika.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/tomizawa0214/django-nagasaki-naika/issues"
+  },
+  "homepage": "https://github.com/tomizawa0214/django-nagasaki-naika#readme",
+  "devDependencies": {
+    "stylelint": "^16.25.0",
+    "stylelint-config-prettier-scss": "^1.0.0",
+    "stylelint-config-recess-order": "^7.4.0",
+    "stylelint-config-standard-scss": "^16.0.0"
+  }
+}

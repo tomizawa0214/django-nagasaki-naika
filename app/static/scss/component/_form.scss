@@ -201,3 +201,11 @@
 .c-optional {
   background-color: map.get(color.$theme-colors, 'gray');
 }
+
+.is-error {
+  background-color: map.get(color.$theme-colors, 'alert-bg');
+  border: 0.2rem solid map.get(color.$theme-colors, 'alert');
+  @include mix.mq('sp-tb') {
+    border: calc(2 / 375) * 100vw solid map.get(color.$theme-colors, 'alert');
+  }
+}

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load widget_tweaks %}
 
 {% block content %}
 <main class="l-contents">
@@ -6,15 +7,28 @@
   <div class="l-contents__inner">
     <section>
       <h2 class="l-contents__title c-title">マイページへログイン</h2>
-      <form class="l-form l-form--signup" action="#" method="post">
+      <form class="l-form l-form--signup" action="" method="post">
+        {% csrf_token %}
         <div class="l-form__group">
           <label class="c-text c-label" for="email">メールアドレス</label>
-          <input class="c-text c-input" type="email" id="email" name="email" placeholder="nagasaki@example.jp" required autocomplete="email">
+          {% render_field form.login %}
+          {# フィールド単位のエラーメッセージ #}
+          {% for error in form.login.errors %}
+          <p class="c-text c-text--sm c-text--alert js-form-error">{{ error }}</p>
+          {% endfor %}
         </div>
         <div class="l-form__group">
           <label class="c-text c-label" for="password">パスワード</label>
-          <input class="c-text c-input" type="password" id="password" name="password" placeholder="8～20文字 半角の英字と数字をまぜて入力" required autocomplete="current-password">
-          <a class="l-form__link c-link" href="/password-reset/">パスワードをお忘れの方</a>
+          {% render_field form.password %}
+          {# フィールド単位のエラーメッセージ #}
+          {% for error in form.password.errors %}
+          <p class="c-text c-text--sm c-text--alert js-form-error">{{ error }}</p>
+          {% endfor %}
+          <a class="l-form__link c-link" href="">パスワードをお忘れの方</a>
+          {# 認証失敗のエラーメッセージ #}
+          {% for error in form.non_field_errors %}
+          <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+          {% endfor %}
         </div>
         <div class="l-contents__button">
           <a class="c-button c-button--secondary" href="https://nagasaki-naika.com/" target="_blank" rel="noopener" aria-label="長崎医院ホームページへ">戻る</a>
@@ -24,7 +38,7 @@
     </section>
     <section class="l-contents__signup">
       <h2 class="l-contents__title c-title">初めてご利用の方へ</h2>
-      <a class="c-button c-button--primary" href="/signup/">ご利用登録</a>
+      <a class="c-button c-button--primary" href="">ご利用登録</a>
     </section>
   </div>
 </main>

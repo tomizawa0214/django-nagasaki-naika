@@ -938,6 +938,16 @@ img {
   background-color: #E5E5EA;
 }
 
+.is-error {
+  background-color: #F8D7DA;
+  border: 0.2rem solid #DC3545;
+}
+@media screen and (max-width: 1023px) {
+  .is-error {
+    border: 0.5333333333vw solid #DC3545;
+  }
+}
+
 .c-button {
   display: -webkit-box;
   display: -ms-flexbox;

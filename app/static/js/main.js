@@ -49,6 +49,26 @@ pagetop.on('click', function () {
   $('html, body').animate({ scrollTop: 0 }, 500)
 })
 
+// Error Message Scroll
+$(function () {
+  if ($('.js-form-error').length) {
+    const position = $('.js-form-error').prev().offset().top
+    $('html, body').stop().animate({scrollTop: position}, 500)
+  }
+})
+
+// Error Message Change Style
+$(function () {
+  $('.js-form-error').each(function () {
+    const ErrorMessage = $(this)
+    ErrorMessage.prev().addClass('is-error')
+    ErrorMessage.prev().one('input change', function () {
+      $(this).removeClass('is-error')
+      ErrorMessage.fadeOut(300)
+    })
+  })
+})
+
 // ===================================================
 // My Page
 // ===================================================

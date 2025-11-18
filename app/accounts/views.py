@@ -1,4 +1,5 @@
 from allauth.account import views
+from .forms import *
 
 
 # =====================================================================================================
@@ -6,6 +7,7 @@ from allauth.account import views
 # =====================================================================================================
 class LoginView(views.LoginView):
     template_name = "account/login.html"
+    form_class = CustomLoginForm
     extra_context = {
         "meta_robots": "index,follow",
         "meta_title": "長﨑医院Web予約システム | 群馬県前橋市",
