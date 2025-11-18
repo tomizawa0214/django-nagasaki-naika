@@ -8,6 +8,30 @@ from .models import *
 
 
 # =====================================================================================================
+# フィルターのテキスト変更
+# =====================================================================================================
+class IsActiveFilter(admin.SimpleListFilter):
+    title = "本登録ステータス"  # サイドバーに表示される見出し
+    parameter_name = "is_active"  # URLクエリに使われるパラメータ名
+
+    def lookups(self, request, model_admin):
+        # 左側に表示する選択肢 (value, ラベル)
+        return (
+            ("1", "本登録済み"),
+            ("0", "仮登録"),
+        )
+
+    def queryset(self, request, queryset):
+        # 選択肢が選ばれたときの絞り込み処理
+        value = self.value()
+        if value == "1":
+            return queryset.filter(is_active=True)
+        if value == "0":
+            return queryset.filter(is_active=False)
+        return queryset
+
+
+# =====================================================================================================
 # ユーザー情報
 # =====================================================================================================
 class CustomUserAdmin(admin.ModelAdmin):
@@ -20,9 +44,9 @@ class CustomUserAdmin(admin.ModelAdmin):
         "birthdate_with_age",
         "gender",
         "card_number",
-        "is_active",
         "formatted_created_at",
         "formatted_updated_at",
+        "is_active",
     )
 
     # 一覧画面: 並び替え（登録日時の直近順）
@@ -41,7 +65,7 @@ class CustomUserAdmin(admin.ModelAdmin):
                 default_end=datetime.datetime.now(),
             ),
         ),
-        "is_active",
+        IsActiveFilter,
     )
 
     # 一覧画面: 日付ナビゲーション
