@@ -1,11 +1,10 @@
 import email.utils
 import logging
-import unicodedata
 from datetime import date
 
 from allauth.account import views
 from django.conf import settings
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, logout
 from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import (
@@ -22,7 +21,6 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.utils.encoding import force_str
 from django.views import View
 
 from app.seo_meta import *
@@ -598,6 +596,40 @@ class PhoneChangeDoneView(LoginRequiredMixin, View):
 
         # テンプレートを描画
         return render(request, "account/phone_change_done.html", {**meta_phone_change_done})
+
+
+# =====================================================================================================
+# 退会（確認）
+# =====================================================================================================
+class WithdrawView(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+
+        # テンプレートを描画
+        return render(request, "account/withdraw.html", {**meta_withdraw})
+
+    def post(self, request, *args, **kwargs):
+
+        # ログインユーザーのログイン権限を解除
+        request.user.is_active = False
+        request.user.save()
+
+        # ログアウトを実行
+        logout(request)
+
+        # 退会完了ページへリダイレクト
+        return redirect("withdraw_done")
+
+
+# =====================================================================================================
+# 退会（完了）
+# =====================================================================================================
+class WithdrawDoneView(View):
+
+    def get(self, request, *args, **kwargs):
+
+        # テンプレートを描画
+        return render(request, "account/withdraw_done.html", {**meta_withdraw_done})
 
 
 # =====================================================================================================

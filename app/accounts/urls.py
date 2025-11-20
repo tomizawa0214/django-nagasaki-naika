@@ -26,4 +26,6 @@ urlpatterns = [
     path("mypage/email/done/<token>/", views.EmailChangeDoneView.as_view(), name="email_change_done"),
     path("mypage/phone/", views.PhoneChangeView.as_view(), name="phone_change"),
     path("mypage/phone/done/", views.PhoneChangeDoneView.as_view(), name="phone_change_done"),
+    path("mypage/withdraw/", views.WithdrawView.as_view(), name="withdraw"),
+    path("mypage/withdraw/done/", views.WithdrawDoneView.as_view(), name="withdraw_done"),
 ]

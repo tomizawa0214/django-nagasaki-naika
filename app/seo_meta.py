@@ -153,6 +153,22 @@ meta_phone_change_done = {
     "url": f"{settings.BASE_URL}/mypage/phone/done/",
 }
 
+# 退会（確認）
+meta_withdraw = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"退会確認{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/withdraw/",
+}
+
+# 退会（完了）
+meta_withdraw_done = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"退会完了{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/withdraw/done/",
+}
+
 # ログアウト
 meta_logout = {
     "meta_robots": "noindex,follow",
