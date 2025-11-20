@@ -34,7 +34,7 @@
             {% endfor %}
           </div>
           {% endif %}
-          <a class="l-form__link c-link" href="">パスワードをお忘れの方</a>
+          <a class="l-form__link c-link" href="{% url 'password_reset' %}">パスワードをお忘れの方</a>
           {# エラーメッセージ（認証失敗） #}
           {% if form.non_field_errors %}
           <div>
@@ -52,7 +52,7 @@
     </section>
     <section class="l-contents__signup">
       <h2 class="l-contents__title c-title">初めてご利用の方へ</h2>
-      <a class="c-button c-button--primary" href="">ご利用登録</a>
+      <a class="c-button c-button--primary" href="{% url 'signup' %}">ご利用登録</a>
     </section>
   </div>
 </main>
