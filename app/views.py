@@ -11,10 +11,10 @@ from app.seo_meta import *
 class MypageView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
-        # ユーザーを取得
+        # ログインユーザーを取得
         user_data = request.user 
 
-        # ユーザーの名前を取得
+        # ログインユーザーの名前を取得
         user_name = user_data.name
 
         # テンプレートを描画
