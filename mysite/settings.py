@@ -158,6 +158,9 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 # 登録済みメールアドレスのエラーを表示
 ACCOUNT_PREVENT_ENUMERATION = False
 
+# ログインページ
+LOGIN_URL = "/"
+
 # ログイン後のリダイレクトページ
 LOGIN_REDIRECT_URL = "/mypage/"
 
