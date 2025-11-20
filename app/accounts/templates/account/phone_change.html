@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<main class="l-contents">
+  <div class="l-step">
+    <ol class="l-step__inner">
+      <li class="c-step current">入力</li>
+      <li class="c-step">完了</li>
+    </ol>
+  </div>
+  <section class="l-contents__inner">
+    <h1 class="l-contents__page-title c-title">電話番号の変更</h1>
+    <p class="l-contents__lead c-text">新しい電話番号を入力してください。</p>
+    <form class="l-form" action="" method="post">
+      {% csrf_token %}
+      <div class="l-form__group l-form__group--registered">
+        <dt class="c-text">現在の電話番号</dt>
+        <dd class="c-text">{{ user_phone }}</dd>
+      </div>
+      <div class="l-form__group">
+        <label class="c-text c-label" for="phone">新しい電話番号</label>
+        {% render_field form.phone %}
+        {# エラーメッセージ #}
+        {% if form.phone.errors %}
+        <div class="js-form-error">
+          {% for error in form.phone.errors %}
+          <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      <div class="l-contents__button">
+        <a class="c-button c-button--secondary" href="{% url 'mypage' %}">戻る</a>
+        <button class="c-button c-button--primary" type="submit" onclick="this.disabled = true; this.form.submit();">電話番号を変更する</button>
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}

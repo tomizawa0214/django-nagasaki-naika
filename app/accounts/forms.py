@@ -313,9 +313,11 @@ class CustomSignupForm(SignupForm):
 class CustomEmailChangeForm(ChangeEmailForm):
 
     # 属性値とエラーメッセージをカスタマイズ
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop("user", None)
+    def __init__(self, *args, current_email=None, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # 登録済みのメールアドレスを取得
+        self.current_email = current_email
 
         # メールアドレス
         email = self.fields["email"]
@@ -340,10 +342,67 @@ class CustomEmailChangeForm(ChangeEmailForm):
 
         # 入力値を取得
         email = self.cleaned_data.get("email")
-        
+
         # 現在のメールアドレスと一致
-        if self.email and email == self.email:
+        if self.current_email and email == self.current_email:
             raise forms.ValidationError(
                 "現在のメールアドレスと同じです。変更する場合は別のアドレスを入力してください。"
             )
         return super().clean_email()
+
+
+# =====================================================================================================
+# 電話番号変更フォーム
+# =====================================================================================================
+class PhoneChangeForm(forms.Form):
+    phone = forms.CharField(
+        label="電話番号",
+        min_length=10,
+        max_length=13,
+        widget=forms.TextInput(
+            attrs={
+                "class": "c-text c-input",
+                "type": "tel",
+                "id": "phone",
+                "inputmode": "numeric",
+                "placeholder": "0272313274",
+                "autocomplete": "tel-national",
+            }
+        ),
+        error_messages={"required": "電話番号を入力してください。"},
+    )
+
+    # 登録済みの電話番号を取得
+    def __init__(self, *args, current_phone=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # 半角に正規化
+        normalized = unicodedata.normalize("NFKC", current_phone)
+
+        # 数字以外を除去
+        current_phone_data = re.sub(r"\D", "", normalized)
+
+        self.current_phone = current_phone_data
+
+    # 電話番号のバリデーション
+    def clean_phone(self):
+
+        # 入力値を取得
+        value = self.cleaned_data.get("phone")
+
+        # 半角に正規化
+        normalized = unicodedata.normalize("NFKC", value)
+
+        # 数字以外を除去
+        phone_data = re.sub(r"\D", "", normalized)
+
+        if self.current_phone and phone_data == self.current_phone:
+            raise forms.ValidationError("現在の電話番号と同じです。別の番号を入力してください。")
+        if not re.search(r"[0-9０-９]", value):
+            raise forms.ValidationError("電話番号には数字を入力ください。")
+        if len(phone_data) < 10:
+            raise forms.ValidationError("電話番号は10桁以上で入力してください。")
+        if len(phone_data) > 13:
+            raise forms.ValidationError("電話番号は13桁以下で入力してください。")
+
+        return phone_data

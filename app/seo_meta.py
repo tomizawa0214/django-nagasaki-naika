@@ -137,6 +137,22 @@ meta_email_change_failed = {
     "url": f"{settings.BASE_URL}/mypage/email/done/",
 }
 
+# 電話番号変更（入力）
+meta_phone_change = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"電話番号変更{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/phone/",
+}
+
+# 電話番号変更（完了）
+meta_phone_change_done = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"電話番号変更完了{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/phone/done/",
+}
+
 # ログアウト
 meta_logout = {
     "meta_robots": "noindex,follow",

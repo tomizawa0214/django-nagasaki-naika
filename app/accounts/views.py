@@ -394,7 +394,7 @@ class EmailChangeView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         # フォームを取得
-        form = CustomEmailChangeForm(request.POST or None, email=request.user.email, user=request.user)
+        form = CustomEmailChangeForm(request.POST or None, current_email=request.user.email)
 
         # ログインユーザーを取得
         user_data = request.user
@@ -419,7 +419,7 @@ class EmailChangeView(LoginRequiredMixin, View):
         user_data = request.user
 
         # フォームを取得
-        form = CustomEmailChangeForm(request.POST or None, email=request.user.email, user=request.user)
+        form = CustomEmailChangeForm(request.POST or None, current_email=request.user.email)
 
         # バリデーションを実行
         if form.is_valid():
@@ -525,6 +525,79 @@ class EmailChangeDoneView(LoginRequiredMixin, View):
 
         # テンプレートを描画
         return render(request, "account/email_change_done.html", {**meta_email_change_failed, "validlink": validlink})
+
+
+# =====================================================================================================
+# 電話番号変更（入力）
+# =====================================================================================================
+class PhoneChangeView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+
+        # フォームを取得
+        form = PhoneChangeForm(request.POST or None, current_phone=request.user.phone)
+
+        # ログインユーザーを取得
+        user_data = request.user
+
+        # ログインユーザーの電話番号を取得
+        user_phone = user_data.phone
+
+        # テンプレートを描画
+        return render(
+            request,
+            "account/phone_change.html",
+            {
+                **meta_phone_change,
+                "form": form,
+                "user_phone": user_phone,
+            },
+        )
+
+    def post(self, request, *args, **kwargs):
+
+        # ログインユーザーを取得
+        user_data = request.user
+
+        # フォームを取得
+        form = PhoneChangeForm(request.POST or None, current_phone=request.user.phone)
+
+        # バリデーションを実行
+        if form.is_valid():
+
+            # ユーザーの新しい電話番号を取得
+            user_new_phone = form.cleaned_data.get("phone")
+
+            # 新しい電話番号を登録
+            request.user.phone = user_new_phone
+            request.user.save()
+
+            # 確認画面へリダイレクト
+            return redirect("phone_change_done")
+
+        # ログインユーザーの電話番号を取得
+        user_phone = user_data.phone
+
+        # テンプレートを描画
+        return render(
+            request,
+            "account/phone_change.html",
+            {
+                **meta_phone_change,
+                "form": form,
+                "user_phone": user_phone,
+            },
+        )
+
+
+# =====================================================================================================
+# 電話番号変更（完了）
+# =====================================================================================================
+class PhoneChangeDoneView(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+
+        # テンプレートを描画
+        return render(request, "account/phone_change_done.html", {**meta_phone_change_done})
 
 
 # =====================================================================================================
