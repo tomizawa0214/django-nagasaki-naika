@@ -1082,6 +1082,12 @@ img {
   font-weight: bold;
   content: "✓";
 }
+.c-step.alert {
+  color: #DC3545;
+}
+.c-step.alert::before {
+  background-color: #DC3545;
+}
 
 .c-calendar {
   padding: 4rem 6rem 3rem;

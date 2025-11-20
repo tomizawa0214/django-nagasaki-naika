@@ -314,11 +314,14 @@ class SignupVerifyView(View):
 class SignupDoneView(View):
     def get(self, request, *args, **kwargs):
 
+        # トークンの有効期限を24時間に定義
+        timeout_seconds = getattr(settings, "ACTIVATION_TIMEOUT_SECONDS", 3600 * 24)
+
         # トークンを取得
         token = kwargs.get("token")
 
-        # トークンの有効期限を24時間に定義
-        timeout_seconds = getattr(settings, "ACTIVATION_TIMEOUT_SECONDS", 60 * 60 * 24)
+        # トークンのフラグ
+        validlink = False
 
         # ユーザー本登録
         try:
@@ -334,15 +337,21 @@ class SignupDoneView(View):
                 user_data.is_active = True
                 user_data.save()
 
+            # トークンのフラグ
+            validlink = True
+
+            # テンプレートを描画
+            return render(request, "account/signup_done.html", {**meta_signup_done, "validlink": validlink})
+
         # トークンが期限切れの場合
         except SignatureExpired as exc:
             logger.exception("signup register failed: %s", exc)
-            return HttpResponse("登録に失敗しました")
+            pass
 
         # トークンが間違っている場合
         except BadSignature as exc:
             logger.exception("signup register failed: %s", exc)
-            return HttpResponse("登録に失敗しました")
+            pass
 
         # テンプレートを描画
-        return render(request, "account/signup_done.html", {**meta_signup_done})
+        return render(request, "account/signup_done.html", {**meta_signup_failed, "validlink": validlink})

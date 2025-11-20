@@ -70,4 +70,12 @@
       content: "\2713";
     }
   }
+
+  &.alert {
+    color: map.get(color.$theme-colors, 'alert');
+    
+    &::before {
+      background-color: map.get(color.$theme-colors, 'alert');
+    }
+  }
 }

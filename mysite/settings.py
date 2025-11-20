@@ -164,6 +164,9 @@ LOGIN_REDIRECT_URL = "/mypage/"
 # ログアウト後のリダイレクトページ
 ACCOUNT_LOGOUT_REDIRECT_URL = "/logout/"
 
+# パスワードリセットメールのトークン有効期限
+PASSWORD_RESET_TIMEOUT = 3600 * 24
+
 # マッピングを定義
 GENDER_CHOICES = (
     ("female", "女性"),
