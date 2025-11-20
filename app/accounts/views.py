@@ -206,7 +206,7 @@ class SignupConfirmView(View):
 
         # セッションが無ければ入力画面へリダイレクト
         if not signup_data:
-            return redirect("signup")
+            return redirect("account_signup")
 
         # 性別を出力用に変換
         gender_choices = dict(settings.GENDER_CHOICES)
@@ -251,7 +251,7 @@ class SignupVerifyView(View):
 
         # セッションが無ければ入力画面へリダイレクト
         if not signup_data:
-            return redirect("signup")
+            return redirect("account_signup")
 
         # フォームを取得
         form = CustomSignupForm(signup_data)
@@ -305,7 +305,7 @@ class SignupVerifyView(View):
             return render(request, "account/signup_verify.html", {**meta_signup_verify})
 
         # 仮にバリデーションが失敗する場合は入力画面へリダイレクト
-        return redirect("signup")
+        return redirect("account_signup")
 
 
 # =====================================================================================================
@@ -355,3 +355,24 @@ class SignupDoneView(View):
 
         # テンプレートを描画
         return render(request, "account/signup_done.html", {**meta_signup_failed, "validlink": validlink})
+
+
+# =====================================================================================================
+# ログアウト
+# =====================================================================================================
+class LogoutView(views.LogoutView):
+
+    # テンプレートを指定
+    template_name = "account/logout.html"
+
+    # メタタグを定義
+    extra_context = meta_logout
+
+    def post(self, request, *args, **kwargs):
+
+        # ログアウト処理
+        if self.request.user.is_authenticated:
+            self.logout()
+
+        # テンプレートを描画
+        return render(request, "account/logout.html", {**meta_logout})

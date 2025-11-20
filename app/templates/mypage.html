@@ -3,6 +3,7 @@
 {% block content %}
 <main class="l-contents">
   <div class="p-mypage">
+    {# マイページメニュー #}
     <aside class="p-mypage__menu" aria-label="マイページメニュー">
       <nav>
         <ul class="p-mypage__menu-group">
@@ -16,11 +17,17 @@
           <li><a class="c-text p-mypage__menu-link p-mypage__menu-link--phone" href="/mypage/phone/">電話番号変更</a></li>
         </ul>
         <ul class="p-mypage__menu-group">
-          <li><a class="c-text p-mypage__menu-link p-mypage__menu-link--logout js-logout" href="/logout/">ログアウト</a></li>
+          <li>
+            <form class="js-logout" method="post" action="{% url 'account_logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="c-text p-mypage__menu-link p-mypage__menu-link--logout">ログアウト</button>
+            </form>
+          </li>
           <li><a class="c-text p-mypage__menu-link p-mypage__menu-link--withdraw" href="/mypage/withdraw/">退会</a></li>
         </ul>
       </nav>
     </aside>
+    {# 予約一覧 #}
     <section class="p-mypage__section">
       <div class="p-mypage__title">
         <div>
@@ -29,6 +36,7 @@
         </div>
       </div>
       <div>
+        {# 予約状況の切り替えタブ #}
         <div class="p-mypage__tablist" role="tablist" aria-label="予約状況の切り替え">
           <input class="p-mypage__tab-radio" id="tab-schedule" type="radio" name="tab" checked>
           <label class="p-mypage__tab-label c-title" for="tab-schedule" role="tab" aria-controls="panel-schedule" aria-selected="true">ご来院予定</label>
@@ -36,6 +44,7 @@
           <label class="p-mypage__tab-label c-title" for="tab-done" role="tab" aria-controls="panel-done" aria-selected="false">ご来院済み</label>
         </div>
         <div>
+          {# ご来院予定 #}
           <div id="panel-schedule" role="tabpanel" aria-labelledby="tab-schedule">
             <!-- <p class="p-mypage__empty c-text">現在、ご来院予定の予約はありません</p> -->
             <ul>
@@ -83,6 +92,7 @@
               </li>
             </ul>
           </div>
+          {# ご来院済み #}
           <div id="panel-done" role="tabpanel" aria-labelledby="tab-done">
             <!-- <p class="p-mypage__empty c-text">ご来院済みの予約履歴はありません</p> -->
             <ul>

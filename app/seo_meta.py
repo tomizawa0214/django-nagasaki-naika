@@ -91,6 +91,14 @@ meta_mypage = {
     "url": f"{settings.BASE_URL}/mypage/",
 }
 
+# ログアウト
+meta_logout = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"ログアウト{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/logout/",
+}
+
 # プライバシーポリシー
 meta_privacy = {
     "meta_robots": "index,follow",

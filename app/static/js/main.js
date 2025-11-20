@@ -16,9 +16,8 @@ function getCookie(name) {
 const csrftoken = getCookie('csrftoken')
 
 // ===================================================
-// Common
+// スムーススクロール
 // ===================================================
-// Smooth Scroll
 $(document).on('click', 'a[href^="#"]', function (e) {
   e.preventDefault()
   let href = $(this).attr('href')
@@ -29,7 +28,9 @@ $(document).on('click', 'a[href^="#"]', function (e) {
   }
 })
 
-// Pagetop
+// ===================================================
+// ページの先頭へスムーススクロール
+// ===================================================
 const pagetop = $('.l-pagetop')
 function togglePageTop() {
   if (!window.matchMedia('(min-width: 1024px)').matches) {
@@ -49,7 +50,9 @@ pagetop.on('click', function () {
   $('html, body').animate({ scrollTop: 0 }, 500)
 })
 
-// Error Message Scroll
+// ===================================================
+// エラーメッセージの先頭へスムーススクロール
+// ===================================================
 $(function () {
   if ($('.js-form-error').length) {
     const position = $('.js-form-error').prev().offset().top
@@ -57,7 +60,9 @@ $(function () {
   }
 })
 
-// Error Message Change Style
+// ===================================================
+// エラーメッセージの削除
+// ===================================================
 $(function () {
   $('.js-form-error').each(function () {
     const ErrorMessage = $(this)
@@ -70,31 +75,13 @@ $(function () {
 })
 
 // ===================================================
-// My Page
+// ログアウト
 // ===================================================
-
-// Logout Alert
-$(document).on('click', '.js-logout', function (event) {
-  event.preventDefault()
-
-  if (!window.confirm('ログアウトしますか？')) {
-    return
-  }
-
-  fetch('/logout/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
-      'X-CSRFToken': csrftoken,
-    },
+$(function () {
+  $(document).on('submit', '.js-logout', function (event) {
+    if (!window.confirm('ログアウトしますか？'))
+    event.preventDefault();
   })
-    .then((res) => {
-      window.location.href = '/logout.php'
-    })
-    .catch((err) => {
-      console.error(err)
-      window.alert('ログアウトに失敗しました。時間をおいて再度お試しください。')
-    })
 })
 
 // Delete
