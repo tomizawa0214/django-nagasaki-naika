@@ -159,11 +159,6 @@ class SignupView(views.SignupView):
         # フォームを取得
         form = CustomSignupForm(request.POST or None)
 
-        # 同じメールアドレスかつ仮登録のアカウントは正規化のうえで削除（本登録忘れや入力間違いに対応）
-        raw_email = form.data.get("email", "")
-        normalized_email = unicodedata.normalize("NFKC", force_str(raw_email)).strip().lower()
-        User.objects.filter(email=normalized_email, is_active=False).delete()
-
         # バリデーションを実行
         if form.is_valid():
 
@@ -262,17 +257,19 @@ class SignupVerifyView(View):
         # バリデーションを実行
         if form.is_valid():
 
+            # 同じメールアドレスかつ仮登録のアカウントを削除（本登録忘れや入力間違いに対応）
+            user_email = signup_data["email"]
+            User.objects.filter(email__iexact=user_email, is_active=False).delete()
+
             # DB登録
             user_data = User()
             user_data.name = f"{signup_data['user_family_name']} {signup_data['user_first_name']}"
-            user_data.email = signup_data["email"]
+            user_data.email = user_email
             user_data.phone = signup_data["phone"]
             user_data.set_password(signup_data["password1"])
             user_data.birthdate = signup_data["birthdate"]
             user_data.gender = signup_data["gender"]
-            card_number = signup_data["card_number"]
-            if card_number:
-                user_data.card_number = card_number
+            user_data.card_number = signup_data["card_number"] or None
             user_data.is_active = False
             user_data.save()
 
@@ -388,6 +385,146 @@ class PasswordChangeDoneView(LoginRequiredMixin, PasswordChangeDoneView):
 
     # メタタグを定義
     extra_context = meta_password_change_done
+
+
+# =====================================================================================================
+# メールアドレス変更（入力）
+# =====================================================================================================
+class EmailChangeView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+
+        # フォームを取得
+        form = CustomEmailChangeForm(request.POST or None, email=request.user.email, user=request.user)
+
+        # ログインユーザーを取得
+        user_data = request.user
+
+        # ログインユーザーのメールアドレスを取得
+        user_email = user_data.email
+
+        # テンプレートを描画
+        return render(
+            request,
+            "account/email_change.html",
+            {
+                **meta_email_change,
+                "form": form,
+                "user_email": user_email,
+            },
+        )
+
+    def post(self, request, *args, **kwargs):
+
+        # ログインユーザーを取得
+        user_data = request.user
+
+        # フォームを取得
+        form = CustomEmailChangeForm(request.POST or None, email=request.user.email, user=request.user)
+
+        # バリデーションを実行
+        if form.is_valid():
+
+            # 新しいメールアドレスを取得
+            user_new_email = form.cleaned_data["email"]
+
+            # メールに使用する変数
+            context = {
+                "base_url": settings.BASE_URL,
+                "token": dumps(user_new_email),
+                "user_data": user_data,
+                "user_new_email": user_new_email,
+            }
+
+            # メール設定
+            subject = render_to_string("account/mail_template/email_change_subject.txt", context)
+            message = render_to_string("account/mail_template/email_change_message.txt", context)
+            from_email = email.utils.formataddr((settings.SITE_NAME, settings.EMAIL_HOST_USER))
+            to_list = [user_new_email]
+
+            # メール送信
+            try:
+                send_mail(
+                    subject=subject,
+                    message=message,
+                    from_email=from_email,
+                    recipient_list=to_list,
+                )
+            except Exception as exc:
+                logger.exception("email change mail failed: %s", exc)
+                return HttpResponse("メール送信に失敗しました")
+
+            # 確認画面へリダイレクト
+            return redirect("email_change_verify")
+
+        # ログインユーザーのメールアドレスを取得
+        user_email = user_data.email
+
+        # テンプレートを描画
+        return render(
+            request,
+            "account/email_change.html",
+            {
+                **meta_email_change,
+                "form": form,
+                "user_email": user_email,
+            },
+        )
+
+
+# =====================================================================================================
+# メールアドレス変更（メール認証）
+# =====================================================================================================
+class EmailChangeVerifyView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+
+        # テンプレートを描画
+        return render(request, "account/email_change_verify.html", {**meta_email_change_verify})
+
+
+# =====================================================================================================
+# メールアドレス変更（完了）
+# =====================================================================================================
+class EmailChangeDoneView(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+
+        # トークンの有効期限を24時間に定義
+        timeout_seconds = getattr(settings, "ACTIVATION_TIMEOUT_SECONDS", 3600 * 24)
+
+        # トークンを取得
+        token = kwargs.get("token")
+
+        # トークンのフラグ
+        validlink = False
+
+        # メールアドレス登録
+        try:
+
+            # ユーザーの新しいメールアドレスを取得
+            user_new_email = loads(token, max_age=timeout_seconds)
+
+            # 新しいメールアドレスを登録
+            request.user.email = user_new_email
+            request.user.save()
+
+            # トークンのフラグ
+            validlink = True
+
+            # テンプレートを描画
+            return render(request, "account/email_change_done.html", {**meta_email_change_done, "validlink": validlink})
+
+        # トークンが期限切れの場合
+        except SignatureExpired as exc:
+            logger.exception("signup register failed: %s", exc)
+            pass
+
+        # トークンが間違っている場合
+        except BadSignature as exc:
+            logger.exception("signup register failed: %s", exc)
+            pass
+
+        # テンプレートを描画
+        return render(request, "account/email_change_done.html", {**meta_email_change_failed, "validlink": validlink})
 
 
 # =====================================================================================================
