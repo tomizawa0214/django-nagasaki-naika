@@ -17,7 +17,7 @@
           {% if form.login.errors %}
           <div class="js-form-error">
             {% for error in form.login.errors %}
-            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+            <p class="c-text c-text--sm c-text--alert">{{ error|linebreaksbr }}</p>
             {% endfor %}
           </div>
           {% endif %}

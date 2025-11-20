@@ -2,14 +2,23 @@ import datetime
 import re
 import unicodedata
 
-from allauth.account.forms import LoginForm, SignupForm
-from django import forms
-from django.conf import settings
-
 from allauth.account.adapter import get_adapter
+from allauth.account.forms import LoginForm, SignupForm
 from allauth.account.internal import flows
 from allauth.account.models import Login
 from allauth.core import context
+from django import forms
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import PasswordResetForm
+
+
+# =====================================================================================================
+# 初期設定
+# =====================================================================================================
+
+# 登録ユーザーを取得
+User = get_user_model()
 
 
 # =====================================================================================================
@@ -35,7 +44,7 @@ class CustomLoginForm(LoginForm):
         login.error_messages.update(
             {
                 "required": "メールアドレスを入力してください。",
-                "invalid": "メールアドレスの形式が正しくありません。",
+                "invalid": "メールアドレスをもう一度ご確認ください。\n（全角文字や余分な空白がないかお確かめください）",
             }
         )
 
@@ -66,7 +75,7 @@ class CustomLoginForm(LoginForm):
         # ユーザーが存在 かつ is_active=False はアカウント無効
         if user and not user.is_active:
             raise adapter.validation_error("account_inactive")
-        
+
         # ユーザーが存在 かつ is_active=True はログイン可にする（レート制限はチェック）
         if user:
             login = Login(user=user, email=credentials.get("email"))
@@ -80,6 +89,19 @@ class CustomLoginForm(LoginForm):
             login_method = flows.login.derive_login_method(self.cleaned_data["login"])
             raise adapter.validation_error(f"{login_method.value}_password_mismatch")
         return self.cleaned_data
+
+
+# =====================================================================================================
+# パスワードリセットフォーム
+# =====================================================================================================
+class CustomPasswordResetForm(PasswordResetForm):
+
+    # 登録メールアドレスのバリデーション
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if not User.objects.filter(email__iexact=email, is_active=True).exists():
+            raise forms.ValidationError("このメールアドレスは登録がありません。")
+        return email
 
 
 # =====================================================================================================
@@ -139,7 +161,7 @@ class CustomSignupForm(SignupForm):
                 "id": "birthdate",
                 "placeholder": "1970-01-01",
                 "autocomplete": "bday",
-                "max": datetime.date.today().isoformat()
+                "max": datetime.date.today().isoformat(),
             }
         ),
         error_messages={"required": "生年月日を選択してください。"},
@@ -250,7 +272,7 @@ class CustomSignupForm(SignupForm):
         email.error_messages.update(
             {
                 "required": "メールアドレスを入力してください。",
-                "invalid": "メールアドレスの形式が正しくありません。",
+                "invalid": "メールアドレスをもう一度ご確認ください。\n・全角文字や余分な空白がないかお確かめください\n・古い形式のアドレスはご利用いただけない場合があります。別のメールアドレスをお試しください",
             }
         )
 

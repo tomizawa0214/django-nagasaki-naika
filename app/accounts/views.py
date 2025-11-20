@@ -6,7 +6,7 @@ from datetime import date
 from allauth.account import views
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.views import (
     PasswordResetCompleteView,
     PasswordResetConfirmView,
@@ -75,7 +75,7 @@ class PasswordResetView(PasswordResetView):
     template_name = "account/password_reset.html"
 
     # フォームを指定
-    form_class = PasswordResetForm
+    form_class = CustomPasswordResetForm
 
     # メタタグを定義
     extra_context = meta_password_reset

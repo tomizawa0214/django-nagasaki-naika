@@ -51,7 +51,7 @@
         {% if form.email.errors %}
         <div class="js-form-error">
           {% for error in form.email.errors %}
-          <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+          <p class="c-text c-text--sm c-text--alert">{{ error|linebreaksbr }}</p>
           {% endfor %}
         </div>
         {% endif %}
