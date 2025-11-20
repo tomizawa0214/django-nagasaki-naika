@@ -83,6 +83,14 @@ meta_signup_failed = {
     "url": f"{settings.BASE_URL}/signup/done/",
 }
 
+# マイページ
+meta_mypage = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"マイページ{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/",
+}
+
 # プライバシーポリシー
 meta_privacy = {
     "meta_robots": "index,follow",
