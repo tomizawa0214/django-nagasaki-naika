@@ -137,7 +137,7 @@
       <div class="l-form__group">
         <label class="c-text c-label"><span class="c-required">必須</span>個人情報のお取扱いについて</label>
         <span class="l-form__checkbox c-text">
-          {% render_field form.privacy id='contact_privacy' %}<a class="c-text c-link" href="" target="_blank" rel="noopener">プライバシーポリシー</a>に同意する
+          {% render_field form.privacy id='contact_privacy' %}<a class="c-text c-link" href="{% url 'privacy' %}" target="_blank" rel="noopener">プライバシーポリシー</a>に同意する
         </span>
         {# エラーメッセージ #}
         {% if form.privacy.errors %}
