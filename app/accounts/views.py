@@ -22,6 +22,8 @@ from django.urls import reverse_lazy
 from django.utils.encoding import force_str
 from django.views import View
 
+from app.seo_meta import *
+
 from .forms import *
 
 # =====================================================================================================
@@ -42,33 +44,43 @@ logger = logging.getLogger(__name__)
 # ログイン
 # =====================================================================================================
 class LoginView(views.LoginView):
+
+    # テンプレートを指定
     template_name = "account/login.html"
+
+    # フォームを指定
     form_class = CustomLoginForm
-    extra_context = {
-        "meta_robots": "index,follow",
-        "meta_title": "長﨑医院ネット予約 | 群馬県前橋市",
-        "meta_description": "群馬県前橋市住吉町にある長﨑医院のネット予約ページです。インターネットから24時間いつでも簡単に予約ができます。",
-        "url": f"{settings.BASE_URL}",
-    }
+
+    # メタタグを定義
+    extra_context = meta_login
 
 
 # =====================================================================================================
 # パスワードリセット（メール入力）
 # =====================================================================================================
 class PasswordResetView(PasswordResetView):
-    subject_template_name = "account/mail_template/password_reset_subject.txt"
-    email_template_name = "account/mail_template/password_reset_message.txt"
-    template_name = "account/password_reset.html"
-    form_class = PasswordResetForm
-    extra_context = {
-        "meta_robots": "noindex,follow",
-        "meta_title": "パスワードリセット | 長﨑医院ネット予約",
-        "meta_description": "",
-        "url": f"{settings.BASE_URL}password-reset/",
-    }
+
+    # メールに使用する変数を定義
     extra_email_context = {
         "base_url": settings.BASE_URL,
     }
+
+    # メール件名のテンプレートを指定
+    subject_template_name = "account/mail_template/password_reset_subject.txt"
+
+    # メール本文のテンプレートを指定
+    email_template_name = "account/mail_template/password_reset_message.txt"
+
+    # テンプレートを指定
+    template_name = "account/password_reset.html"
+
+    # フォームを指定
+    form_class = PasswordResetForm
+
+    # メタタグを定義
+    extra_context = meta_password_reset
+
+    # 成功時のリダイレクト指定
     success_url = reverse_lazy("password_reset_verify")
 
 
@@ -76,27 +88,29 @@ class PasswordResetView(PasswordResetView):
 # パスワードリセット（メール認証）
 # =====================================================================================================
 class PasswordResetVerifyView(PasswordResetDoneView):
+
+    # テンプレートを指定
     template_name = "account/password_reset_verify.html"
-    extra_context = {
-        "meta_robots": "noindex,follow",
-        "meta_title": "パスワードリセット（メール認証） | 長﨑医院ネット予約",
-        "meta_description": "",
-        "url": f"{settings.BASE_URL}password-reset/verify/",
-    }
+
+    # メタタグを定義
+    extra_context = meta_password_reset_verify
 
 
 # =====================================================================================================
 # パスワードリセット（パスワード再設定）
 # =====================================================================================================
 class PasswordResetNewpasswordView(PasswordResetConfirmView):
+
+    # テンプレートを指定
     template_name = "account/password_reset_newpassword.html"
+
+    # フォームを指定
     form_class = SetPasswordForm
-    extra_context = {
-        "meta_robots": "noindex,follow",
-        "meta_title": "パスワード再設定 | 長﨑医院ネット予約",
-        "meta_description": "",
-        "url": f"{settings.BASE_URL}password-reset/new-password/",
-    }
+
+    # メタタグを定義
+    extra_context = meta_password_reset_newpassword
+
+    # 成功時のリダイレクト指定
     success_url = reverse_lazy("password_reset_done")
 
 
@@ -104,13 +118,12 @@ class PasswordResetNewpasswordView(PasswordResetConfirmView):
 # パスワードリセット（完了）
 # =====================================================================================================
 class PasswordResetDoneView(PasswordResetCompleteView):
+
+    # テンプレートを指定
     template_name = "account/password_reset_done.html"
-    extra_context = {
-        "meta_robots": "noindex,follow",
-        "meta_title": "パスワードリセット完了 | 長﨑医院ネット予約",
-        "meta_description": "",
-        "url": f"{settings.BASE_URL}password-reset/done/",
-    }
+
+    # メタタグを定義
+    extra_context = meta_password_reset_done
 
 
 # =====================================================================================================
@@ -124,13 +137,8 @@ class SignupView(views.SignupView):
     # フォームを指定
     form_class = CustomSignupForm
 
-    # メタタグ
-    extra_context = {
-        "meta_robots": "index,follow",
-        "meta_title": "利用登録 | 長﨑医院ネット予約",
-        "meta_description": "長﨑医院ネット予約を初めてご利用の方向けの利用登録ページです。簡単な登録で24時間いつでもインターネットから診察予約ができます。",
-        "url": f"{settings.BASE_URL}signup/",
-    }
+    # メタタグを定義
+    extra_context = meta_signup
 
     # 戻る操作などでセッションが残っていればフォームの初期値に代入
     def get_form_kwargs(self):
@@ -147,14 +155,6 @@ class SignupView(views.SignupView):
 
         # フォームを取得
         form = CustomSignupForm(request.POST or None)
-
-        # メタタグ
-        extra_context = {
-            "meta_robots": "index,follow",
-            "meta_title": "利用登録 | 長﨑医院ネット予約",
-            "meta_description": "長﨑医院ネット予約を初めてご利用の方向けの利用登録ページです。簡単な登録で24時間いつでもインターネットから診察予約ができます。",
-            "url": f"{settings.BASE_URL}signup/",
-        }
 
         # 同じメールアドレスかつ仮登録のアカウントは正規化のうえで削除（本登録忘れや入力間違いに対応）
         raw_email = form.data.get("email", "")
@@ -189,7 +189,7 @@ class SignupView(views.SignupView):
             request,
             "account/signup.html",
             {
-                "extra_context": extra_context,
+                **meta_signup,
                 "form": form,
             },
         )
@@ -208,14 +208,6 @@ class SignupConfirmView(View):
         if not signup_data:
             return redirect("signup")
 
-        # メタタグ
-        extra_context = {
-            "meta_robots": "noindex,follow",
-            "meta_title": "利用登録内容の確認 | 長﨑医院ネット予約",
-            "meta_description": "",
-            "url": f"{settings.BASE_URL}signup/confirm/",
-        }
-
         # 性別を出力用に変換
         gender_choices = dict(settings.GENDER_CHOICES)
         display_gender = gender_choices.get(signup_data.get("gender"))
@@ -230,8 +222,8 @@ class SignupConfirmView(View):
             request,
             "account/signup_confirm.html",
             {
-                "extra_context": extra_context,
-                "signup_data": signup_data,
+                **meta_signup_confirm,
+                **signup_data,
                 "display_gender": display_gender,
                 "display_birthdate": display_birthdate,
             },
@@ -249,26 +241,10 @@ class SignupConfirmView(View):
 class SignupVerifyView(View):
     def get(self, request, *args, **kwargs):
 
-        # メタタグ
-        extra_context = {
-            "meta_robots": "noindex,follow",
-            "meta_title": "利用登録（メール認証） | 長﨑医院ネット予約",
-            "meta_description": "",
-            "url": f"{settings.BASE_URL}signup/verify/",
-        }
-
         # テンプレートを描画
-        return render(request, "account/signup_verify.html", {"extra_context": extra_context})
+        return render(request, "account/signup_verify.html", {**meta_signup_verify})
 
     def post(self, request, *args, **kwargs):
-
-        # メタタグ
-        extra_context = {
-            "meta_robots": "noindex,follow",
-            "meta_title": "利用登録（メール認証） | 長﨑医院ネット予約",
-            "meta_description": "",
-            "url": f"{settings.BASE_URL}signup/verify/",
-        }
 
         # セッションを取得
         signup_data = request.session.get(SESSION_KEY_SIGNUP)
@@ -297,7 +273,7 @@ class SignupVerifyView(View):
             user_data.is_active = False
             user_data.save()
 
-            # メール本文の引数
+            # メールに使用する変数
             context = {
                 "base_url": settings.BASE_URL,
                 "token": dumps(user_data.pk),
@@ -326,7 +302,7 @@ class SignupVerifyView(View):
             del request.session[SESSION_KEY_SIGNUP]
 
             # テンプレートを描画
-            return render(request, "account/signup_verify.html", {"extra_context": extra_context})
+            return render(request, "account/signup_verify.html", {**meta_signup_verify})
 
         # 仮にバリデーションが失敗する場合は入力画面へリダイレクト
         return redirect("signup")
@@ -337,14 +313,6 @@ class SignupVerifyView(View):
 # =====================================================================================================
 class SignupDoneView(View):
     def get(self, request, *args, **kwargs):
-
-        # メタタグ
-        extra_context = {
-            "meta_robots": "noindex,follow",
-            "meta_title": "利用登録完了 | 長﨑医院ネット予約",
-            "meta_description": "",
-            "url": f"{settings.BASE_URL}signup/done/",
-        }
 
         # トークンを取得
         token = kwargs.get("token")
@@ -377,4 +345,4 @@ class SignupDoneView(View):
             return HttpResponse("登録に失敗しました")
 
         # テンプレートを描画
-        return render(request, "account/signup_done.html", {"extra_context": extra_context})
+        return render(request, "account/signup_done.html", {**meta_signup_done})
