@@ -21,4 +21,7 @@ urlpatterns = [
     path("signup/done/<token>/", views.SignupDoneView.as_view(), name="signup_done"),
     path("mypage/password/", views.PasswordChangeView.as_view(), name="password_change"),
     path("mypage/password/done/", views.PasswordChangeDoneView.as_view(), name="password_change_done"),
+    path("mypage/email/", views.EmailChangeView.as_view(), name="email_change"),
+    path("mypage/email/verify/", views.EmailChangeVerifyView.as_view(), name="email_change_verify"),
+    path("mypage/email/done/<token>/", views.EmailChangeDoneView.as_view(), name="email_change_done"),
 ]

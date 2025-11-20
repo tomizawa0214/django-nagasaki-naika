@@ -107,6 +107,36 @@ meta_password_change_done = {
     "url": f"{settings.BASE_URL}/mypage/password/done/",
 }
 
+# メールアドレス変更（入力）
+meta_email_change = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"メールアドレス変更{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/email/",
+}
+
+# メールアドレス変更（メール認証）
+meta_email_change_verify = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"メールアドレス変更（メール認証）{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/email/verify/",
+}
+
+# メールアドレス変更（完了）
+meta_email_change_done = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"メールアドレス変更完了{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/email/done/",
+}
+meta_email_change_failed = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"メールアドレス変更失敗{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/email/done/",
+}
+
 # ログアウト
 meta_logout = {
     "meta_robots": "noindex,follow",

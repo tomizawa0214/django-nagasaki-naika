@@ -3,7 +3,7 @@ import re
 import unicodedata
 
 from allauth.account.adapter import get_adapter
-from allauth.account.forms import LoginForm, SignupForm
+from allauth.account.forms import ChangeEmailForm, LoginForm, SignupForm
 from allauth.account.internal import flows
 from allauth.account.models import Login
 from allauth.core import context
@@ -11,7 +11,6 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import PasswordResetForm
-
 
 # =====================================================================================================
 # 初期設定
@@ -194,6 +193,13 @@ class CustomSignupForm(SignupForm):
         error_messages={"required": "プライバシーポリシーへの同意が必要です。チェックを入れてください。"},
     )
 
+    # メールアドレスのバリデーション
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if User.objects.filter(email__iexact=email, is_active=True).exists():
+            raise forms.ValidationError("このメールアドレスはすでに別のアカウントで登録されています。")
+        return email
+
     # 電話番号のバリデーション
     def clean_phone(self):
 
@@ -291,3 +297,41 @@ class CustomSignupForm(SignupForm):
                 "required": "パスワードを入力してください。",
             }
         )
+
+
+# =====================================================================================================
+# メールアドレス変更フォーム
+# =====================================================================================================
+class CustomEmailChangeForm(ChangeEmailForm):
+
+    # 属性値とエラーメッセージをカスタマイズ
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+        # メールアドレス
+        email = self.fields["email"]
+        email.label = "メールアドレス"
+        email.widget = forms.EmailInput(
+            attrs={
+                "class": "c-text c-input",
+                "id": "email",
+                "placeholder": "taro@example.jp",
+                "autocomplete": "email",
+            }
+        )
+        email.error_messages.update(
+            {
+                "required": "メールアドレスを入力してください。",
+                "invalid": "メールアドレスをもう一度ご確認ください。\n・全角文字や余分な空白がないかお確かめください\n・古い形式のアドレスはご利用いただけない場合があります。別のメールアドレスをお試しください",
+            }
+        )
+
+    # メールアドレスのバリデーション
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if self.email and email == self.email:
+            raise forms.ValidationError(
+                "現在のメールアドレスと同じです。変更する場合は別のアドレスを入力してください。"
+            )
+        return super().clean_email()
