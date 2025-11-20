@@ -91,6 +91,22 @@ meta_mypage = {
     "url": f"{settings.BASE_URL}/mypage/",
 }
 
+# パスワード変更（入力）
+meta_password_change = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"パスワード変更{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/password/",
+}
+
+# パスワード変更（完了）
+meta_password_change_done = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"パスワード変更完了{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/password/done/",
+}
+
 # ログアウト
 meta_logout = {
     "meta_robots": "noindex,follow",

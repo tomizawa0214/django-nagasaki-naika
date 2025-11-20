@@ -6,8 +6,11 @@ from datetime import date
 from allauth.account import views
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import (
+    PasswordChangeDoneView,
+    PasswordChangeView,
     PasswordResetCompleteView,
     PasswordResetConfirmView,
     PasswordResetDoneView,
@@ -355,6 +358,36 @@ class SignupDoneView(View):
 
         # テンプレートを描画
         return render(request, "account/signup_done.html", {**meta_signup_failed, "validlink": validlink})
+
+
+# =====================================================================================================
+# パスワード変更（入力）
+# =====================================================================================================
+class PasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+
+    # テンプレートを指定
+    template_name = "account/password_change.html"
+
+    # フォームを指定
+    form_class = PasswordChangeForm
+
+    # メタタグを定義
+    extra_context = meta_password_change
+
+    # 成功時のリダイレクト指定
+    success_url = reverse_lazy("password_change_done")
+
+
+# =====================================================================================================
+# パスワード変更（完了）
+# =====================================================================================================
+class PasswordChangeDoneView(LoginRequiredMixin, PasswordChangeDoneView):
+
+    # テンプレートを指定
+    template_name = "account/password_change_done.html"
+
+    # メタタグを定義
+    extra_context = meta_password_change_done
 
 
 # =====================================================================================================
