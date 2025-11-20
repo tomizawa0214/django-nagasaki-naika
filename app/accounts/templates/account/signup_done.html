@@ -18,6 +18,7 @@
     <div class="l-contents__button">
       <a class="c-button c-button--primary" href="{% url 'account_login' %}">ログインページへ</a>
     </div>
+  </section>
   {# トークン無効 #}
   {% else %}
   <div class="l-step">
@@ -32,9 +33,9 @@
     <h1 class="l-contents__page-title c-title">登録失敗</h1>
     <p class="l-contents__lead c-text">このURLは無効または期限切れです。<br>もう一度はじめからお手続きをお願いします。</p>
     <div class="l-contents__button">
-      <a class="c-button c-button--primary" href="{% url 'account_signup' %}">ご利用登録へ</a>
+      <a class="c-button c-button--primary" href="{% url 'account_signup' %}">ご利用登録に戻る</a>
     </div>
-  {% endif %}
   </section>
+  {% endif %}
 </main>
 {% endblock %}
