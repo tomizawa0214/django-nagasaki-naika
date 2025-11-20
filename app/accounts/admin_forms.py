@@ -51,7 +51,7 @@ class CustomUserCreateForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
+        user.set_password(self.cleaned_data.get("password1"))
         if commit:
             user.save()
             self.save_m2m()

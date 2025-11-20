@@ -85,7 +85,7 @@ class CustomLoginForm(LoginForm):
 
         # 認証に失敗はエラーメッセージ
         else:
-            login_method = flows.login.derive_login_method(self.cleaned_data["login"])
+            login_method = flows.login.derive_login_method(self.cleaned_data.get("login"))
             raise adapter.validation_error(f"{login_method.value}_password_mismatch")
         return self.cleaned_data
 
@@ -97,7 +97,11 @@ class CustomPasswordResetForm(PasswordResetForm):
 
     # 登録メールアドレスのバリデーション
     def clean_email(self):
+
+        # 入力値を取得
         email = self.cleaned_data.get("email")
+        
+        # 大文字・小文字の区別なくメールアドレスを参照
         if not User.objects.filter(email__iexact=email, is_active=True).exists():
             raise forms.ValidationError("このメールアドレスは登録がありません。")
         return email
@@ -195,7 +199,11 @@ class CustomSignupForm(SignupForm):
 
     # メールアドレスのバリデーション
     def clean_email(self):
+
+        # 入力値を取得
         email = self.cleaned_data.get("email")
+        
+        # 大文字・小文字の区別なくメールアドレスを参照
         if User.objects.filter(email__iexact=email, is_active=True).exists():
             raise forms.ValidationError("このメールアドレスはすでに別のアカウントで登録されています。")
         return email
@@ -204,7 +212,7 @@ class CustomSignupForm(SignupForm):
     def clean_phone(self):
 
         # 入力値を取得
-        value = self.cleaned_data["phone"]
+        value = self.cleaned_data.get("phone")
 
         # 半角に正規化
         normalized = unicodedata.normalize("NFKC", value)
@@ -225,7 +233,7 @@ class CustomSignupForm(SignupForm):
     def clean_birthdate(self):
 
         # 入力値を取得
-        value = self.cleaned_data["birthdate"]
+        value = self.cleaned_data.get("birthdate")
 
         # date型の場合はスルー
         if isinstance(value, datetime.date):
@@ -241,7 +249,7 @@ class CustomSignupForm(SignupForm):
     def clean_card_number(self):
 
         # 入力値を取得
-        value = self.cleaned_data["card_number"]
+        value = self.cleaned_data.get("card_number")
 
         # 未入力ならそのまま空文字を返す
         if not value:
@@ -329,7 +337,11 @@ class CustomEmailChangeForm(ChangeEmailForm):
 
     # メールアドレスのバリデーション
     def clean_email(self):
+
+        # 入力値を取得
         email = self.cleaned_data.get("email")
+        
+        # 現在のメールアドレスと一致
         if self.email and email == self.email:
             raise forms.ValidationError(
                 "現在のメールアドレスと同じです。変更する場合は別のアドレスを入力してください。"

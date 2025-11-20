@@ -164,16 +164,16 @@ class SignupView(views.SignupView):
 
             # 入力値を辞書に格納
             signup_data = {
-                "user_family_name": form.cleaned_data["user_family_name"],
-                "user_first_name": form.cleaned_data["user_first_name"],
-                "email": form.cleaned_data["email"],
-                "phone": form.cleaned_data["phone"],
-                "password1": form.cleaned_data["password1"],
-                "password2": form.cleaned_data["password1"],
-                "birthdate": f"{form.cleaned_data['birthdate']}",
-                "gender": form.cleaned_data["gender"],
-                "card_number": form.cleaned_data["card_number"],
-                "privacy": form.cleaned_data["privacy"],
+                "user_family_name": form.cleaned_data.get("user_family_name"),
+                "user_first_name": form.cleaned_data.get("user_first_name"),
+                "email": form.cleaned_data.get("email"),
+                "phone": form.cleaned_data.get("phone"),
+                "password1": form.cleaned_data("password1"),
+                "password2": form.cleaned_data("password1"),
+                "birthdate": f"{form.cleaned_data.get('birthdate')}",
+                "gender": form.cleaned_data.get("gender"),
+                "card_number": form.cleaned_data.get("card_number"),
+                "privacy": form.cleaned_data.get("privacy"),
             }
 
             # セッションに保存
@@ -263,13 +263,13 @@ class SignupVerifyView(View):
 
             # DB登録
             user_data = User()
-            user_data.name = f"{signup_data['user_family_name']} {signup_data['user_first_name']}"
+            user_data.name = f"{signup_data.get('user_family_name')} {signup_data.get('user_first_name')}"
             user_data.email = user_email
-            user_data.phone = signup_data["phone"]
-            user_data.set_password(signup_data["password1"])
-            user_data.birthdate = signup_data["birthdate"]
-            user_data.gender = signup_data["gender"]
-            user_data.card_number = signup_data["card_number"] or None
+            user_data.phone = signup_data.get("phone")
+            user_data.set_password(signup_data.get("password1"))
+            user_data.birthdate = signup_data.get("birthdate")
+            user_data.gender = signup_data.get("gender")
+            user_data.card_number = signup_data.get("card_number")
             user_data.is_active = False
             user_data.save()
 
@@ -425,7 +425,7 @@ class EmailChangeView(LoginRequiredMixin, View):
         if form.is_valid():
 
             # 新しいメールアドレスを取得
-            user_new_email = form.cleaned_data["email"]
+            user_new_email = form.cleaned_data.get("email")
 
             # メールに使用する変数
             context = {
