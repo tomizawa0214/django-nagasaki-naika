@@ -27,8 +27,14 @@ from .forms import *
 # =====================================================================================================
 # 初期設定
 # =====================================================================================================
+
+# 登録ユーザーを取得
 User = get_user_model()
+
+# セッション管理
 SESSION_KEY_SIGNUP = "signup_data"
+
+# ログ
 logger = logging.getLogger(__name__)
 
 
@@ -201,7 +207,7 @@ class SignupConfirmView(View):
         # セッションが無ければ入力画面へリダイレクト
         if not signup_data:
             return redirect("signup")
-        
+
         # メタタグ
         extra_context = {
             "meta_robots": "noindex,follow",
@@ -213,7 +219,7 @@ class SignupConfirmView(View):
         # 性別を出力用に変換
         gender_choices = dict(settings.GENDER_CHOICES)
         display_gender = gender_choices.get(signup_data.get("gender"))
-        
+
         # 生年月日を出力用に変換
         birthdate_str = signup_data.get("birthdate")
         birthdate_dt = date.fromisoformat(birthdate_str)
