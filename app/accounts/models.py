@@ -1,12 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
-
-# マッピングを定義
-GENDER_CHOICES = (
-    ("female", "女性"),
-    ("male", "男性"),
-)
 
 
 # =====================================================================================================
@@ -36,7 +31,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField("メールアドレス", max_length=256, unique=True)
     phone = models.CharField("電話番号", max_length=13)
     birthdate = models.DateField("生年月日")
-    gender = models.CharField("性別", max_length=10, choices=GENDER_CHOICES)
+    gender = models.CharField("性別", max_length=10, choices=settings.GENDER_CHOICES)
     card_number = models.CharField("診察券番号", max_length=10, blank=True, null=True)
     is_active = models.BooleanField(
         "ログイン権限",
@@ -46,7 +41,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(
         "管理画面のアクセス権限",
         default=False,
-        help_text="※この管理画面にログインできるかを指定します。<br>""※ログイン権限にもチェックが付いていることが必須です。"
+        help_text="※この管理画面にログインできるかを指定します。<br>"
+        "※ログイン権限にもチェックを入れることが必須です。",
     )
     created_at = models.DateTimeField("登録日時", default=timezone.now)
     updated_at = models.DateTimeField("更新日時", auto_now=True)

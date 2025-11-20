@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="l-contents">
+  <div class="l-step">
+    <ol class="l-step__inner">
+      <li class="c-step done">入力</li>
+      <li class="c-step done">確認</li>
+      <li class="c-step current">認証</li>
+      <li class="c-step">完了</li>
+    </ol>
+  </div>
+  <section class="l-contents__inner l-contents__inner--only-text">
+    <h1 class="l-contents__page-title c-title">ご利用登録</h1>
+    <p class="l-contents__lead c-text">
+      確認メールを送信しました。<br>
+      <span class="c-text--alert">まだ登録は完了していません。</span><br>
+      メール本文の案内に沿って<br class="only-sp">登録を完了してください。
+    </p>
+  </section>
+</main>
+{% endblock %}

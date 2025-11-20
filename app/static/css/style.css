@@ -672,12 +672,17 @@ img {
 .c-text--help::before {
   content: "※";
 }
-.c-text--help:not(:first-of-type) {
-  margin: 0;
-}
 .c-text--help--row {
   display: inline-block;
   margin: 0 0 0 0.5rem;
+}
+@media screen and (max-width: 1023px) {
+  .c-text--help--row {
+    margin: 0 0 0 1.3333333333vw;
+  }
+}
+.c-text--help:not(.c-text--row) .c-text--help:not(:first-of-type) {
+  margin: 0;
 }
 
 .c-title {

@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<main class="l-contents">
+  <div class="l-step">
+    <ol class="l-step__inner">
+      <li class="c-step current">入力</li>
+      <li class="c-step">確認</li>
+      <li class="c-step">認証</li>
+      <li class="c-step">完了</li>
+    </ol>
+  </div>
+  <section class="l-contents__inner">
+    <h1 class="l-contents__page-title c-title">ご利用登録</h1>
+    <p class="l-contents__lead c-text">以下の情報を入力してください。</p>
+    <form class="l-form" action="" method="post">
+      {% csrf_token %}
+      {# お名前 #}
+      <div class="l-form__group l-form__group--two">
+        <div>
+          <label class="c-text c-label" for="user-family-name"><span class="c-required">必須</span>お名前 （姓）</label>
+          {% render_field form.user_family_name %}
+          {# エラーメッセージ #}
+          {% if form.user_family_name.errors %}
+          <div class="js-form-error">
+            {% for error in form.user_family_name.errors %}
+            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <div>
+          <label class="c-text c-label" for="user-first-name"><span class="c-required">必須</span>お名前 （名）</label>
+          {% render_field form.user_first_name %}
+          {# エラーメッセージ #}
+          {% if form.user_first_name.errors %}
+          <div class="js-form-error">
+            {% for error in form.user_first_name.errors %}
+            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {# メールアドレス #}
+      <div class="l-form__group">
+        <label class="c-text c-label" for="email"><span class="c-required">必須</span>メールアドレス</label>
+        {% render_field form.email %}
+        {# エラーメッセージ #}
+        {% if form.email.errors %}
+        <div class="js-form-error">
+          {% for error in form.email.errors %}
+          <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {# 電話番号 #}
+      <div class="l-form__group">
+        <label class="c-text c-label" for="phone"><span class="c-required">必須</span>電話番号</label>
+        {% render_field form.phone %}
+        {# エラーメッセージ #}
+        {% if form.phone.errors %}
+        <div class="js-form-error">
+          {% for error in form.phone.errors %}
+          <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {# パスワード #}
+      <div class="l-form__group">
+        <label class="c-text c-label" for="password"><span class="c-required">必須</span>パスワード<span class="c-text--help c-text--help--row">8～20文字の半角英数字</span></label>
+        {% render_field form.password1 %}
+        {# エラーメッセージ #}
+        {% if form.password1.errors %}
+        <div class="js-form-error">
+          {% for error in form.password1.errors %}
+          <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {# 生年月日 #}
+      <div class="l-form__group">
+        <label class="c-text c-label" for="birthdate"><span class="c-required">必須</span>生年月日</label>
+        {% render_field form.birthdate %}
+        {# エラーメッセージ #}
+        {% if form.birthdate.errors %}
+        <div class="js-form-error">
+          {% for error in form.birthdate.errors %}
+          <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {# 性別 #}
+      <div class="l-form__group">
+        <fieldset>
+          <legend class="c-text c-label"><span class="c-required">必須</span>性別</legend>
+          <div class="l-form__radio-checkbox-group">
+          {# 選択値を保持して描画 #}
+          {% with selected=form.gender.value %}
+            {% for value, label in form.gender.field.choices %}
+            <label class="c-text" for="gender{{ forloop.counter }}">
+              <input class="c-radio" type="radio" name="{{ form.gender.name }}" id="gender{{ forloop.counter }}" value="{{ value }}" {% if selected == value %}checked{% endif %} required>
+              <span>{{ label }}</span>
+            </label>
+            {% endfor %}
+          {% endwith %}
+          </div>
+          {# エラーメッセージ #}
+          {% if form.gender.errors %}
+          <div class="js-form-error">
+            {% for error in form.gender.errors %}
+            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </fieldset>
+      </div>
+      {# 診察券番号 #}
+      <div class="l-form__group">
+        <label class="c-text c-label" for="card-number"><span class="c-optional">任意</span>診察券番号</label>
+        {% render_field form.card_number %}
+        {# エラーメッセージ #}
+        {% if form.card_number.errors %}
+        <div class="js-form-error">
+          {% for error in form.card_number.errors %}
+          <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {# 個人情報のお取扱いについて #}
+      <div class="l-form__group">
+        <label class="c-text c-label"><span class="c-required">必須</span>個人情報のお取扱いについて</label>
+        <span class="l-form__checkbox c-text">
+          {% render_field form.privacy id='contact_privacy' %}<a class="c-text c-link" href="" target="_blank" rel="noopener">プライバシーポリシー</a>に同意する
+        </span>
+        {# エラーメッセージ #}
+        {% if form.privacy.errors %}
+        <div class="js-form-error">
+          {% for error in form.privacy.errors %}
+          <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      <div class="l-contents__button">
+        <a class="c-button c-button--secondary" href="{% url 'login' %}">戻る</a>
+        <button class="c-button c-button--primary" type="submit">確認画面へ進む</button>
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}

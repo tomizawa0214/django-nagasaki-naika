@@ -13,7 +13,7 @@ from .models import *
 # フィルターのテキスト変更
 # =====================================================================================================
 class IsActiveFilter(admin.SimpleListFilter):
-    title = "登録ステータス"  # サイドバーに表示される見出し
+    title = "ログイン権限"  # サイドバーに表示される見出し
     parameter_name = "is_active"  # URLクエリに使われるパラメータ名
 
     def lookups(self, request, model_admin):

@@ -144,8 +144,8 @@ ACCOUNT_LOGIN_METHODS = {"email"}
 # 利用登録の必須項目
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*"]
 
-# 利用登録においてメールアドレスの確認が必須
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+# メールアドレスの確認は送信するけど確認は任意（ログインはis_activeで制御）
+ACCOUNT_EMAIL_VERIFICATION = "optional"
 
 # ログイン回数制限（10分間に5回まで）
 ACCOUNT_RATE_LIMITS = {
@@ -155,11 +155,20 @@ ACCOUNT_RATE_LIMITS = {
 # カスタムユーザーを認証に指定
 AUTH_USER_MODEL = "accounts.CustomUser"
 
+# 登録済みメールアドレスのエラーを表示
+ACCOUNT_PREVENT_ENUMERATION = False
+
 # ログイン後のリダイレクトページ
 LOGIN_REDIRECT_URL = "/mypage/"
 
 # ログアウト後のリダイレクトページ
 ACCOUNT_LOGOUT_REDIRECT_URL = "/logout/"
+
+# マッピングを定義
+GENDER_CHOICES = (
+    ("female", "女性"),
+    ("male", "男性"),
+)
 
 try:
     from .local_settings import *
