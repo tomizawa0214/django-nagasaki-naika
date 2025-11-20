@@ -19,15 +19,15 @@
       <dl class="l-confirm">
         <div class="l-confirm__group">
           <dt class="c-text">お名前</dt>
-          <dd class="c-text">{{ signup_data.user_family_name }} {{ signup_data.user_first_name }}</dd>
+          <dd class="c-text">{{ user_family_name }} {{ user_first_name }}</dd>
         </div>
         <div class="l-confirm__group">
           <dt class="c-text">メールアドレス</dt>
-          <dd class="c-text">{{ signup_data.email }}</dd>
+          <dd class="c-text">{{ email }}</dd>
         </div>
         <div class="l-confirm__group">
           <dt class="c-text">電話番号</dt>
-          <dd class="c-text">{{ signup_data.phone }}</dd>
+          <dd class="c-text">{{ phone }}</dd>
         </div>
         <div class="l-confirm__group">
           <dt class="c-text">生年月日</dt>
@@ -39,8 +39,8 @@
         </div>
         <div class="l-confirm__group">
           <dt class="c-text">診察券番号</dt>
-          {% if signup_data.card_number %}
-          <dd class="c-text">{{ signup_data.card_number }}</dd>
+          {% if card_number %}
+          <dd class="c-text">{{ card_number }}</dd>
           {% else %}
           <dd class="c-text">なし</dd>
           {% endif %}
