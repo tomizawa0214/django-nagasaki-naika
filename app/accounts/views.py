@@ -112,19 +112,19 @@ class PasswordResetNewpasswordView(PasswordResetConfirmView):
     extra_context = meta_password_reset_newpassword
 
     # 成功時のリダイレクト指定
-    success_url = reverse_lazy("password_reset_done")
+    success_url = reverse_lazy("password_reset_complete")
 
 
 # =====================================================================================================
 # パスワードリセット（完了）
 # =====================================================================================================
-class PasswordResetDoneView(PasswordResetCompleteView):
+class PasswordResetCompleteView(PasswordResetCompleteView):
 
     # テンプレートを指定
-    template_name = "account/password_reset_done.html"
+    template_name = "account/password_reset_complete.html"
 
     # メタタグを定義
-    extra_context = meta_password_reset_done
+    extra_context = meta_password_reset_complete
 
 
 # =====================================================================================================
@@ -304,7 +304,7 @@ class SignupVerifyView(View):
 # =====================================================================================================
 # ご利用登録（完了）
 # =====================================================================================================
-class SignupDoneView(View):
+class SignupCompleteView(View):
     def get(self, request, *args, **kwargs):
 
         # トークンの有効期限を24時間に定義
@@ -334,7 +334,7 @@ class SignupDoneView(View):
             validlink = True
 
             # テンプレートを描画
-            return render(request, "account/signup_done.html", {**meta_signup_done, "validlink": validlink})
+            return render(request, "account/signup_complete.html", {**meta_signup_complete, "validlink": validlink})
 
         # トークンが期限切れの場合
         except SignatureExpired as exc:
@@ -347,7 +347,7 @@ class SignupDoneView(View):
             pass
 
         # テンプレートを描画
-        return render(request, "account/signup_done.html", {**meta_signup_failed, "validlink": validlink})
+        return render(request, "account/signup_complete.html", {**meta_signup_failed, "validlink": validlink})
 
 
 # =====================================================================================================
@@ -365,19 +365,19 @@ class PasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     extra_context = meta_password_change
 
     # 成功時のリダイレクト指定
-    success_url = reverse_lazy("password_change_done")
+    success_url = reverse_lazy("password_change_complete")
 
 
 # =====================================================================================================
 # パスワード変更（完了）
 # =====================================================================================================
-class PasswordChangeDoneView(LoginRequiredMixin, PasswordChangeDoneView):
+class PasswordChangeCompleteView(LoginRequiredMixin, PasswordChangeDoneView):
 
     # テンプレートを指定
-    template_name = "account/password_change_done.html"
+    template_name = "account/password_change_complete.html"
 
     # メタタグを定義
-    extra_context = meta_password_change_done
+    extra_context = meta_password_change_complete
 
 
 # =====================================================================================================
@@ -477,7 +477,7 @@ class EmailChangeVerifyView(LoginRequiredMixin, View):
 # =====================================================================================================
 # メールアドレス変更（完了）
 # =====================================================================================================
-class EmailChangeDoneView(LoginRequiredMixin, View):
+class EmailChangeCompleteView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         # トークンの有効期限を24時間に定義
@@ -503,7 +503,9 @@ class EmailChangeDoneView(LoginRequiredMixin, View):
             validlink = True
 
             # テンプレートを描画
-            return render(request, "account/email_change_done.html", {**meta_email_change_done, "validlink": validlink})
+            return render(
+                request, "account/email_change_complete.html", {**meta_email_change_complete, "validlink": validlink}
+            )
 
         # トークンが期限切れの場合
         except SignatureExpired as exc:
@@ -516,7 +518,9 @@ class EmailChangeDoneView(LoginRequiredMixin, View):
             pass
 
         # テンプレートを描画
-        return render(request, "account/email_change_done.html", {**meta_email_change_failed, "validlink": validlink})
+        return render(
+            request, "account/email_change_complete.html", {**meta_email_change_failed, "validlink": validlink}
+        )
 
 
 # =====================================================================================================
@@ -564,7 +568,7 @@ class PhoneChangeView(LoginRequiredMixin, View):
             request.user.save()
 
             # 確認画面へリダイレクト
-            return redirect("phone_change_done")
+            return redirect("phone_change_complete")
 
         # ログインユーザーの電話番号を取得
         user_phone = user_data.phone
@@ -584,11 +588,11 @@ class PhoneChangeView(LoginRequiredMixin, View):
 # =====================================================================================================
 # 電話番号変更（完了）
 # =====================================================================================================
-class PhoneChangeDoneView(LoginRequiredMixin, View):
+class PhoneChangeCompleteView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         # テンプレートを描画
-        return render(request, "account/phone_change_done.html", {**meta_phone_change_done})
+        return render(request, "account/phone_change_complete.html", {**meta_phone_change_complete})
 
 
 # =====================================================================================================
@@ -610,17 +614,17 @@ class WithdrawView(LoginRequiredMixin, View):
         logout(request)
 
         # 退会完了ページへリダイレクト
-        return redirect("withdraw_done")
+        return redirect("withdraw_complete")
 
 
 # =====================================================================================================
 # 退会（完了）
 # =====================================================================================================
-class WithdrawDoneView(View):
+class WithdrawCompleteView(View):
     def get(self, request, *args, **kwargs):
 
         # テンプレートを描画
-        return render(request, "account/withdraw_done.html", {**meta_withdraw_done})
+        return render(request, "account/withdraw_complete.html", {**meta_withdraw_complete})
 
 
 # =====================================================================================================
