@@ -227,21 +227,6 @@ class SignupConfirmView(View):
 
     def post(self, request, *args, **kwargs):
 
-        # 認証画面へリダイレクト
-        return redirect("signup_verify")
-
-
-# =====================================================================================================
-# ご利用登録（メール認証）
-# =====================================================================================================
-class SignupVerifyView(View):
-    def get(self, request, *args, **kwargs):
-
-        # テンプレートを描画
-        return render(request, "account/signup_verify.html", {**meta_signup_verify})
-
-    def post(self, request, *args, **kwargs):
-
         # セッションを取得
         signup_data = request.session.get(SESSION_KEY_SIGNUP)
 
@@ -299,11 +284,21 @@ class SignupVerifyView(View):
             # セッションを削除
             del request.session[SESSION_KEY_SIGNUP]
 
-            # テンプレートを描画
-            return render(request, "account/signup_verify.html", {**meta_signup_verify})
+            # 認証画面へリダイレクト
+            return redirect("signup_verify")
 
         # 仮にバリデーションが失敗する場合は入力画面へリダイレクト
         return redirect("account_signup")
+
+
+# =====================================================================================================
+# ご利用登録（メール認証）
+# =====================================================================================================
+class SignupVerifyView(View):
+    def get(self, request, *args, **kwargs):
+
+        # テンプレートを描画
+        return render(request, "account/signup_verify.html", {**meta_signup_verify})
 
 
 # =====================================================================================================
@@ -483,7 +478,6 @@ class EmailChangeVerifyView(LoginRequiredMixin, View):
 # メールアドレス変更（完了）
 # =====================================================================================================
 class EmailChangeDoneView(LoginRequiredMixin, View):
-
     def get(self, request, *args, **kwargs):
 
         # トークンの有効期限を24時間に定義
@@ -591,7 +585,6 @@ class PhoneChangeView(LoginRequiredMixin, View):
 # 電話番号変更（完了）
 # =====================================================================================================
 class PhoneChangeDoneView(LoginRequiredMixin, View):
-
     def get(self, request, *args, **kwargs):
 
         # テンプレートを描画
@@ -602,7 +595,6 @@ class PhoneChangeDoneView(LoginRequiredMixin, View):
 # 退会（確認）
 # =====================================================================================================
 class WithdrawView(LoginRequiredMixin, View):
-
     def get(self, request, *args, **kwargs):
 
         # テンプレートを描画
@@ -625,7 +617,6 @@ class WithdrawView(LoginRequiredMixin, View):
 # 退会（完了）
 # =====================================================================================================
 class WithdrawDoneView(View):
-
     def get(self, request, *args, **kwargs):
 
         # テンプレートを描画
