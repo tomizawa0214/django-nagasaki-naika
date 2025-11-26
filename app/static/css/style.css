@@ -859,6 +859,36 @@ img {
   }
 }
 
+.c-textarea {
+  width: 100%;
+  height: 16.8rem;
+  padding: 1rem 1em;
+  font-size: 1.8rem;
+  line-height: 1.8;
+  resize: vertical;
+  background-color: #FFF;
+  border: 0.1rem solid #CCC;
+  border-radius: 0.4rem;
+}
+@media screen and (max-width: 1023px) {
+  .c-textarea {
+    height: 44.8vw;
+    padding: 2.6666666667vw 1em;
+    font-size: clamp(1.6rem, 4.2666666667vw, 3.2rem);
+    border: 0.2666666667vw solid #CCC;
+    border-radius: 1.0666666667vw;
+  }
+}
+.c-textarea:focus {
+  outline: 0.2rem solid #42B1D1;
+  border: none;
+}
+@media screen and (max-width: 1023px) {
+  .c-textarea:focus {
+    outline: 0.5333333333vw solid #42B1D1;
+  }
+}
+
 .c-select-box {
   position: relative;
 }
@@ -950,11 +980,16 @@ img {
 .is-error {
   background-color: #F8D7DA;
   border: 0.2rem solid #DC3545;
+  border-radius: 0.4rem;
 }
 @media screen and (max-width: 1023px) {
   .is-error {
     border: 0.5333333333vw solid #DC3545;
+    border-radius: 1.0666666667vw;
   }
+}
+.is-error .c-select {
+  background-color: #F8D7DA;
 }
 
 .c-button {

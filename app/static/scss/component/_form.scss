@@ -122,6 +122,34 @@
   }
 }
 
+.c-textarea {
+  width: 100%;
+  height: 5.6rem * 3;
+  padding: 1rem 1em;
+  font-size: map.get(map.get(font.$font-sizes, 'pc'), 'base');
+  line-height: map.get(font.$line-heights, 'base');
+  resize: vertical;
+  background-color: #FFF;
+  border: 0.1rem solid map.get(color.$theme-colors, 'border');
+  border-radius: 0.4rem;
+  @include mix.mq('sp-tb') {
+    height: calc(56 * 3 / 375) * 100vw;
+    padding: calc(10 / 375) * 100vw 1em;
+    font-size: map.get(map.get(font.$font-sizes, 'sp'), 'base');
+    border: calc(1 / 375) * 100vw solid map.get(color.$theme-colors, 'border');
+    border-radius: calc(4 / 375) * 100vw;
+  }
+
+  &:focus {
+    outline: 0.2rem solid map.get(color.$theme-colors, 'accent');
+    border: none;
+    @include mix.mq('sp-tb') {
+      outline: calc(2 / 375) * 100vw solid map.get(color.$theme-colors, 'accent');
+    }
+  }
+
+}
+
 .c-select-box {
   position: relative;
 
@@ -205,7 +233,13 @@
 .is-error {
   background-color: map.get(color.$theme-colors, 'alert-bg');
   border: 0.2rem solid map.get(color.$theme-colors, 'alert');
+  border-radius: 0.4rem;
   @include mix.mq('sp-tb') {
     border: calc(2 / 375) * 100vw solid map.get(color.$theme-colors, 'alert');
+    border-radius: calc(4 / 375) * 100vw;
+  }
+
+  .c-select {
+    background-color: map.get(color.$theme-colors, 'alert-bg');
   }
 }

@@ -136,7 +136,7 @@ AUTHENTICATION_BACKENDS = [
 SITE_ID = 1
 
 # ユーザーモデルにusernameフィールドは無いことを明示
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None  
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
 # ユーザー認証にメールアドレスを使用
 ACCOUNT_LOGIN_METHODS = {"email"}
@@ -175,6 +175,64 @@ GENDER_CHOICES = (
     ("female", "女性"),
     ("male", "男性"),
 )
+VISIT_CHOICES = (
+    ("first", "初診"),
+    ("return", "再診"),
+)
+SYMTOM_CHOICES = (
+    ("fever", "熱"),
+    ("sore_throat", "喉の痛み"),
+    ("headache", "頭痛"),
+    ("runny_nose_congestion", "鼻水・鼻づまり"),
+    ("cough_phlegm", "咳・たん"),
+    ("nausea", "吐き気"),
+    ("diarrhea", "下痢"),
+    ("abdominal_pain", "腹痛"),
+    ("stomach_pain", "胃痛"),
+    ("heartburn", "胸やけ"),
+    ("palpitations_dyspnea", "動悸・息切れ"),
+    ("swelling", "むくみ"),
+    ("dizziness", "めまい"),
+    ("other", "その他"),
+)
+YES_OR_NO_CHOICES = (
+    ("no", "ない"),
+    ("yes", "ある"),
+)
+SMOKING_CHOICES = (
+    ("no-smoking", "吸わない"),
+    ("smoking", "吸う"),
+    ("quit-smoking", "禁煙した"),
+)
+SMOKING_PER_DAY_CHOICES = (
+    [("", "---")] + [(str(i), f"{i}本") for i in range(1, 20)] + [("20_over", "20本以上")]
+)
+SMOKING_YEARS_CHOICES = (
+    [("", "---"), ("1_under", "1年未満")] + [(str(i), f"{i}年間") for i in range(2, 20)] + [("20_over", "20年以上")]
+)
+QUIT_SMOKING_YEARS_CHOICES = (
+    [("", "---")] + [(str(i), f"{i}本") for i in range(1, 20)] + [("20_over", "20本以上")]
+)
+UNTIL_SMOKING_YEARS_CHOICES = (
+    [("", "---"), ("1_under", "1年未満")] + [(str(i), f"{i}年間") for i in range(2, 20)] + [("20_over", "20年以上")]
+)
+ALCOHOL_CHOICES = (
+    ("no", "飲まない"),
+    ("yes", "飲む"),
+)
+ALCOHOL_PER_WEEK_CHOICES = [("", "---")] + [(str(i), f"{i}日") for i in range(1, 8)]
+PREGNANCY_CHOICES = (
+    ("no", "いいえ"),
+    ("now", "妊娠中"),
+    ("possible", "妊娠の可能性"),
+    ("breastfeeding", "授乳中"),
+)
+
+# 診察時間帯を定義
+TIME_LIST = ["09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"]
+
+# 曜日を日本語の略称で定義
+WEEKDAYS = ["月", "火", "水", "木", "金", "土", "日"]
 
 try:
     from .local_settings import *

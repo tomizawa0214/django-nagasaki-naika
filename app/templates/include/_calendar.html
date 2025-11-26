@@ -1,0 +1,78 @@
+{% load get_item %}
+
+<form class="l-form" action="" method="post">
+  {% csrf_token %}
+  <div class="c-calendar">
+    <div class="c-calendar__header">
+      {# 前の週 #}
+      {% if tomorrow < start_date %}
+      <button class="c-calendar__prev c-calendar__text js-prev-week" type="button">前の週</button>
+      {% endif %}
+      {# 表示月のセレクトボックス #}
+      <div class="c-calendar__month">
+        <select class="c-calendar__select c-calendar__text js-display-month">
+          {% for month in month_list %}
+          <option data-month-first-date="{{ month.month_first|date:'Y-m-d' }}" {% if current_month == month.month_first %}selected{% endif %}>{{ month.display_month }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {# 次の週 #}
+      {% if start_date < last_month_start_date %}
+      <button class="c-calendar__next c-calendar__text js-next-week" type="button">次の週</button>
+      {% endif %}
+    </div>
+    <div class="c-calendar__contents">
+      <table class="c-calendar__table">
+        <thead class="c-calendar__table-header">
+          <tr>
+            <th></th>
+            {# 日付ヘッダー #}
+            {% for day in appointment_dt_list %}
+            <th>
+              <span class="c-calendar__date {{ day.class_name }}">{{ day.date_data|date:"j" }}</span>
+              <span class="c-calendar__weekday {{ day.class_name }}">{{ day.display_weekday }}</span>
+            </th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody class="c-calendar__table-body">
+          {# 時間帯ごとの予約可否 #}
+          {% for time_data in time_list %}
+          <tr>
+            {# 時間帯 #}
+            <th class="c-text">{{ time_data }}</th>
+            {% for day in appointment_dt_list %}
+            {% with status=day|get_item:time_data %}
+            {# 予約可否 #}
+            <td class="c-calendar__status-cell c-calendar__status-cell--{{ status }}">
+              <label class="c-calendar__status-label c-calendar__status-label--{{ status }}">
+                <input class="c-calendar__status-radio" type="radio" name="{{ form.appointment_dt.name }}" value="{{ day.date_data|date:'Y-m-d' }}T{{ time_data }}" {% if status == 'closed' %}disabled{% endif %}>
+                <span class="c-calendar__status c-calendar__status--{{ status }}" aria-label="{% if status == 'open' %}予約可{% elif status == 'limited' %}残りわずか{% else %}予約不可{% endif %}"></span>
+                <span class="c-calendar__status-box"></span>
+              </label>
+            </td>
+            {% endwith %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <dl class="c-calendar__checked">
+      <dt class="c-text">選択中のご来院日時</dt>
+      <dd class="c-text js-appointment-dt">日時を選択してください</dd>
+    </dl>
+    {# エラーメッセージ #}
+    {% if form.appointment_dt.errors %}
+    <div class="js-form-error">
+      {% for error in form.appointment_dt.errors %}
+      <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  <div class="l-contents__button">
+    <a class="c-button c-button--secondary" href="{% url back_url %}">戻る</a>
+    <button class="c-button c-button--primary" type="submit">次へ</button>
+  </div>
+</form>

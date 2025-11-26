@@ -84,6 +84,121 @@ $(function () {
   })
 })
 
+// ===================================================
+// 本日はどうなさいましたか？
+// 「その他」を選択で入力フィールドを表示
+// ===================================================
+function toggleSymptomCheckbox() {
+  if ($('.js-symptom-other').prop('checked')) {
+    $('.js-symptom-other-field').fadeIn(300).prop('disabled', false)
+  } else {
+    $('.js-symptom-other-field').fadeOut(300).prop('disabled', true)
+  }
+}
+toggleSymptomCheckbox()
+$('[name="symptom"]:checkbox').change(toggleSymptomCheckbox)
+
+// ===================================================
+// 大きな病気で治療や手術
+// 「ある」を選択で入力フィールドを表示
+// ===================================================
+function toggleMedicalHistoryRadio() {
+  if ($('.js-has-medical-history').prop('checked')) {
+    $('.js-has-medical-history-field').fadeIn(300).prop('disabled', false)
+  } else {
+    $('.js-has-medical-history-field').fadeOut(300).prop('disabled', true)
+  }
+}
+$(function () {
+  toggleMedicalHistoryRadio()
+})
+$('input[name="medical_history"]').change(toggleMedicalHistoryRadio)
+
+// ===================================================
+// 治療中の病気
+// 「ある」を選択で入力フィールドを表示
+// ===================================================
+function toggleUnderTreatmentRadio() {
+  if ($('.js-has-under-treatment').prop('checked')) {
+    $('.js-has-under-treatment-field').fadeIn(300).prop('disabled', false)
+  } else {
+    $('.js-has-under-treatment-field').fadeOut(300).prop('disabled', true)
+  }
+}
+$(function () {
+  toggleUnderTreatmentRadio()
+})
+$('input[name="under_treatment"]').change(toggleUnderTreatmentRadio)
+
+// ===================================================
+// 飲んでいるお薬
+// 「ある」を選択で入力フィールドを表示
+// ===================================================
+function toggleCurrentMedicationRadio() {
+  if ($('.js-has-current-medication').prop('checked')) {
+    $('.js-has-current-medication-field').fadeIn(300).prop('disabled', false)
+  } else {
+    $('.js-has-current-medication-field').fadeOut(300).prop('disabled', true)
+  }
+}
+$(function () {
+  toggleCurrentMedicationRadio()
+})
+$('input[name="current_medication"]').change(toggleCurrentMedicationRadio)
+
+// ===================================================
+// 煙草について
+// 「吸う」または「禁煙した」を選択で入力フィールドを表示
+// ===================================================
+function toggleSmokingRadio() {
+  if ($('.js-smoking').prop('checked')) {
+    $('.js-has-quit-smoking').fadeOut(0).prop('disabled', true)
+    $('.js-has-smoking').fadeIn(300).prop('disabled', false)
+  } else if ($('.js-quit-smoking').prop('checked')) {
+    $('.js-has-smoking').fadeOut(0).prop('disabled', true)
+    $('.js-has-quit-smoking').fadeIn(300).prop('disabled', false)
+  } else {
+    $('.js-has-smoking').fadeOut(300).prop('disabled', true)
+    $('.js-has-quit-smoking').fadeOut(300).prop('disabled', true)
+  }
+}
+$(function () {
+  toggleSmokingRadio()
+})
+$('input[name="smoking"]').change(toggleSmokingRadio)
+
+// ===================================================
+// 飲酒について
+// 「飲む」を選択で入力フィールドを表示
+// ===================================================
+function toggleAlcoholRadio() {
+  if ($('.js-alcohol').prop('checked')) {
+    $('.js-has-alcohol').fadeIn(300).prop('disabled', false)
+  } else {
+    $('.js-has-alcohol').fadeOut(300).prop('disabled', true)
+  }
+}
+$(function () {
+  toggleAlcoholRadio()
+})
+$('input[name="alcohol"]').change(toggleAlcoholRadio)
+
+// ===================================================
+// お薬・食べ物のアレルギー
+// 「ある」を選択で入力フィールドを表示
+// ===================================================
+function toggleAllergyRadio() {
+  if ($('.js-has-allergy').prop('checked')) {
+    $('.js-has-allergy-field').fadeIn(300).prop('disabled', false)
+  } else {
+    $('.js-has-allergy-field').fadeOut(300).prop('disabled', true)
+  }
+}
+$(function () {
+  toggleAllergyRadio()
+})
+$('input[name="allergy"]').change(toggleAllergyRadio)
+
 // Delete
 $(document).on('click', '.js-appointment-delete', function (event) {
   event.preventDefault()
@@ -116,11 +231,11 @@ $(document).on('click', '.js-appointment-delete', function (event) {
 })
 
 // ===================================================
-// Datetime Calendar
+// カレンダーの週移動・月変更
 // ===================================================
 const calendarPostUrl = window.location.pathname + window.location.search
 
-// Prev Week
+// 前の週
 $(document).on('click', '.js-prev-week', function (event) {
   event.preventDefault()
 
@@ -135,7 +250,7 @@ $(document).on('click', '.js-prev-week', function (event) {
       'X-CSRFToken': csrftoken,
     },
   })
-    .then((res) => {
+    .then(() => {
       window.location.reload()
     })
     .catch((err) => {
@@ -144,7 +259,7 @@ $(document).on('click', '.js-prev-week', function (event) {
     })
 })
 
-// Next Week
+// 次の週
 $(document).on('click', '.js-next-week', function (event) {
   event.preventDefault()
 
@@ -159,7 +274,7 @@ $(document).on('click', '.js-next-week', function (event) {
       'X-CSRFToken': csrftoken,
     },
   })
-    .then((res) => {
+    .then(() => {
       window.location.reload()
     })
     .catch((err) => {
@@ -168,7 +283,7 @@ $(document).on('click', '.js-next-week', function (event) {
     })
 })
 
-// Month Change
+// 表示月の切り替え
 let isManualMonthChange = false
 
 $(document)
@@ -181,10 +296,10 @@ $(document)
   
     event.preventDefault()
 
-    const startDate = $(this).find('option:selected').data('start-date')
+    const monthFirstDate = $(this).find('option:selected').data('month-first-date')
 
     const body = new URLSearchParams()
-    body.append('start_date', startDate)
+    body.append('month_first_date', monthFirstDate)
 
     fetch(calendarPostUrl, {
       method: 'POST',
@@ -203,7 +318,9 @@ $(document)
       })
 })
 
-// Selected Datetime
+// ===================================================
+// 選択中のご来院日時の表示
+// ===================================================
 $(document).on('change', 'input[name="appointment_dt"]', function () {
   const value = $(this).val()
   
@@ -220,101 +337,3 @@ $(document).on('change', 'input[name="appointment_dt"]', function () {
 
   $('.js-appointment-dt').text(selectedDtText)
 })
-
-// ===================================================
-// Questionnaire
-// ===================================================
-
-// Symptom Checkbox
-function toggleSymptomCheckbox() {
-  if ($('.js-symptom-other').prop('checked')) {
-    $('.js-symptom-other-field').fadeIn(300).prop('disabled', false)
-  } else {
-    $('.js-symptom-other-field').fadeOut(300).prop('disabled', true)
-  }
-}
-toggleSymptomCheckbox()
-$('[name="symptom[]"]:checkbox').change(toggleSymptomCheckbox)
-
-// Medical History Radio
-function toggleMedicalHistoryRadio() {
-  if ($('.js-has-medical-history').prop('checked')) {
-    $('.js-has-medical-history-field').fadeIn(300).prop('disabled', false)
-  } else {
-    $('.js-has-medical-history-field').fadeOut(300).prop('disabled', true)
-  }
-}
-$(function () {
-  toggleMedicalHistoryRadio()
-})
-$('input[name="medical_history"]').change(toggleMedicalHistoryRadio)
-
-// Under Treatment Radio
-function toggleUnderTreatmentRadio() {
-  if ($('.js-has-under-treatment').prop('checked')) {
-    $('.js-has-under-treatment-field').fadeIn(300).prop('disabled', false)
-  } else {
-    $('.js-has-under-treatment-field').fadeOut(300).prop('disabled', true)
-  }
-}
-$(function () {
-  toggleUnderTreatmentRadio()
-})
-$('input[name="under_treatment"]').change(toggleUnderTreatmentRadio)
-
-// Current Medication Radio
-function toggleCurrentMedicationRadio() {
-  if ($('.js-has-current-medication').prop('checked')) {
-    $('.js-has-current-medication-field').fadeIn(300).prop('disabled', false)
-  } else {
-    $('.js-has-current-medication-field').fadeOut(300).prop('disabled', true)
-  }
-}
-$(function () {
-  toggleCurrentMedicationRadio()
-})
-$('input[name="current_medication"]').change(toggleCurrentMedicationRadio)
-
-// Smoking Radio
-function toggleSmokingRadio() {
-  if ($('.js-smoking').prop('checked')) {
-    $('.js-has-quit-smoking').fadeOut(0).prop('disabled', true)
-    $('.js-has-smoking').fadeIn(300).prop('disabled', false)
-  } else if ($('.js-quit-smoking').prop('checked')) {
-    $('.js-has-smoking').fadeOut(0).prop('disabled', true)
-    $('.js-has-quit-smoking').fadeIn(300).prop('disabled', false)
-  } else {
-    $('.js-has-smoking').fadeOut(300).prop('disabled', true)
-    $('.js-has-quit-smoking').fadeOut(300).prop('disabled', true)
-  }
-}
-$(function () {
-  toggleSmokingRadio()
-})
-$('input[name="smoking"]').change(toggleSmokingRadio)
-
-// Alcohol Radio
-function toggleAlcoholRadio() {
-  if ($('.js-alcohol').prop('checked')) {
-    $('.js-has-alcohol').fadeIn(300).prop('disabled', false)
-  } else {
-    $('.js-has-alcohol').fadeOut(300).prop('disabled', true)
-  }
-}
-$(function () {
-  toggleAlcoholRadio()
-})
-$('input[name="alcohol"]').change(toggleAlcoholRadio)
-
-// Allergy Radio
-function toggleAllergyRadio() {
-  if ($('.js-has-allergy').prop('checked')) {
-    $('.js-has-allergy-field').fadeIn(300).prop('disabled', false)
-  } else {
-    $('.js-has-allergy-field').fadeOut(300).prop('disabled', true)
-  }
-}
-$(function () {
-  toggleAllergyRadio()
-})
-$('input[name="allergy"]').change(toggleAllergyRadio)

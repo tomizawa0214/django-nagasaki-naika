@@ -38,11 +38,11 @@ meta_password_reset_newpassword = {
 }
 
 # パスワードリセット（完了）
-meta_password_reset_done = {
+meta_password_reset_complete = {
     "meta_robots": "noindex,follow",
     "meta_title": f"パスワードリセット完了{separate}{site_name}",
     "meta_description": "",
-    "url": f"{settings.BASE_URL}/password-reset/done/",
+    "url": f"{settings.BASE_URL}/password-reset/complete/",
 }
 
 # ご利用登録（入力）
@@ -70,17 +70,17 @@ meta_signup_verify = {
 }
 
 # ご利用登録（完了）
-meta_signup_done = {
+meta_signup_complete = {
     "meta_robots": "noindex,follow",
     "meta_title": f"利用登録完了{separate}{site_name}",
     "meta_description": "",
-    "url": f"{settings.BASE_URL}/signup/done/",
+    "url": f"{settings.BASE_URL}/signup/complete/",
 }
 meta_signup_failed = {
     "meta_robots": "noindex,follow",
     "meta_title": f"利用登録失敗{separate}{site_name}",
     "meta_description": "",
-    "url": f"{settings.BASE_URL}/signup/done/",
+    "url": f"{settings.BASE_URL}/signup/complete/",
 }
 
 # マイページ
@@ -89,6 +89,54 @@ meta_mypage = {
     "meta_title": f"マイページ{separate}{site_name}",
     "meta_description": "",
     "url": f"{settings.BASE_URL}/mypage/",
+}
+
+# 診察予約（初診 / 再診）
+meta_appointment = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"診察予約{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/appointment/",
+}
+
+# 診察予約（問診票）
+meta_appointment_questionnaire = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"診察予約（問診票の入力）{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/appointment/questionnaire/",
+}
+
+# 診察予約（日時選択）
+meta_appointment_datetime = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"診察予約（日時の選択）{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/appointment/datetime/",
+}
+
+# 診察予約（連絡先入力）
+meta_appointment_contact = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"診察予約（連絡先の入力）{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/appointment/contact/",
+}
+
+# 診察予約（確認）
+meta_appointment_confirm = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"診察予約内容の確認{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/appointment/confirm/",
+}
+
+# 診察予約（完了）
+meta_appointment_complete = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"診察予約完了{separate}{site_name}",
+    "meta_description": "",
+    "url": f"{settings.BASE_URL}/mypage/appointment/complete/",
 }
 
 # パスワード変更（入力）
@@ -100,11 +148,11 @@ meta_password_change = {
 }
 
 # パスワード変更（完了）
-meta_password_change_done = {
+meta_password_change_complete = {
     "meta_robots": "noindex,follow",
     "meta_title": f"パスワード変更完了{separate}{site_name}",
     "meta_description": "",
-    "url": f"{settings.BASE_URL}/mypage/password/done/",
+    "url": f"{settings.BASE_URL}/mypage/password/complete/",
 }
 
 # メールアドレス変更（入力）
@@ -124,17 +172,17 @@ meta_email_change_verify = {
 }
 
 # メールアドレス変更（完了）
-meta_email_change_done = {
+meta_email_change_complete = {
     "meta_robots": "noindex,follow",
     "meta_title": f"メールアドレス変更完了{separate}{site_name}",
     "meta_description": "",
-    "url": f"{settings.BASE_URL}/mypage/email/done/",
+    "url": f"{settings.BASE_URL}/mypage/email/complete/",
 }
 meta_email_change_failed = {
     "meta_robots": "noindex,follow",
     "meta_title": f"メールアドレス変更失敗{separate}{site_name}",
     "meta_description": "",
-    "url": f"{settings.BASE_URL}/mypage/email/done/",
+    "url": f"{settings.BASE_URL}/mypage/email/complete/",
 }
 
 # 電話番号変更（入力）
@@ -146,11 +194,11 @@ meta_phone_change = {
 }
 
 # 電話番号変更（完了）
-meta_phone_change_done = {
+meta_phone_change_complete = {
     "meta_robots": "noindex,follow",
     "meta_title": f"電話番号変更完了{separate}{site_name}",
     "meta_description": "",
-    "url": f"{settings.BASE_URL}/mypage/phone/done/",
+    "url": f"{settings.BASE_URL}/mypage/phone/complete/",
 }
 
 # 退会（確認）
@@ -162,11 +210,11 @@ meta_withdraw = {
 }
 
 # 退会（完了）
-meta_withdraw_done = {
+meta_withdraw_complete = {
     "meta_robots": "noindex,follow",
     "meta_title": f"退会完了{separate}{site_name}",
     "meta_description": "",
-    "url": f"{settings.BASE_URL}/mypage/withdraw/done/",
+    "url": f"{settings.BASE_URL}/mypage/withdraw/complete/",
 }
 
 # ログアウト

@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<main class="l-contents">
+  <div class="l-step">
+    <ol class="l-step__inner">
+      <li class="c-step done">初診 /<br class="only-sp"> 再診</li>
+      <li class="c-step current">問診票</li>
+      <li class="c-step">日時<br class="only-sp">選択</li>
+      <li class="c-step">連絡先<br class="only-sp">入力</li>
+      <li class="c-step">確認</li>
+      <li class="c-step">完了</li>
+    </ol>
+  </div>
+  <section class="l-contents__inner">
+    <h1 class="l-contents__page-title c-title">診察予約</h1>
+    <p class="l-contents__lead c-text">初診の方は以下を入力してください。</p>
+    <form class="l-form" action="" method="post">
+      {% csrf_token %}
+      {# 本日はどうなさいましたか？ #}
+      <div class="l-form__group l-form__group--questionnaire">
+        <fieldset>
+          <legend class="c-text c-label"><span class="c-required">必須</span>本日はどうなさいましたか？ <br class="only-sp">当てはまるものにチェックをつけてください<span class="c-text--help">複数選択可</span></legend>
+          <div class="l-form__radio-checkbox-group">
+          {# 選択値を保持して描画 #}
+          {% with selected=form.symptom.value %}
+            {% for value, label in form.symptom.field.choices %}
+            <label class="c-text" for="symptom{{ forloop.counter }}">
+              <input class="c-checkbox{% if value == 'other' %} js-symptom-other{% endif %}" type="checkbox" name="{{ form.symptom.name }}" id="symptom{{ forloop.counter }}" value="{{ value }}" {% if selected and value in selected %}checked{% endif %} required>
+              <span>{{ label }}</span>
+            </label>
+            {% endfor %}
+          {% endwith %}
+          {# その他の入力フィールド #}
+          {% render_field form.symptom_other %}
+          </div>
+          {# エラーメッセージ #}
+          {% if form.symptom.errors %}
+          <div class="js-form-error">
+            {% for error in form.symptom.errors %}
+            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </fieldset>
+      </div>
+      {# 症状はいつ頃から #}
+      <div class="l-form__group l-form__group--questionnaire">
+        <label class="c-text c-label" for="symptom_start"><span class="c-required">必須</span>症状はいつ頃からありますか？</label>
+        <div class="c-select-box">
+          {% render_field form.symptom_start %}
+        </div>
+        {# エラーメッセージ #}
+        {% if form.symptom_start.errors %}
+        <div class="js-form-error">
+          {% for error in form.symptom_start.errors %}
+          <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {# 大きな病気での治療や手術 #}
+      <div class="l-form__group l-form__group--questionnaire">
+        <fieldset>
+          <legend class="c-text c-label"><span class="c-required">必須</span>過去に大きな病気で治療や手術を受けられたことはありますか？</legend>
+          <div class="l-form__radio-checkbox-group">
+          {# 選択値を保持して描画 #}
+          {% with selected=form.medical_history.value %}
+            {% for value, label in form.medical_history.field.choices %}
+            <label class="c-text" for="medical_history{{ forloop.counter }}">
+              <input class="c-radio{% if value == 'yes' %} js-has-medical-history{% endif %}" type="radio" name="{{ form.medical_history.name }}" id="medical_history{{ forloop.counter }}" value="{{ value }}" {% if selected == value %}checked{% endif %} required>
+              <span>{{ label }}</span>
+            </label>
+            {% endfor %}
+          {% endwith %}
+          {# その他の入力フィールド #}
+          {% render_field form.has_medical_history %}
+          </div>
+          {# エラーメッセージ #}
+          {% if form.medical_history.errors %}
+          <div class="js-form-error">
+            {% for error in form.medical_history.errors %}
+            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </fieldset>
+      </div>
+      {# 治療中の病気 #}
+      <div class="l-form__group l-form__group--questionnaire">
+        <fieldset>
+          <legend class="c-text c-label"><span class="c-required">必須</span>現在、治療中の病気はありますか？</legend>
+          <div class="l-form__radio-checkbox-group">
+          {# 選択値を保持して描画 #}
+          {% with selected=form.under_treatment.value %}
+            {% for value, label in form.under_treatment.field.choices %}
+            <label class="c-text" for="under_treatment{{ forloop.counter }}">
+              <input class="c-radio{% if value == 'yes' %} js-has-under-treatment{% endif %}" type="radio" name="{{ form.under_treatment.name }}" id="under_treatment{{ forloop.counter }}" value="{{ value }}" {% if selected == value %}checked{% endif %} required>
+              <span>{{ label }}</span>
+            </label>
+            {% endfor %}
+          {% endwith %}
+          {# その他の入力フィールド #}
+          {% render_field form.has_under_treatment %}
+          </div>
+          {# エラーメッセージ #}
+          {% if form.under_treatment.errors %}
+          <div class="js-form-error">
+            {% for error in form.under_treatment.errors %}
+            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </fieldset>
+      </div>
+      {# 飲んでいるお薬 #}
+      <div class="l-form__group l-form__group--questionnaire">
+        <fieldset>
+          <legend class="c-text c-label"><span class="c-required">必須</span>現在、飲んでいるお薬はありますか？</legend>
+          <div class="l-form__radio-checkbox-group">
+          {# 選択値を保持して描画 #}
+          {% with selected=form.current_medication.value %}
+            {% for value, label in form.current_medication.field.choices %}
+            <label class="c-text" for="current_medication{{ forloop.counter }}">
+              <input class="c-radio{% if value == 'yes' %} js-has-current-medication{% endif %}" type="radio" name="{{ form.current_medication.name }}" id="current_medication{{ forloop.counter }}" value="{{ value }}" {% if selected == value %}checked{% endif %} required>
+              <span>{{ label }}</span>
+            </label>
+            {% endfor %}
+          {% endwith %}
+          {# その他の入力フィールド #}
+          {% render_field form.has_current_medication %}
+          </div>
+          {# エラーメッセージ #}
+          {% if form.current_medication.errors %}
+          <div class="js-form-error">
+            {% for error in form.current_medication.errors %}
+            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </fieldset>
+      </div>
+      {# 喫煙、飲酒について #}
+      <div class="l-form__group l-form__group--questionnaire">
+        <fieldset>
+          <legend class="c-text c-label"><span class="c-required">必須</span>喫煙、飲酒について教えてください。</legend>
+          {# 煙草 #}
+          <div class="l-form__radio-checkbox-group">
+            <p class="c-text">【煙草】</p>
+            {# 選択値を保持して描画 #}
+            {% with selected=form.smoking.value %}
+              {% for value, label in form.smoking.field.choices %}
+              <label class="c-text" for="smoking{{ forloop.counter }}">
+                <input class="c-radio{% if value == 'smoking' %} js-smoking{% elif value == 'quit-smoking' %} js-quit-smoking{% endif %}" type="radio" name="{{ form.smoking.name }}" id="smoking{{ forloop.counter }}" value="{{ value }}" {% if selected == value %}checked{% endif %} required>
+                <span>{{ label }}</span>
+              </label>
+              {% endfor %}
+            {% endwith %}
+            {# 吸う場合のフィールド #}
+            <div class="js-has-smoking">
+              <div class="l-form__smoking">
+                {# 1日の喫煙本数 #}
+                <span class="c-text">1日</span>
+                <div class="c-select-box">
+                  {% render_field form.has_smoking_per_day %}
+                </div>
+                <span class="c-text">&times;</span>
+                {# 喫煙の期間 #}
+                <div class="c-select-box">
+                  {% render_field form.has_smoking_years %}
+                </div>
+              </div>
+            </div>
+            {# 禁煙した場合のフィールド #}
+            <div class="js-has-quit-smoking">
+              <div class="l-form__smoking l-form__smoking--vertical">
+                {# 禁煙の期間 #}
+                <div class="l-form__smoking l-form__smoking--quit">
+                  <span class="c-text">禁煙は</span>
+                  <div class="c-select-box">
+                    {% render_field form.has_quit_smoking_years %}
+                  </div>
+                  <span class="c-text">前から</span>
+                </div>
+                {# 禁煙するまでの喫煙期間 #}
+                <div class="l-form__smoking l-form__smoking--quit">
+                  <span class="c-text">それまで</span>
+                  <div class="c-select-box">
+                    {% render_field form.has_until_smoking_years %}
+                  </div>
+                  <span class="c-text">喫煙</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          {# エラーメッセージ #}
+          {% if form.smoking.errors %}
+          <div class="js-form-error">
+            {% for error in form.smoking.errors %}
+            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+          {# 飲酒 #}
+          <div class="l-form__radio-checkbox-group l-form__radio-checkbox-group--alcohol">
+            <p class="c-text">【飲酒】</p>
+            {# 選択値を保持して描画 #}
+            {% with selected=form.alcohol.value %}
+              {% for value, label in form.alcohol.field.choices %}
+              <label class="c-text" for="alcohol{{ forloop.counter }}">
+                <input class="c-radio{% if value == 'yes' %} js-alcohol{% endif %}" type="radio" name="{{ form.alcohol.name }}" id="alcohol{{ forloop.counter }}" value="{{ value }}" {% if selected == value %}checked{% endif %} required>
+                <span>{{ label }}</span>
+              </label>
+              {% endfor %}
+            {% endwith %}
+            {# 飲む場合のフィールド #}
+            <div class="l-form__has-alcohol js-has-alcohol">
+              <div class="l-form__has-alcohol">
+                {# 週 #}
+                <div class="l-form__alcohol l-form__alcohol--detail">
+                  <span class="c-text">週</span>
+                  <div class="c-select-box c-select-box--week">
+                    {% render_field form.alcohol_per_week %}
+                  </div>
+                </div>
+                {# 種類 #}
+                <div class="l-form__alcohol l-form__alcohol--detail">
+                  <label class="c-text" for="alcohol-type">種類</label>
+                  {% render_field form.alcohol_type %}
+                </div>
+                {# 量 #}
+                <div class="l-form__alcohol l-form__alcohol--detail">
+                  <label class="c-text" for="alcohol-amount">量</label>
+                  {% render_field form.alcohol_amount %}
+                </div>
+              </div>
+            </div>
+          </div>
+          {# エラーメッセージ #}
+          {% if form.alcohol.errors %}
+          <div class="js-form-error">
+            {% for error in form.alcohol.errors %}
+            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </fieldset>
+      </div>
+      {# お薬・食べ物のアレルギー #}
+      <div class="l-form__group l-form__group--questionnaire">
+        <fieldset>
+          <legend class="c-text c-label"><span class="c-required">必須</span>お薬・食べ物のアレルギーはありますか？</legend>
+          <div class="l-form__radio-checkbox-group">
+          {# 選択値を保持して描画 #}
+          {% with selected=form.allergy.value %}
+            {% for value, label in form.allergy.field.choices %}
+            <label class="c-text" for="allergy{{ forloop.counter }}">
+              <input class="c-radio{% if value == 'yes' %} js-has-allergy{% endif %}" type="radio" name="{{ form.allergy.name }}" id="allergy{{ forloop.counter }}" value="{{ value }}" {% if selected == value %}checked{% endif %} required>
+              <span>{{ label }}</span>
+            </label>
+            {% endfor %}
+          {% endwith %}
+          {# その他の入力フィールド #}
+          {% render_field form.has_allergy %}
+          </div>
+          {# エラーメッセージ #}
+          {% if form.allergy.errors %}
+          <div class="js-form-error">
+            {% for error in form.allergy.errors %}
+            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </fieldset>
+      </div>
+      {# 妊娠の可能性 #}
+      <div class="l-form__group l-form__group--questionnaire">
+        <fieldset>
+          <legend class="c-text c-label"><span class="c-required">必須</span>現在、妊娠中あるいは妊娠の可能性、または授乳中ですか？<span class="c-text--help">女性の方のみ</span></legend>
+          <div class="l-form__radio-checkbox-group">
+          {# 選択値を保持して描画 #}
+          {% with selected=form.pregnancy.value %}
+            {% for value, label in form.pregnancy.field.choices %}
+            <label class="c-text" for="pregnancy{{ forloop.counter }}">
+              <input class="c-radio" type="radio" name="{{ form.pregnancy.name }}" id="pregnancy{{ forloop.counter }}" value="{{ value }}" {% if selected == value %}checked{% endif %} required>
+              <span>{{ label }}</span>
+            </label>
+            {% endfor %}
+          {% endwith %}
+          </div>
+          {# エラーメッセージ #}
+          {% if form.pregnancy.errors %}
+          <div class="js-form-error">
+            {% for error in form.pregnancy.errors %}
+            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </fieldset>
+      </div>
+      {# 特に調べてほしいこと #}
+      <div class="l-form__group">
+        <label class="c-text c-label" for="especially"><span class="c-optional">任意</span>特に調べてほしいこと、検査、治療がありましたらご記入ください</label>
+        {% render_field form.especially %}
+      </div>
+      <div class="l-contents__button">
+        <a class="c-button c-button--secondary" href="{% url 'appointment' %}">戻る</a>
+        <button class="c-button c-button--primary" type="submit">次へ</button>
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}

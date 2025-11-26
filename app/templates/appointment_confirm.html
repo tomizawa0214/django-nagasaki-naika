@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="l-contents">
+  <div class="l-step">
+    <ol class="l-step__inner">
+      <li class="c-step done">初診 /<br class="only-sp"> 再診</li>
+      <li class="c-step done">問診票</li>
+      <li class="c-step done">日時<br class="only-sp">選択</li>
+      <li class="c-step done">連絡先<br class="only-sp">入力</li>
+      <li class="c-step current">確認</li>
+      <li class="c-step">完了</li>
+    </ol>
+  </div>
+  <section class="l-contents__inner">
+    <h1 class="l-contents__page-title c-title">診察予約</h1>
+    <p class="l-contents__lead c-text">以下の内容で送信してよろしいですか？</p>
+    <form action="" method="post">
+      {% csrf_token %}
+      <section class="l-contents__section">
+        <h2 class="c-heading c-text">診察情報</h2>
+        <dl>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">初診 または 再診</dt>
+            <dd class="c-text">初診</dd>
+          </div>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">本日はどうなさいましたか？</dt>
+            <dd class="c-text">喉の痛み、頭痛、腹痛</dd>
+          </div>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">症状はいつ頃からありますか？</dt>
+            <dd class="c-text">昨日から (11月9日頃)</dd>
+          </div>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">過去に大きな病気で治療や手術を受けられたことはありますか？</dt>
+            <dd class="c-text">ある<br>(入力テキスト)</dd>
+            <!-- <dd class="c-text">ない</dd> -->
+          </div>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">現在、治療中の病気はありますか？</dt>
+            <!-- <dd class="c-text">ある<br>(入力テキスト)</dd> -->
+            <dd class="c-text">ない</dd>
+          </div>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">現在、飲んでいるお薬はありますか？</dt>
+            <!-- <dd class="c-text">ある<br>(入力テキスト)</dd> -->
+            <dd class="c-text">ない</dd>
+          </div>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">喫煙、飲酒について教えてください。</dt>
+            <!-- <dd class="c-text">【煙草】 吸わない</dd> -->
+            <!-- <dd class="c-text">【煙草】 吸う (1日10本×10年間)</dd> -->
+            <dd class="c-text">【煙草】 禁煙した<br class="only-sp"> (5年前から / それまで喫煙10年間)</dd>
+            <!-- <dd class="c-text">【飲酒】 飲まない</dd> -->
+            <dd class="c-text">【飲酒】 飲む<br class="only-sp"> (週5日 / 種類: 入力テキスト / 量: 入力テキスト)</dd>
+          </div>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">お薬・食べ物のアレルギーはありますか？</dt>
+            <dd class="c-text">ない</dd>
+            <!-- <dd class="c-text">ある<br>(入力テキスト)</dd> -->
+          </div>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">特に調べてほしいこと、検査、治療がありましたらご記入ください。</dt>
+            <dd class="c-text">入力テキスト</dd>
+            <!-- <dd class="c-text">特になし</dd> -->
+          </div>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">現在、妊娠中あるいは妊娠の可能性、または授乳中ですか？</dt>
+            <dd class="c-text">いいえ</dd>
+            <!-- <dd class="c-text">はい<br>(妊娠中)</dd> -->
+          </div>
+        </dl>
+      </section>
+      <section class="l-contents__section">
+        <h2 class="c-heading c-text">連絡先情報</h2>
+        <dl class="l-confirm">
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">お名前</dt>
+            <dd class="c-text">長﨑 太郎</dd>
+          </div>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">メールアドレス</dt>
+            <dd class="c-text">nagasaki@example.jp</dd>
+          </div>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">電話番号</dt>
+            <dd class="c-text">0272313274</dd>
+          </div>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">生年月日</dt>
+            <dd class="c-text">1970年1月1日</dd>
+          </div>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">性別</dt>
+            <dd class="c-text">男性</dd>
+          </div>
+          <div class="l-confirm__group l-confirm__group--vertical">
+            <dt class="c-text">診察券番号</dt>
+            <dd class="c-text">123456789</dd>
+          </div>
+        </dl>
+      </section>
+      <div class="l-contents__button">
+        <a class="c-button c-button--secondary" href="{% url 'appointment_contact' %}">戻る</a>
+        <button class="c-button c-button--primary" type="submit">送信する</button>
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}

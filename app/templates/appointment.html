@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<main class="l-contents">
+  <div class="l-step">
+    <ol class="l-step__inner">
+      <li class="c-step current">初診 /<br class="only-sp"> 再診</li>
+      <li class="c-step">問診票</li>
+      <li class="c-step">日時<br class="only-sp">選択</li>
+      <li class="c-step">連絡先<br class="only-sp">入力</li>
+      <li class="c-step">確認</li>
+      <li class="c-step">完了</li>
+    </ol>
+  </div>
+  <section class="l-contents__inner">
+    <h1 class="l-contents__page-title c-title">診察予約</h1>
+    <div class="l-contents__lead">
+      <p class="c-text">初診または再診をお選びください。</p>
+      <ul>
+        <li class="c-text c-text--help">初診は当院を初めて受診される方、または前回の受診から長期間経過している方</li>
+        <li class="c-text c-text--help">再診は定期的な診察や、経過観察、継続処方をご希望の方</li>
+      </ul>
+    </div>
+    <form class="l-form" action="" method="post">
+      {% csrf_token %}
+      {# 初診 / 再診 #}
+      <div class="l-form__group">
+        <fieldset>
+          <div class="l-form__radio-checkbox-group l-form__radio-checkbox-group--one">
+          {# 選択値を保持して描画 #}
+          {% with selected=form.visit.value %}
+            {% for value, label in form.visit.field.choices %}
+            <label class="c-text" for="visit{{ forloop.counter }}">
+              <input class="c-radio" type="radio" name="{{ form.visit.name }}" id="visit{{ forloop.counter }}" value="{{ value }}" {% if selected == value %}checked{% endif %} required>
+              <span>{{ label }}</span>
+            </label>
+            {% endfor %}
+          {% endwith %}
+          </div>
+          {# エラーメッセージ #}
+          {% if form.visit.errors %}
+          <div class="js-form-error">
+            {% for error in form.visit.errors %}
+            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </fieldset>
+      </div>
+      <div class="l-contents__button">
+        <a class="c-button c-button--secondary" href="{% url 'mypage' %}">戻る</a>
+        <button class="c-button c-button--primary" type="submit">次へ</button>
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}
