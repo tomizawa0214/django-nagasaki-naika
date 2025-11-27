@@ -1,23 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-<main class="l-contents">
-  <div class="l-step">
-    <ol class="l-step__inner">
-      <li class="c-step done">初診 /<br class="only-sp"> 再診</li>
-      <li class="c-step done">問診票</li>
-      <li class="c-step done">日時<br class="only-sp">選択</li>
-      <li class="c-step done">連絡先<br class="only-sp">入力</li>
-      <li class="c-step done">確認</li>
-      <li class="c-step done current">完了</li>
-    </ol>
-  </div>
-  <section class="l-contents__inner l-contents__inner">
-    <h1 class="l-contents__page-title c-title">予約完了</h1>
-    <p class="l-contents__lead c-text">診察予約が完了しました。<br>ご来院をお待ちしております。</p>
-    <div class="l-contents__button">
-      <a class="c-button c-button--primary" href="{% url 'mypage' %}">マイページに戻る</a>
+  <main class="l-contents">
+    <div class="l-step">
+      <ol class="l-step__inner">
+        <li class="c-step done">初診 /<br class="only-sp"> 再診</li>
+        <li class="c-step done">問診票</li>
+        <li class="c-step done">日時<br class="only-sp">選択</li>
+        <li class="c-step done">連絡先<br class="only-sp">入力</li>
+        <li class="c-step done">確認</li>
+        <li class="c-step done current">完了</li>
+      </ol>
     </div>
-  </section>
-</main>
+    <section class="l-contents__inner l-contents__inner">
+      <h1 class="l-contents__page-title c-title">予約完了</h1>
+      <p class="l-contents__lead c-text">診察予約が完了しました。<br>ご来院をお待ちしております。</p>
+      <div class="l-contents__button">
+        <a class="c-button c-button--primary" href="{% url 'mypage' %}">マイページに戻る</a>
+      </div>
+    </section>
+  </main>
 {% endblock %}

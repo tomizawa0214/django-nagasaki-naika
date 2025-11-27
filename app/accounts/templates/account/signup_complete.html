@@ -1,41 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-<main class="l-contents">
+  <main class="l-contents">
   {# トークン有効 #}
   {% if validlink %}
-  <div class="l-step">
-    <ol class="l-step__inner">
-      <li class="c-step done">入力</li>
-      <li class="c-step done">確認</li>
-      <li class="c-step done">認証</li>
-      <li class="c-step done current">完了</li>
-    </ol>
-  </div>
-  <section class="l-contents__inner">
-    <h1 class="l-contents__page-title c-title">登録完了</h1>
-    <p class="l-contents__lead c-text">ご利用登録が完了しました。<br>ログインしてご利用ください。</p>
-    <div class="l-contents__button">
-      <a class="c-button c-button--primary" href="{% url 'account_login' %}">ログインページへ</a>
+    <div class="l-step">
+      <ol class="l-step__inner">
+        <li class="c-step done">入力</li>
+        <li class="c-step done">確認</li>
+        <li class="c-step done">認証</li>
+        <li class="c-step done current">完了</li>
+      </ol>
     </div>
-  </section>
+    <section class="l-contents__inner">
+      <h1 class="l-contents__page-title c-title">登録完了</h1>
+      <p class="l-contents__lead c-text">ご利用登録が完了しました。<br>ログインしてご利用ください。</p>
+      <div class="l-contents__button">
+        <a class="c-button c-button--primary" href="{% url 'account_login' %}">ログインページへ</a>
+      </div>
+    </section>
   {# トークン無効 #}
   {% else %}
-  <div class="l-step">
-    <ol class="l-step__inner">
-      <li class="c-step done">入力</li>
-      <li class="c-step done">確認</li>
-      <li class="c-step done">認証</li>
-      <li class="c-step current alert">失敗</li>
-    </ol>
-  </div>
-  <section class="l-contents__inner">
-    <h1 class="l-contents__page-title c-title">登録失敗</h1>
-    <p class="l-contents__lead c-text">このURLは無効または期限切れです。<br>もう一度はじめからお手続きをお願いします。</p>
-    <div class="l-contents__button">
-      <a class="c-button c-button--primary" href="{% url 'account_signup' %}">ご利用登録に戻る</a>
+    <div class="l-step">
+      <ol class="l-step__inner">
+        <li class="c-step done">入力</li>
+        <li class="c-step done">確認</li>
+        <li class="c-step done">認証</li>
+        <li class="c-step current alert">失敗</li>
+      </ol>
     </div>
-  </section>
+    <section class="l-contents__inner">
+      <h1 class="l-contents__page-title c-title">登録失敗</h1>
+      <p class="l-contents__lead c-text">このURLは無効または期限切れです。<br>もう一度はじめからお手続きをお願いします。</p>
+      <div class="l-contents__button">
+        <a class="c-button c-button--primary" href="{% url 'account_signup' %}">ご利用登録に戻る</a>
+      </div>
+    </section>
   {% endif %}
-</main>
+  </main>
 {% endblock %}

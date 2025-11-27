@@ -2,58 +2,58 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<main class="l-contents">
-  <h1 class="l-contents__lead c-text">こちらは長﨑医院のネット予約サイトです。</h1>
-  <div class="l-contents__inner">
-    <section>
-      <h2 class="l-contents__title c-title">マイページへログイン</h2>
-      <form class="l-form l-form--signup" action="" method="post">
+  <main class="l-contents">
+    <h1 class="l-contents__lead c-text">こちらは長﨑医院のネット予約サイトです。</h1>
+    <div class="l-contents__inner">
+      <section>
+        <h2 class="l-contents__title c-title">マイページへログイン</h2>
+        <form class="l-form l-form--signup" action="" method="post">
         {% csrf_token %}
-        {# メールアドレス #}
-        <div class="l-form__group">
-          <label class="c-text c-label" for="email">メールアドレス</label>
-          {% render_field form.login %}
-          {# エラーメッセージ（フィールド単位） #}
-          {% if form.login.errors %}
-          <div class="js-form-error">
-            {% for error in form.login.errors %}
-            <p class="c-text c-text--sm c-text--alert">{{ error|linebreaksbr }}</p>
-            {% endfor %}
+          {# メールアドレス #}
+          <div class="l-form__group">
+            <label class="c-text c-label" for="email">メールアドレス</label>
+            {% render_field form.login %}
+            {# エラーメッセージ（フィールド単位） #}
+            {% if form.login.errors %}
+              <div class="js-form-error">
+                {% for error in form.login.errors %}
+                  <p class="c-text c-text--sm c-text--alert">{{ error|linebreaksbr }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
           </div>
-          {% endif %}
-        </div>
-        {# パスワード #}
-        <div class="l-form__group">
-          <label class="c-text c-label" for="password">パスワード</label>
-          {% render_field form.password %}
-          {# エラーメッセージ（フィールド単位） #}
-          {% if form.password.errors %}
-          <div class="js-form-error">
-            {% for error in form.password.errors %}
-            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
-            {% endfor %}
+          {# パスワード #}
+          <div class="l-form__group">
+            <label class="c-text c-label" for="password">パスワード</label>
+            {% render_field form.password %}
+            {# エラーメッセージ（フィールド単位） #}
+            {% if form.password.errors %}
+              <div class="js-form-error">
+                {% for error in form.password.errors %}
+                  <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+            <a class="l-form__link c-link" href="{% url 'password_reset' %}">パスワードをお忘れの方</a>
+            {# エラーメッセージ（認証失敗） #}
+            {% if form.non_field_errors %}
+              <div>
+                {% for error in form.non_field_errors %}
+                  <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
           </div>
-          {% endif %}
-          <a class="l-form__link c-link" href="{% url 'password_reset' %}">パスワードをお忘れの方</a>
-          {# エラーメッセージ（認証失敗） #}
-          {% if form.non_field_errors %}
-          <div>
-            {% for error in form.non_field_errors %}
-            <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
-            {% endfor %}
+          <div class="l-contents__button">
+            <a class="c-button c-button--secondary" href="https://nagasaki-naika.com/" target="_blank" rel="noopener" aria-label="長崎医院ホームページへ">戻る</a>
+            <button class="c-button c-button--primary" type="submit" onclick="this.disabled = true; this.form.submit();">ログイン</button>
           </div>
-          {% endif %}
-        </div>
-        <div class="l-contents__button">
-          <a class="c-button c-button--secondary" href="https://nagasaki-naika.com/" target="_blank" rel="noopener" aria-label="長崎医院ホームページへ">戻る</a>
-          <button class="c-button c-button--primary" type="submit" onclick="this.disabled = true; this.form.submit();">ログイン</button>
-        </div>
-      </form>
-    </section>
-    <section class="l-contents__signup">
-      <h2 class="l-contents__title c-title">初めてご利用の方へ</h2>
-      <a class="c-button c-button--primary" href="{% url 'account_signup' %}">ご利用登録</a>
-    </section>
-  </div>
-</main>
+        </form>
+      </section>
+      <section class="l-contents__signup">
+        <h2 class="l-contents__title c-title">初めてご利用の方へ</h2>
+        <a class="c-button c-button--primary" href="{% url 'account_signup' %}">ご利用登録</a>
+      </section>
+    </div>
+  </main>
 {% endblock %}

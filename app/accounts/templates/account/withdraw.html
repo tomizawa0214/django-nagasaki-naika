@@ -2,27 +2,27 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<main class="l-contents">
-  <div class="l-step">
-    <ol class="l-step__inner">
-      <li class="c-step current">確認</li>
-      <li class="c-step">完了</li>
-    </ol>
-  </div>
-  <section class="l-contents__inner">
-    <h1 class="l-contents__page-title c-title">退会</h1>
-    <div class="l-contents__lead">
-      <p class="c-text">退会手続きの前にご確認ください。<br>退会すると、予約システムのアカウントは<br class="only-sp">削除されます。</p>
-      <small class="c-text c-text--help">診療録や会計記録などの医療情報は法令に基づき、当院で保存されます。</small>
+  <main class="l-contents">
+    <div class="l-step">
+      <ol class="l-step__inner">
+        <li class="c-step current">確認</li>
+        <li class="c-step">完了</li>
+      </ol>
     </div>
-    <p class="l-contents__lead c-text c-text--bold">このまま退会しますか？</p>
-    <form class="l-form" action="" method="post">
-      {% csrf_token %}
-      <div class="l-contents__button l-contents__button--withdraw">
-        <a class="c-button c-button--secondary" href="{% url 'mypage' %}">いいえ、退会しません</a>
-        <button class="c-button c-button--alert" type="submit" onclick="this.disabled = true; this.form.submit();">はい、退会します</button>
+    <section class="l-contents__inner">
+      <h1 class="l-contents__page-title c-title">退会</h1>
+      <div class="l-contents__lead">
+        <p class="c-text">退会手続きの前にご確認ください。<br>退会すると、予約システムのアカウントは<br class="only-sp">削除されます。</p>
+        <small class="c-text c-text--help">診療録や会計記録などの医療情報は法令に基づき、当院で保存されます。</small>
       </div>
-    </form>
-  </section>
-</main>
+      <p class="l-contents__lead c-text c-text--bold">このまま退会しますか？</p>
+      <form class="l-form" action="" method="post">
+      {% csrf_token %}
+        <div class="l-contents__button l-contents__button--withdraw">
+          <a class="c-button c-button--secondary" href="{% url 'mypage' %}">いいえ、退会しません</a>
+          <button class="c-button c-button--alert" type="submit" onclick="this.disabled = true; this.form.submit();">はい、退会します</button>
+        </div>
+      </form>
+    </section>
+  </main>
 {% endblock %}

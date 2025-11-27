@@ -15,7 +15,7 @@
     <h1 class="l-contents__page-title c-title">ご利用登録</h1>
     <p class="l-contents__lead c-text">以下の内容で送信してよろしいですか？</p>
     <form action="" method="post">
-      {% csrf_token %}
+    {% csrf_token %}
       <dl class="l-confirm">
         <div class="l-confirm__group">
           <dt class="c-text">お名前</dt>
@@ -40,9 +40,9 @@
         <div class="l-confirm__group">
           <dt class="c-text">診察券番号</dt>
           {% if card_number %}
-          <dd class="c-text">{{ card_number }}</dd>
+            <dd class="c-text">{{ card_number }}</dd>
           {% else %}
-          <dd class="c-text">なし</dd>
+            <dd class="c-text">なし</dd>
           {% endif %}
         </div>
       </dl>
