@@ -260,6 +260,9 @@ MODEL_WEEKDAY_MAP = {
     6: "sunday",
 }
 
+# セッションの有効期限
+SESSION_AGE_TIME = 60
+
 try:
     from .local_settings import *
 except ImportError:

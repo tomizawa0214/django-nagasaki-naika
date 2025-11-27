@@ -3,8 +3,36 @@ from datetime import timedelta
 
 import jpholiday
 from django.conf import settings
+from django.utils import timezone
 
 from .models import *
+
+
+# =====================================================================================================
+# セッション判定
+# =====================================================================================================
+def session_check(request, session_key):
+
+    # セッションを取得
+    session_data = request.session.get(session_key)
+
+    # セッションが無い
+    if not session_data:
+        return None
+
+    # セッションの更新日時を取得
+    updated_at = datetime.datetime.fromisoformat(session_data.get("updated_at"))
+
+    # セッションの更新日時から60分以上経過している場合はセッションを削除
+    if timezone.now() - updated_at > timedelta(minutes=settings.SESSION_AGE_TIME):
+        request.session.pop(session_key, None)
+        return None
+
+    # セッションの更新日時を更新して保存
+    session_data["updated_at"] = timezone.localtime(timezone.now()).isoformat()
+    request.session[session_key] = session_data
+
+    return session_data
 
 
 # =====================================================================================================

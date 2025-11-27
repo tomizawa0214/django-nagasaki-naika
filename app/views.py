@@ -1,12 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from django.views.generic import View
 
-from app.seo_meta import *
 from app.functions import *
+from app.seo_meta import *
 
 from .forms import *
-
 
 # =====================================================================================================
 # 初期設定
@@ -14,6 +14,8 @@ from .forms import *
 
 # セッション管理
 SESSION_KEY_APPOINTMENT = "appointment_data"
+SESSION_KEY_APPOINTMENT_DT = "appointment_datetime"
+
 
 # =====================================================================================================
 # マイページ
@@ -39,7 +41,7 @@ class AppointmentView(LoginRequiredMixin, View):
 
         # セッションを取得
         appointment_data = request.session.get(SESSION_KEY_APPOINTMENT, {})
-        
+
         # 保持している初診・再診の選択を初期値にする
         initial = {}
         if "visit" in appointment_data:
@@ -62,10 +64,11 @@ class AppointmentView(LoginRequiredMixin, View):
             # 初診or再診を取得
             visit = form.cleaned_data.get("visit")
 
+            # 現在日時を取得
+            created_at = timezone.localtime(timezone.now())
+
             # 入力値を辞書に格納
-            appointment_data = {
-                "visit": visit
-            }
+            appointment_data = {"visit": visit, "updated_at": created_at.isoformat()}
 
             # セッションに保存
             request.session[SESSION_KEY_APPOINTMENT] = appointment_data
@@ -93,10 +96,10 @@ class AppointmentQuestionnaireView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         # セッションを取得
-        appointment_data = request.session.get(SESSION_KEY_APPOINTMENT)
+        appointment_data = session_check(request, session_key=SESSION_KEY_APPOINTMENT)
 
-        # セッションが無ければ入力画面へリダイレクト
-        if not appointment_data:
+        # セッション判定
+        if appointment_data is None:
             return redirect("appointment")
 
         # フォームを取得
@@ -108,10 +111,10 @@ class AppointmentQuestionnaireView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
 
         # セッションを取得
-        appointment_data = request.session.get(SESSION_KEY_APPOINTMENT)
+        appointment_data = session_check(request, session_key=SESSION_KEY_APPOINTMENT)
 
-        # セッションが無ければ入力画面へリダイレクト
-        if not appointment_data:
+        # セッション判定
+        if appointment_data is None:
             return redirect("appointment")
 
         # フォームを取得
@@ -165,21 +168,21 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         # セッションを取得
-        appointment_data = request.session.get(SESSION_KEY_APPOINTMENT)
+        appointment_data = session_check(request, session_key=SESSION_KEY_APPOINTMENT)
 
-        # セッションが無ければ入力画面へリダイレクト
-        if not appointment_data:
+        # セッション判定
+        if appointment_data is None:
             return redirect("appointment")
 
         # 初診 or 再診を取得
         visit = appointment_data.get("visit")
 
         # 初診の場合の戻るボタン
-        if visit =="first":
+        if visit == "first":
             back_url = "appointment_questionnaire"
 
         # 再診の場合の戻るボタン
-        if visit =="return":
+        if visit == "return":
             back_url = "appointment"
 
         # カレンダーを取得
@@ -215,10 +218,10 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
 
         # セッションを取得
-        appointment_data = request.session.get(SESSION_KEY_APPOINTMENT)
+        appointment_data = session_check(request, session_key=SESSION_KEY_APPOINTMENT)
 
-        # セッションが無ければ入力画面へリダイレクト
-        if not appointment_data:
+        # セッション判定
+        if appointment_data is None:
             return redirect("appointment")
 
         # 初診 or 再診を取得
@@ -233,7 +236,7 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
             back_url = "appointment"
 
         # カレンダーを取得
-        calendar_data = build_calendar(request, session_key="appointment_datetime")
+        calendar_data = build_calendar(request, session_key=SESSION_KEY_APPOINTMENT_DT)
 
         # フォーム用の選択肢を格納
         choices = []

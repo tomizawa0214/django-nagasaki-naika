@@ -21,8 +21,10 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views import View
 
+from app.functions import *
 from app.seo_meta import *
 
 from .forms import *
@@ -160,6 +162,9 @@ class SignupView(views.SignupView):
         # バリデーションを実行
         if form.is_valid():
 
+            # 現在日時を取得
+            created_at = timezone.localtime(timezone.now())
+
             # 入力値を辞書に格納
             signup_data = {
                 "user_family_name": form.cleaned_data.get("user_family_name"),
@@ -172,6 +177,7 @@ class SignupView(views.SignupView):
                 "gender": form.cleaned_data.get("gender"),
                 "card_number": form.cleaned_data.get("card_number"),
                 "privacy": form.cleaned_data.get("privacy"),
+                "updated_at": created_at.isoformat(),
             }
 
             # セッションに保存
@@ -198,10 +204,10 @@ class SignupConfirmView(View):
     def get(self, request, *args, **kwargs):
 
         # セッションを取得
-        signup_data = request.session.get(SESSION_KEY_SIGNUP)
+        signup_data = session_check(request, session_key=SESSION_KEY_SIGNUP)
 
-        # セッションが無ければ入力画面へリダイレクト
-        if not signup_data:
+        # セッション判定
+        if signup_data is None:
             return redirect("account_signup")
 
         # 性別を出力用に変換
@@ -228,10 +234,10 @@ class SignupConfirmView(View):
     def post(self, request, *args, **kwargs):
 
         # セッションを取得
-        signup_data = request.session.get(SESSION_KEY_SIGNUP)
+        signup_data = session_check(request, session_key=SESSION_KEY_SIGNUP)
 
-        # セッションが無ければ入力画面へリダイレクト
-        if not signup_data:
+        # セッション判定
+        if signup_data is None:
             return redirect("account_signup")
 
         # フォームを取得
@@ -282,7 +288,7 @@ class SignupConfirmView(View):
                 return HttpResponse("メール送信に失敗しました")
 
             # セッションを削除
-            del request.session[SESSION_KEY_SIGNUP]
+            request.session.pop(SESSION_KEY_SIGNUP, None)
 
             # 認証画面へリダイレクト
             return redirect("signup_verify")
