@@ -37,8 +37,16 @@ class MypageView(LoginRequiredMixin, View):
 class AppointmentView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
+        # セッションを取得
+        appointment_data = request.session.get(SESSION_KEY_APPOINTMENT, {})
+        
+        # 保持している初診・再診の選択を初期値にする
+        initial = {}
+        if "visit" in appointment_data:
+            initial["visit"] = appointment_data["visit"]
+
         # フォームを取得
-        form = AppointmentVisitForm(request.POST or None)
+        form = AppointmentVisitForm(request.POST or None, initial=initial)
 
         # テンプレートを描画
         return render(request, "appointment.html", {**meta_appointment, "form": form})
