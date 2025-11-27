@@ -40,6 +40,7 @@ class CustomUserAdmin(UserAdmin):
     form = CustomUserChangeForm
     add_form = CustomUserCreateForm
 
+    # 一覧画面: 表示項目
     list_display = (
         "name",
         "email",
@@ -51,8 +52,14 @@ class CustomUserAdmin(UserAdmin):
         "display_updated_at",
         "is_active",
     )
+
+    # 一覧画面: 並び順
     ordering = ("-created_at",)
+
+    # 一覧画面: 検索項目
     search_fields = ("name", "email", "phone", "card_number")
+
+    # 一覧画面: 絞り込み項目
     list_filter = (
         (
             "created_at",
@@ -64,7 +71,11 @@ class CustomUserAdmin(UserAdmin):
         ),
         IsActiveFilter,
     )
+
+    # 一覧画面: 日付階層ナビゲーション
     date_hierarchy = "created_at"
+
+    # 一覧画面: 1ページあたりの表示件数
     list_per_page = 10000
 
     # 表示項目の定数

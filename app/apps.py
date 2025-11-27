@@ -4,4 +4,4 @@ from django.apps import AppConfig
 class AppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'app'
-    verbose_name = "長﨑医院ネット予約"
+    verbose_name = "予約・設定項目"

@@ -227,6 +227,21 @@ PREGNANCY_CHOICES = (
     ("possible", "妊娠の可能性"),
     ("breastfeeding", "授乳中"),
 )
+CLOSED_WEEKDAY_CHOICES = (
+    ("monday", "月曜日"),
+    ("tuesday", "火曜日"),
+    ("wednesday", "水曜日"),
+    ("thursday", "木曜日"),
+    ("friday", "金曜日"),
+    ("saturday", "土曜日"),
+    ("sunday", "日曜日"),
+    ("holiday", "祝日"),
+)
+CLOSED_TIME_CHOICES = (
+    ("morning", "午前休診"),
+    ("afternoon", "午後休診"),
+    ("all_day", "終日休診"),
+)
 
 # 診察時間帯を定義
 TIME_LIST = ["09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"]
