@@ -321,10 +321,11 @@ $(document)
 // ===================================================
 // 選択中のご来院日時の表示
 // ===================================================
-$(document).on('change', 'input[name="appointment_dt"]', function () {
-  const value = $(this).val()
-  
-  const dt = new Date(value)
+function appointmentDt() {
+  const $checked = $('input[name="appointment_dt"]:checked');
+  if (!$checked.length) return;
+
+  const dt = new Date($checked.val());
   const weekdays = ['日', '月', '火', '水', '木', '金', '土']
   const year = dt.getFullYear()
   const month = dt.getMonth() + 1
@@ -332,8 +333,12 @@ $(document).on('change', 'input[name="appointment_dt"]', function () {
   const weekday = weekdays[dt.getDay()]
   const hours = String(dt.getHours()).padStart(2, '0')
   const minutes = String(dt.getMinutes()).padStart(2, '0')
-  
+
   const selectedDtText = `${year}年${month}月${day}日（${weekday}） ${hours}：${minutes}〜`
 
   $('.js-appointment-dt').text(selectedDtText)
-})
+}
+
+$(document).on('change', 'input[name="appointment_dt"]', appointmentDt);
+$(window).on('pageshow', appointmentDt);
+$(appointmentDt);
