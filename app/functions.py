@@ -102,13 +102,13 @@ def build_calendar(request, session_key):
         date_data = start_date + timedelta(days=i)
 
         # 日付を文字列で取得
-        display_date = date_data.isoformat()
+        date_display = date_data.isoformat()
 
         # 曜日のインデックスを取得
         weekday_index = date_data.weekday()
 
         # 日付と曜日のクラス名を定義
-        if display_date in HOLIDAYS:
+        if date_display in HOLIDAYS:
             class_name = "c-calendar__text c-text--holiday"
         elif weekday_index == 5:
             class_name = "c-calendar__text c-text--saturday"
@@ -120,7 +120,7 @@ def build_calendar(request, session_key):
         # 1日分のデータを格納
         oneday = {
             "date_data": date_data,
-            "display_weekday": settings.WEEKDAYS[weekday_index],
+            "weekday_display": settings.WEEKDAYS[weekday_index],
             "class_name": class_name,
         }
 
@@ -132,11 +132,11 @@ def build_calendar(request, session_key):
 
             # 予約不可条件の判定（過去日 / 休診 / 臨時休診 / 夏季休診 / 年末年始休診）
             if (
-                display_date < tomorrow.isoformat()
-                or display_date in HOLIDAYS
-                or display_date in NEWYEAR_CLOSING
-                or display_date in SUMMER_CLOSING
-                or display_date in TEMP_CLOSING
+                date_display < tomorrow.isoformat()
+                or date_display in HOLIDAYS
+                or date_display in NEWYEAR_CLOSING
+                or date_display in SUMMER_CLOSING
+                or date_display in TEMP_CLOSING
             ):
                 status = "closed"
 
@@ -163,7 +163,7 @@ def build_calendar(request, session_key):
         month_list.append(
             {
                 "month_first": month_first,
-                "display_month": month_first.strftime("%Y年%-m月"),
+                "month_display": month_first.strftime("%Y年%-m月"),
             }
         )
 

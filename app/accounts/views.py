@@ -206,12 +206,12 @@ class SignupConfirmView(View):
 
         # 性別を出力用に変換
         gender_choices = dict(settings.GENDER_CHOICES)
-        display_gender = gender_choices.get(signup_data.get("gender"))
+        gender_display = gender_choices.get(signup_data.get("gender"))
 
         # 生年月日を出力用に変換
         birthdate_str = signup_data.get("birthdate")
         birthdate_dt = date.fromisoformat(birthdate_str)
-        display_birthdate = f"{birthdate_dt.year}年{birthdate_dt.month}月{birthdate_dt.day}日"
+        birthdate_display = f"{birthdate_dt.year}年{birthdate_dt.month}月{birthdate_dt.day}日"
 
         # テンプレートを描画
         return render(
@@ -220,8 +220,8 @@ class SignupConfirmView(View):
             {
                 **meta_signup_confirm,
                 **signup_data,
-                "display_gender": display_gender,
-                "display_birthdate": display_birthdate,
+                "gender_display": gender_display,
+                "birthdate_display": birthdate_display,
             },
         )
 

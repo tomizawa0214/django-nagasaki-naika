@@ -12,7 +12,7 @@
     <div class="c-calendar__month">
       <select class="c-calendar__select c-calendar__text js-display-month">
       {% for month in month_list %}
-        <option data-month-first-date="{{ month.month_first|date:'Y-m-d' }}" {% if current_month == month.month_first %}selected{% endif %}>{{ month.display_month }}</option>
+        <option data-month-first-date="{{ month.month_first|date:'Y-m-d' }}" {% if current_month == month.month_first %}selected{% endif %}>{{ month.month_display }}</option>
       {% endfor %}
       </select>
     </div>
@@ -30,7 +30,7 @@
             {% for day in appointment_dt_list %}
               <th>
                 <span class="c-calendar__date {{ day.class_name }}">{{ day.date_data|date:"j" }}</span>
-                <span class="c-calendar__weekday {{ day.class_name }}">{{ day.display_weekday }}</span>
+                <span class="c-calendar__weekday {{ day.class_name }}">{{ day.weekday_display }}</span>
               </th>
             {% endfor %}
           </tr>

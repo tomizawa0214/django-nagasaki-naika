@@ -48,8 +48,8 @@ class CustomUserAdmin(UserAdmin):
         "birthdate_with_age",
         "gender",
         "card_number",
-        "display_created_at",
-        "display_updated_at",
+        "created_at_display",
+        "updated_at_display",
         "is_active",
     )
 
@@ -81,7 +81,7 @@ class CustomUserAdmin(UserAdmin):
     # 表示項目の定数
     account = ("name", "email", "phone", "password", "birthdate", "gender", "card_number")
     auth = ("is_active", "is_staff")
-    access = ("display_last_login", "display_created_at", "display_updated_at")
+    access = ("last_login_display", "created_at_display", "updated_at_display")
 
     # 編集画面: 表示項目
     fieldsets = (
@@ -98,7 +98,7 @@ class CustomUserAdmin(UserAdmin):
     )
 
     # 編集画面: 表示のみ（編集不可）
-    readonly_fields = ("display_last_login", "display_created_at", "display_updated_at")
+    readonly_fields = ("last_login_display", "created_at_display", "updated_at_display")
 
     # 生年月日の表示形式を変更
     def birthdate_with_age(self, model):
@@ -113,27 +113,27 @@ class CustomUserAdmin(UserAdmin):
     birthdate_with_age.short_description = "生年月日"
 
     # 登録日時の表示形式を変更
-    def display_created_at(self, model):
+    def created_at_display(self, model):
         dt = timezone.localtime(model.created_at)
         return dt.strftime("%Y年%m月%d日 %H:%M")
 
-    display_created_at.short_description = "登録日時"
+    created_at_display.short_description = "登録日時"
 
     # 更新日時の表示形式を変更
-    def display_updated_at(self, model):
+    def updated_at_display(self, model):
         dt = timezone.localtime(model.updated_at)
         return dt.strftime("%Y年%m月%d日 %H:%M")
 
-    display_updated_at.short_description = "更新日時"
+    updated_at_display.short_description = "更新日時"
 
     # 最終ログイン日時の表示形式を変更
-    def display_last_login(self, model):
+    def last_login_display(self, model):
         if not model.last_login:
             return "-"
         dt = timezone.localtime(model.last_login)
         return dt.strftime("%Y年%m月%d日 %H:%M")
 
-    display_last_login.short_description = "最終ログイン"
+    last_login_display.short_description = "最終ログイン"
 
 
 admin.site.register(CustomUser, CustomUserAdmin)

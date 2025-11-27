@@ -21,7 +21,7 @@ class RegularClosingCustomAdmin(admin.ModelAdmin):
 
     # 表示項目の定数
     setting = ("weekday", "closed_hours")
-    access = ("display_created_at",)
+    access = ("created_at_display",)
 
     # 編集画面: 表示項目
     fieldsets = (
@@ -77,7 +77,7 @@ class SummerClosingCustomAdmin(admin.ModelAdmin):
 
     # 表示項目の定数
     setting = ("start_date", "end_date")
-    access = ("display_created_at",)
+    access = ("created_at_display",)
 
     # 編集画面: 表示項目
     fieldsets = (
@@ -127,7 +127,7 @@ class NewYearClosingCustomAdmin(admin.ModelAdmin):
 
     # 表示項目の定数
     setting = ("start_date", "end_date")
-    access = ("display_created_at",)
+    access = ("created_at_display",)
 
     # 編集画面: 表示項目
     fieldsets = (
@@ -178,7 +178,7 @@ class TempClosingCustomAdmin(admin.ModelAdmin):
 
     # 表示項目の定数
     setting = ("date", "closed_hours")
-    access = ("display_created_at",)
+    access = ("created_at_display",)
 
     # 編集画面: 表示項目
     fieldsets = (
