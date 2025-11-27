@@ -33,6 +33,10 @@
     font-weight: bold;
   }
 
+  &--center {
+    text-align: center;
+  }
+
   &--alert {
     font-weight: bold;
     color: map.get(color.$theme-colors, 'alert');

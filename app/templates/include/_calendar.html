@@ -64,9 +64,9 @@
     </dl>
     {# エラーメッセージ #}
     {% if form.appointment_dt.errors %}
-      <div class="js-form-error">
+      <div>
         {% for error in form.appointment_dt.errors %}
-          <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+          <p class="c-text c-text--sm c-text--alert c-text--center">{{ error }}</p>
         {% endfor %}
       </div>
     {% endif %}
