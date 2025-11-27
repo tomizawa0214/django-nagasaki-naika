@@ -7,12 +7,12 @@ from django.core.exceptions import ValidationError
 # 休診日
 # =====================================================================================================
 class RegularClosing(models.Model):
-    weekday = models.CharField("休診の曜日", choices=settings.CLOSED_WEEKDAY_CHOICES, max_length=10)
+    weekday = models.CharField("休診の曜日", choices=settings.CLOSED_WEEKDAY_CHOICES, max_length=10, unique=True)
     closed_hours = models.CharField(
         "休診の時間帯",
         max_length=10,
         choices=settings.CLOSED_TIME_CHOICES,
-        default="both",
+        default="all_day",
     )
     created_at = models.DateTimeField("変更日時", auto_now=True)
 
@@ -33,7 +33,7 @@ class SummerClosing(models.Model):
     created_at = models.DateTimeField("変更日時", auto_now=True)
 
     def __str__(self):
-        return f"{self.start_date.strftime("%Y年%m月%d日(%a)")}～{self.end_date.strftime("%Y年%m月%d日(%a)")}"
+        return f"{self.start_date.strftime("%Y年%-m月%-d日")}～{self.end_date.strftime("%Y年%-m月%-d日")}"
     
     # バリデーション
     def clean(self):
@@ -54,7 +54,7 @@ class NewYearClosing(models.Model):
     created_at = models.DateTimeField("変更日時", auto_now=True)
 
     def __str__(self):
-        return f"{self.start_date.strftime("%Y年%m月%d日(%a)")}～{self.end_date.strftime("%Y年%m月%d日(%a)")}"
+        return f"{self.start_date.strftime("%Y年%-m月%-d日")}～{self.end_date.strftime("%Y年%-m月%-d日")}"
     
     # バリデーション
     def clean(self):
@@ -71,17 +71,17 @@ class NewYearClosing(models.Model):
 # 臨時休診日
 # =====================================================================================================
 class TempClosing(models.Model):
-    date = models.DateField("臨時休診日")
+    date = models.DateField("臨時休診日", unique=True)
     closed_hours = models.CharField(
         "休診時間帯",
         max_length=10,
         choices=settings.CLOSED_TIME_CHOICES,
-        default="both",
+        default="all_day",
     )
     created_at = models.DateTimeField("変更日時", auto_now=True)
 
     def __str__(self):
-        return f"{self.date.strftime("%Y年%m月%d日(%a)")} ({self.get_closed_hours_display()})"
+        return f"{self.date.strftime("%Y年%-m月%-d日")} ({self.get_closed_hours_display()})"
 
     class Meta:
         verbose_name = "臨時休診日"

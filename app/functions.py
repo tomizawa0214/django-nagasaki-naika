@@ -4,6 +4,104 @@ from datetime import timedelta
 import jpholiday
 from django.conf import settings
 
+from .models import *
+
+
+# =====================================================================================================
+# 予約可否判定
+# =====================================================================================================
+def status_check(
+    date_data,
+    time_data,
+    tomorrow,
+    weekday_index,
+    regular_closing,
+    summer_closing,
+    new_year_closing,
+    temp_closing,
+    holiday_list,
+):
+
+    # 時間帯の午前判定
+    is_morning = time_data < "12:00"
+
+    # 初期値
+    status = "open"
+
+    # 今日以前は終日予約不可
+    if date_data < tomorrow:
+        status = "closed"
+
+    # 休診日（時間帯設定を考慮）
+    if status == "open":
+
+        # 曜日キーを取得
+        weekday_key = settings.MODEL_WEEKDAY_MAP.get(weekday_index)
+
+        # 休診日の設定を取得
+        for closing in regular_closing:
+
+            # 休診日の曜日一致 または 休診日の祝日一致かつ祝日の場合
+            if closing["weekday"] == weekday_key or (closing["weekday"] == "holiday" and date_data in holiday_list):
+
+                # 終日休診の場合は予約不可に設定
+                if closing["closed_hours"] == "all_day":
+                    status = "closed"
+
+                # 午前休診の場合は12:00以前であれば予約不可に設定
+                elif closing["closed_hours"] == "morning" and is_morning:
+                    status = "closed"
+
+                # 午後休診の場合は12:00以降であれば予約不可に設定
+                elif closing["closed_hours"] == "afternoon" and not is_morning:
+                    status = "closed"
+
+    # 夏季休診は終日予約不可
+    if status == "open":
+
+        # 夏季休診の設定を取得
+        for closing in summer_closing:
+
+            # 夏季休診期間内の場合は終日予約不可
+            if closing["start_date"] <= date_data <= closing["end_date"]:
+                status = "closed"
+                break
+
+    # 年末年始休診は終日予約不可
+    if status == "open":
+
+        # 年末年始休診の設定を取得
+        for closing in new_year_closing:
+
+            # 年末年始休診期間内の場合は終日予約不可
+            if closing["start_date"] <= date_data <= closing["end_date"]:
+                status = "closed"
+                break
+
+    # 臨時休診日（時間帯設定を考慮）
+    if status == "open":
+
+        # 臨時休診日の設定を取得
+        for closing in temp_closing:
+
+            # 臨時休診日に該当しない場合はスルー
+            if closing["date"] != date_data:
+                continue
+
+            # 終日休診の場合は予約不可に設定
+            if closing["closed_hours"] == "all_day":
+                status = "closed"
+
+            # 午前休診の場合は12:00以前であれば予約不可に設定
+            elif closing["closed_hours"] == "morning" and is_morning:
+                status = "closed"
+
+            # 午後休診の場合は12:00以降であれば予約不可に設定
+            elif closing["closed_hours"] == "afternoon" and not is_morning:
+                status = "closed"
+
+    return status
+
 
 # =====================================================================================================
 # 日時選択のカレンダー表示
@@ -23,39 +121,7 @@ def build_calendar(request, session_key):
     this_monday = today - timedelta(days=today.weekday())
 
     # 今日から60日間の祝日リスト
-    HOLIDAYS = [date.isoformat() for date, _ in jpholiday.between(today, today + timedelta(days=60))]
-
-    # 定期休診
-    REGULAR_CLOSING = []
-
-    # 夏季休診
-    SUMMER_CLOSING = [
-        "2026-08-10",
-        "2026-08-11",
-        "2026-08-12",
-        "2026-08-13",
-        "2026-08-14",
-        "2026-08-15",
-        "2026-08-16",
-        "2026-08-17",
-    ]
-
-    # 年末年始休診
-    NEWYEAR_CLOSING = [
-        "2025-12-29",
-        "2025-12-30",
-        "2025-12-31",
-        "2026-01-01",
-        "2026-01-02",
-        "2026-01-03",
-        "2026-01-04",
-        "2026-01-05",
-    ]
-
-    # 臨時休診
-    TEMP_CLOSING = [
-        "2025-11-28",
-    ]
+    holiday_list = [date for date, _ in jpholiday.between(today, today + timedelta(days=60))]
 
     # セッションからカレンダーの開始日を取得（セッションが無ければ今週の月曜日を開始日に設定）
     session_data = request.session.get(session_key, {})
@@ -101,14 +167,11 @@ def build_calendar(request, session_key):
         # 日付を取得
         date_data = start_date + timedelta(days=i)
 
-        # 日付を文字列で取得
-        date_display = date_data.isoformat()
-
         # 曜日のインデックスを取得
         weekday_index = date_data.weekday()
 
         # 日付と曜日のクラス名を定義
-        if date_display in HOLIDAYS:
+        if date_data in holiday_list:
             class_name = "c-calendar__text c-text--holiday"
         elif weekday_index == 5:
             class_name = "c-calendar__text c-text--saturday"
@@ -124,24 +187,25 @@ def build_calendar(request, session_key):
             "class_name": class_name,
         }
 
+        # 休診設定を辞書のリストに変換して取得
+        regular_closing = list(RegularClosing.objects.values("weekday", "closed_hours"))
+        summer_closing = list(SummerClosing.objects.values("start_date", "end_date"))
+        new_year_closing = list(NewYearClosing.objects.values("start_date", "end_date"))
+        temp_closing = list(TempClosing.objects.values("date", "closed_hours"))
+
         # 各診察時間ごとの予約可否判定
         for time_data in settings.TIME_LIST:
-
-            # 予約ステータスの初期値を定義
-            status = "open"
-
-            # 予約不可条件の判定（過去日 / 休診 / 臨時休診 / 夏季休診 / 年末年始休診）
-            if (
-                date_display < tomorrow.isoformat()
-                or date_display in HOLIDAYS
-                or date_display in NEWYEAR_CLOSING
-                or date_display in SUMMER_CLOSING
-                or date_display in TEMP_CLOSING
-            ):
-                status = "closed"
-
-            # 各時間帯の予約可否を格納
-            oneday[time_data] = status
+            oneday[time_data] = status_check(
+                date_data,
+                time_data,
+                tomorrow,
+                weekday_index,
+                regular_closing,
+                summer_closing,
+                new_year_closing,
+                temp_closing,
+                holiday_list,
+            )
 
         # 予約状況のリストに追加
         appointment_dt_list.append(oneday)

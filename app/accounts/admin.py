@@ -108,21 +108,21 @@ class CustomUserAdmin(UserAdmin):
             - model.birthdate.year
             - ((today.month, today.day) < (model.birthdate.month, model.birthdate.day))
         )
-        return f"{model.birthdate:%Y年%m月%d日}（{age}歳）"
+        return f"{model.birthdate:%Y年%-m月%-d日}（{age}歳）"
 
     birthdate_with_age.short_description = "生年月日"
 
     # 登録日時の表示形式を変更
     def created_at_display(self, model):
         dt = timezone.localtime(model.created_at)
-        return dt.strftime("%Y年%m月%d日 %H:%M")
+        return dt.strftime("%Y年%-m月%-d日 %H:%M")
 
     created_at_display.short_description = "登録日時"
 
     # 更新日時の表示形式を変更
     def updated_at_display(self, model):
         dt = timezone.localtime(model.updated_at)
-        return dt.strftime("%Y年%m月%d日 %H:%M")
+        return dt.strftime("%Y年%-m月%-d日 %H:%M")
 
     updated_at_display.short_description = "更新日時"
 
@@ -131,7 +131,7 @@ class CustomUserAdmin(UserAdmin):
         if not model.last_login:
             return "-"
         dt = timezone.localtime(model.last_login)
-        return dt.strftime("%Y年%m月%d日 %H:%M")
+        return dt.strftime("%Y年%-m月%-d日 %H:%M")
 
     last_login_display.short_description = "最終ログイン"
 

@@ -249,6 +249,17 @@ TIME_LIST = ["09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "15:00", "15:
 # 曜日を日本語の略称で定義
 WEEKDAYS = ["月", "火", "水", "木", "金", "土", "日"]
 
+# 各曜日とモデルの曜日フィールドのマッピング
+MODEL_WEEKDAY_MAP = {
+    0: "monday",
+    1: "tuesday",
+    2: "wednesday",
+    3: "thursday",
+    4: "friday",
+    5: "saturday",
+    6: "sunday",
+}
+
 try:
     from .local_settings import *
 except ImportError:
