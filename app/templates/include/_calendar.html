@@ -46,7 +46,7 @@
                 {# 予約可否 #}
                 <td class="c-calendar__status-cell c-calendar__status-cell--{{ status }}">
                   <label class="c-calendar__status-label c-calendar__status-label--{{ status }}">
-                    <input class="c-calendar__status-radio" type="radio" name="{{ form.appointment_dt.name }}" value="{{ day.date_data|date:'Y-m-d' }}T{{ time_data }}" {% if status == 'closed' %}disabled{% endif %}>
+                    <input class="c-calendar__status-radio" type="radio" name="{{ form.appointment_dt.name }}" value="{{ day.date_data|date:'Y-m-d' }}T{{ time_data }}" {% if form.initial.appointment_dt == day.date_data|date:'Y-m-d'|add:"T"|add:time_data %}checked{% endif %} {% if status == 'closed' %}disabled{% endif %}>
                     <span class="c-calendar__status c-calendar__status--{{ status }}" aria-label="{% if status == 'open' %}予約可{% elif status == 'limited' %}残りわずか{% else %}予約不可{% endif %}"></span>
                     <span class="c-calendar__status-box"></span>
                   </label>
