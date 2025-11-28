@@ -183,10 +183,10 @@ class SignupView(views.SignupView):
             # セッションに保存
             request.session[SESSION_KEY_SIGNUP] = signup_data
 
-            # 確認画面へリダイレクト
+            # 確認ページへリダイレクト
             return redirect("signup_confirm")
 
-        # バリデーション失敗の場合は入力画面にエラーを出力
+        # バリデーション失敗の場合は入力ページにエラーを出力
         return render(
             request,
             "account/signup.html",
@@ -291,10 +291,10 @@ class SignupConfirmView(View):
             # セッションを削除
             request.session.pop(SESSION_KEY_SIGNUP, None)
 
-            # 認証画面へリダイレクト
+            # 認証ページへリダイレクト
             return redirect("signup_verify")
 
-        # 仮にバリデーションが失敗する場合は入力画面へリダイレクト
+        # 仮にバリデーションが失敗する場合は入力ページへリダイレクト
         return redirect("account_signup")
 
 
@@ -453,7 +453,7 @@ class EmailChangeView(LoginRequiredMixin, View):
                 logger.exception("email change mail failed: %s", exc)
                 return HttpResponse("メール送信に失敗しました")
 
-            # 確認画面へリダイレクト
+            # 確認ページへリダイレクト
             return redirect("email_change_verify")
 
         # ログインユーザーのメールアドレスを取得
@@ -574,7 +574,7 @@ class PhoneChangeView(LoginRequiredMixin, View):
             request.user.phone = user_new_phone
             request.user.save()
 
-            # 確認画面へリダイレクト
+            # 確認ページへリダイレクト
             return redirect("phone_change_complete")
 
         # ログインユーザーの電話番号を取得
