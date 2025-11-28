@@ -42,7 +42,7 @@ class CustomUserAdmin(UserAdmin):
 
     # 一覧画面: 表示項目
     list_display = (
-        "name",
+        "name_display",
         "email",
         "phone",
         "birthdate_with_age",
@@ -57,7 +57,7 @@ class CustomUserAdmin(UserAdmin):
     ordering = ("-created_at",)
 
     # 一覧画面: 検索項目
-    search_fields = ("name", "email", "phone", "card_number")
+    search_fields = ("family_name", "first_name", "email", "phone", "card_number")
 
     # 一覧画面: 絞り込み項目
     list_filter = (
@@ -79,7 +79,7 @@ class CustomUserAdmin(UserAdmin):
     list_per_page = 10000
 
     # 表示項目の定数
-    account = ("name", "email", "phone", "password", "birthdate", "gender", "card_number")
+    account = ("family_name", "first_name", "email", "phone", "password", "birthdate", "gender", "card_number")
     auth = ("is_active", "is_staff")
     access = ("last_login_display", "created_at_display", "updated_at_display")
 
@@ -99,6 +99,12 @@ class CustomUserAdmin(UserAdmin):
 
     # 編集画面: 表示のみ（編集不可）
     readonly_fields = ("last_login_display", "created_at_display", "updated_at_display")
+
+    # 生年月日の表示形式を変更
+    def name_display(self, model):
+        return f"{model.family_name} {model.first_name}"
+
+    name_display.short_description = "お名前"
 
     # 生年月日の表示形式を変更
     def birthdate_with_age(self, model):

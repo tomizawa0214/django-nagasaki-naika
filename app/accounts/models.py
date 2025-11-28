@@ -27,7 +27,8 @@ class CustomUserManager(BaseUserManager):
 # カスタムユーザー
 # =====================================================================================================
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    name = models.CharField("お名前", max_length=100)
+    family_name = models.CharField("お名前 （姓）", max_length=100, default="")
+    first_name = models.CharField("お名前 （名）", max_length=100, default="")
     email = models.EmailField("メールアドレス", max_length=256, unique=True)
     phone = models.CharField("電話番号", max_length=13)
     birthdate = models.DateField("生年月日")
@@ -57,7 +58,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = "email"
 
     # ユーザー作成コマンドにおけるメールアドレス以外の必須項目の指定
-    REQUIRED_FIELDS = ["name", "phone", "birthdate", "gender"]
+    REQUIRED_FIELDS = ["family_name", "first_name", "phone", "birthdate", "gender"]
 
     # 管理画面の表示名
     class Meta:
@@ -66,7 +67,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     # 編集画面の表示名
     def __str__(self):
-        return self.name
+        return f"{self.family_name} {self.first_name}"
 
     # メールアドレスを正規化
     def clean(self):

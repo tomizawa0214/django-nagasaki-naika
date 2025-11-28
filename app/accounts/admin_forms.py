@@ -12,7 +12,8 @@ class CustomUserChangeForm(forms.ModelForm):
         fields = [
             "email",
             "password",
-            "name",
+            "family_name",
+            "first_name",
             "phone",
             "birthdate",
             "gender",
@@ -33,7 +34,8 @@ class CustomUserCreateForm(forms.ModelForm):
         model = CustomUser
         fields = [
             "email",
-            "name",
+            "family_name",
+            "first_name",
             "phone",
             "birthdate",
             "gender",
