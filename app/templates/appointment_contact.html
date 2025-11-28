@@ -18,52 +18,125 @@
       <p class="l-contents__lead c-text">以下の情報を入力してください。</p>
       <form class="l-form" action="" method="post">
       {% csrf_token %}
+        {# お名前 #}
         <div class="l-form__group l-form__group--two">
           <div>
             <label class="c-text c-label" for="user_family_name"><span class="c-required">必須</span>お名前 （姓）</label>
-            <input class="c-text c-input" type="text" id="user_family_name" name="user_family_name" value="長﨑" placeholder="長﨑" required autocomplete="family-name">
+            {% render_field form.user_family_name %}
+            {# エラーメッセージ #}
+            {% if form.user_family_name.errors %}
+              <div class="js-form-error">
+                {% for error in form.user_family_name.errors %}
+                  <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
           </div>
           <div>
             <label class="c-text c-label" for="user_first_name"><span class="c-required">必須</span>お名前 （名）</label>
-            <input class="c-text c-input" type="text" id="user_first_name" name="user_first_name" value="太郎" placeholder="太郎" required autocomplete="given-name">
+            {% render_field form.user_first_name %}
+            {# エラーメッセージ #}
+            {% if form.user_first_name.errors %}
+              <div class="js-form-error">
+                {% for error in form.user_first_name.errors %}
+                  <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
           </div>
         </div>
+        {# メールアドレス #}
         <div class="l-form__group">
           <label class="c-text c-label" for="email"><span class="c-required">必須</span>メールアドレス</label>
-          <input class="c-text c-input" type="email" id="email" name="email" value="nagasaki@example.jp" placeholder="nagasaki@example.jp" required autocomplete="email">
+          {% render_field form.email %}
+          {# エラーメッセージ #}
+          {% if form.email.errors %}
+            <div class="js-form-error">
+              {% for error in form.email.errors %}
+                <p class="c-text c-text--sm c-text--alert">{{ error|linebreaksbr }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
+        {# 電話番号 #}
         <div class="l-form__group">
           <label class="c-text c-label" for="phone"><span class="c-required">必須</span>電話番号</label>
-          <input class="c-text c-input" type="tel" id="phone" name="phone" inputmode="numeric" value="0272313274" placeholder="0272313274" required autocomplete="tel-national">
+          {% render_field form.phone %}
+          {# エラーメッセージ #}
+          {% if form.phone.errors %}
+            <div class="js-form-error">
+              {% for error in form.phone.errors %}
+                <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
+        {# 生年月日 #}
         <div class="l-form__group">
           <label class="c-text c-label" for="birthdate"><span class="c-required">必須</span>生年月日</label>
-          <input class="c-text c-input" type="date" id="birthdate" name="birthdate" value="1970-01-01" placeholder="YYYY-MM-DD" required autocomplete="bday">
+          {% render_field form.birthdate %}
+          {# エラーメッセージ #}
+          {% if form.birthdate.errors %}
+            <div class="js-form-error">
+              {% for error in form.birthdate.errors %}
+                <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
+        {# 性別 #}
         <div class="l-form__group">
           <fieldset>
             <legend class="c-text c-label"><span class="c-required">必須</span>性別</legend>
             <div class="l-form__radio-checkbox-group">
-              <label class="c-text" for="gender01">
-                <input class="c-radio" type="radio" name="gender" id="gender01" value="female" required>
-                <span>女性</span>
-              </label>
-              <label class="c-text" for="gender02">
-                <input class="c-radio" type="radio" name="gender" id="gender02" value="male" checked>
-                <span>男性</span>
-              </label>
+            {# 選択値を保持して描画 #}
+            {% with selected=form.gender.value %}
+              {% for value, label in form.gender.field.choices %}
+                <label class="c-text" for="gender{{ forloop.counter }}">
+                  <input class="c-radio" type="radio" name="{{ form.gender.name }}" id="gender{{ forloop.counter }}" value="{{ value }}" {% if selected == value %}checked{% endif %} required>
+                  <span>{{ label }}</span>
+                </label>
+              {% endfor %}
+            {% endwith %}
+            </div>
+            {# エラーメッセージ #}
+            {% if form.gender.errors %}
+              <div class="js-form-error">
+                {% for error in form.gender.errors %}
+                  <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
             </div>
           </fieldset>
         </div>
+        {# 診察券番号 #}
         <div class="l-form__group">
           <label class="c-text c-label" for="card-number"><span class="c-optional">任意</span>診察券番号</label>
-          <input class="c-text c-input" type="text" id="card-number" name="card_number" value="123456789" placeholder="000000000">
+          {% render_field form.card_number %}
+          {# エラーメッセージ #}
+          {% if form.card_number.errors %}
+            <div class="js-form-error">
+              {% for error in form.card_number.errors %}
+                <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
+        {# 個人情報のお取扱いについて #}
         <div class="l-form__group">
           <label class="c-text c-label"><span class="c-required">必須</span>個人情報のお取扱いについて</label>
           <span class="l-form__checkbox c-text">
-            <input class="c-checkbox" type="checkbox" name="privacy" value="1" required><a class="c-text c-link" href="/privacy.php" target="_blank" rel="noopener">プライバシーポリシー</a>に同意する
+            {% render_field form.privacy %}<a class="c-text c-link" href="{% url 'privacy' %}" target="_blank" rel="noopener">プライバシーポリシー</a>に同意する
           </span>
+          {# エラーメッセージ #}
+          {% if form.privacy.errors %}
+            <div class="js-form-error">
+              {% for error in form.privacy.errors %}
+                <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
         <div class="l-contents__button">
           <a class="c-button c-button--secondary" href="{% url 'appointment_datetime' %}">戻る</a>

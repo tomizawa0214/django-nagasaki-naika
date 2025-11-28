@@ -21,98 +21,9 @@ User = get_user_model()
 
 
 # =====================================================================================================
-# ログインフォーム
+# 共通フォーム
 # =====================================================================================================
-class CustomLoginForm(LoginForm):
-
-    # 属性値とエラーメッセージをカスタマイズ
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # メールアドレス
-        login = self.fields["login"]
-        login.label = "メールアドレス"
-        login.widget = forms.EmailInput(
-            attrs={
-                "class": "c-text c-input",
-                "id": "email",
-                "placeholder": "taro@example.jp",
-                "autocomplete": "email",
-            }
-        )
-        login.error_messages.update(
-            {
-                "required": "メールアドレスを入力してください。",
-                "invalid": "メールアドレスをもう一度ご確認ください。\n（全角文字や余分な空白がないかお確かめください）",
-            }
-        )
-
-        # パスワード
-        password = self.fields["password"]
-        password.label = "パスワード"
-        password.widget.attrs.update(
-            {
-                "class": "c-input",
-                "id": "password",
-                "placeholder": "パスワードを入力してください",
-                "autocomplete": "current-password",
-            }
-        )
-        password.error_messages.update(
-            {
-                "required": "パスワードを入力してください。",
-            }
-        )
-
-    # ログイン処理のカスタマイズ（デフォルトの関数を継承）
-    def _clean_with_password(self, credentials):
-
-        # メールとパスワードを認証してユーザーを取得
-        adapter = get_adapter(self.request)
-        user = adapter.authenticate(self.request, **credentials)
-
-        # ユーザーが存在 かつ is_active=False はアカウント無効
-        if user and not user.is_active:
-            raise adapter.validation_error("account_inactive")
-
-        # ユーザーが存在 かつ is_active=True はログイン可にする（レート制限はチェック）
-        if user:
-            login = Login(user=user, email=credentials.get("email"))
-            if flows.login.is_login_rate_limited(context.request, login):
-                raise adapter.validation_error("too_many_login_attempts")
-            self._login = login
-            self.user = user
-
-        # 認証に失敗はエラーメッセージ
-        else:
-            login_method = flows.login.derive_login_method(self.cleaned_data.get("login"))
-            raise adapter.validation_error(f"{login_method.value}_password_mismatch")
-        return self.cleaned_data
-
-
-# =====================================================================================================
-# パスワードリセットフォーム
-# =====================================================================================================
-class CustomPasswordResetForm(PasswordResetForm):
-
-    # 登録メールアドレスのバリデーション
-    def clean_email(self):
-
-        # 入力値を取得
-        email = self.cleaned_data.get("email")
-        
-        # 大文字・小文字の区別なくメールアドレスを参照
-        if not User.objects.filter(email__iexact=email, is_active=True).exists():
-            raise forms.ValidationError("このメールアドレスは登録がありません。")
-        return email
-
-
-# =====================================================================================================
-# 利用登録フォーム
-# =====================================================================================================
-class CustomSignupForm(SignupForm):
-
-    # 追加フィールド
+class BaseContactFieldsMixin(forms.Form):
     user_family_name = forms.CharField(
         label="お名前 （姓）",
         max_length=100,
@@ -197,17 +108,6 @@ class CustomSignupForm(SignupForm):
         error_messages={"required": "プライバシーポリシーへの同意が必要です。チェックを入れてください。"},
     )
 
-    # メールアドレスのバリデーション
-    def clean_email(self):
-
-        # 入力値を取得
-        email = self.cleaned_data.get("email")
-        
-        # 大文字・小文字の区別なくメールアドレスを参照
-        if User.objects.filter(email__iexact=email, is_active=True).exists():
-            raise forms.ValidationError("このメールアドレスはすでに別のアカウントで登録されています。")
-        return email
-
     # 電話番号のバリデーション
     def clean_phone(self):
 
@@ -267,6 +167,110 @@ class CustomSignupForm(SignupForm):
             raise forms.ValidationError("診察券番号は10桁以下で入力してください。")
 
         return card_number_data
+
+
+# =====================================================================================================
+# ログインフォーム
+# =====================================================================================================
+class CustomLoginForm(LoginForm):
+
+    # 属性値とエラーメッセージをカスタマイズ
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # メールアドレス
+        login = self.fields["login"]
+        login.label = "メールアドレス"
+        login.widget = forms.EmailInput(
+            attrs={
+                "class": "c-text c-input",
+                "id": "email",
+                "placeholder": "taro@example.jp",
+                "autocomplete": "email",
+            }
+        )
+        login.error_messages.update(
+            {
+                "required": "メールアドレスを入力してください。",
+                "invalid": "メールアドレスをもう一度ご確認ください。\n（全角文字や余分な空白がないかお確かめください）",
+            }
+        )
+
+        # パスワード
+        password = self.fields["password"]
+        password.label = "パスワード"
+        password.widget.attrs.update(
+            {
+                "class": "c-input",
+                "id": "password",
+                "placeholder": "パスワードを入力してください",
+                "autocomplete": "current-password",
+            }
+        )
+        password.error_messages.update(
+            {
+                "required": "パスワードを入力してください。",
+            }
+        )
+
+    # ログイン処理のカスタマイズ（デフォルトの関数を継承）
+    def _clean_with_password(self, credentials):
+
+        # メールとパスワードを認証してユーザーを取得
+        adapter = get_adapter(self.request)
+        user = adapter.authenticate(self.request, **credentials)
+
+        # ユーザーが存在 かつ is_active=False はアカウント無効
+        if user and not user.is_active:
+            raise adapter.validation_error("account_inactive")
+
+        # ユーザーが存在 かつ is_active=True はログイン可にする（レート制限はチェック）
+        if user:
+            login = Login(user=user, email=credentials.get("email"))
+            if flows.login.is_login_rate_limited(context.request, login):
+                raise adapter.validation_error("too_many_login_attempts")
+            self._login = login
+            self.user = user
+
+        # 認証に失敗はエラーメッセージ
+        else:
+            login_method = flows.login.derive_login_method(self.cleaned_data.get("login"))
+            raise adapter.validation_error(f"{login_method.value}_password_mismatch")
+        return self.cleaned_data
+
+
+# =====================================================================================================
+# パスワードリセットフォーム
+# =====================================================================================================
+class CustomPasswordResetForm(PasswordResetForm):
+
+    # 登録メールアドレスのバリデーション
+    def clean_email(self):
+
+        # 入力値を取得
+        email = self.cleaned_data.get("email")
+
+        # 大文字・小文字の区別なくメールアドレスを参照
+        if not User.objects.filter(email__iexact=email, is_active=True).exists():
+            raise forms.ValidationError("このメールアドレスは登録がありません。")
+        return email
+
+
+# =====================================================================================================
+# 利用登録フォーム
+# =====================================================================================================
+class CustomSignupForm(BaseContactFieldsMixin, SignupForm):
+
+    # メールアドレスのバリデーション
+    def clean_email(self):
+
+        # 入力値を取得
+        email = self.cleaned_data.get("email")
+
+        # 大文字・小文字の区別なくメールアドレスを参照
+        if User.objects.filter(email__iexact=email, is_active=True).exists():
+            raise forms.ValidationError("このメールアドレスはすでに別のアカウントで登録されています。")
+        return email
 
     # 属性値とエラーメッセージをカスタマイズ
     def __init__(self, *args, **kwargs):

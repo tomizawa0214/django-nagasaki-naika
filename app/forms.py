@@ -3,6 +3,7 @@ from datetime import timedelta
 
 from django import forms
 from django.conf import settings
+from .accounts.forms import *
 
 
 # =====================================================================================================
@@ -276,11 +277,20 @@ class AppointmentDatetimeForm(forms.Form):
 # =====================================================================================================
 # 連絡先フォーム
 # =====================================================================================================
-class AppointmentContactForm(forms.Form):
-    visit = forms.ChoiceField(
-        label="初診 / 再診",
-        choices=settings.VISIT_CHOICES,
-        widget=forms.widgets.RadioSelect,
-        initial="first",
-        error_messages={"required": "初診または再診を選択してください。"},
+class AppointmentContactForm(BaseContactFieldsMixin):
+    email = forms.EmailField(
+        label="メールアドレス",
+        max_length=100,
+        widget=forms.EmailInput(
+            attrs={
+                "class": "c-text c-input",
+                "id": "email",
+                "placeholder": "taro@example.jp",
+                "autocomplete": "email",
+            }
+        ),
+        error_messages={
+            "required": "メールアドレスを入力してください。",
+            "invalid": "メールアドレスをもう一度ご確認ください。\n・全角文字や余分な空白がないかお確かめください\n・古い形式のアドレスはご利用いただけない場合があります。別のメールアドレスをお試しください",
+        },
     )

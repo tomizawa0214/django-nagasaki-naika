@@ -3,14 +3,17 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.generic import View
 
-from app.functions import *
-from app.seo_meta import *
-
+from .accounts.forms import *
 from .forms import *
+from .functions import *
+from .seo_meta import *
 
 # =====================================================================================================
 # 初期設定
 # =====================================================================================================
+
+# 登録ユーザーを取得
+User = get_user_model()
 
 # セッション管理
 SESSION_KEY_APPOINTMENT = "appointment_data"
@@ -27,7 +30,7 @@ class MypageView(LoginRequiredMixin, View):
         user_data = request.user
 
         # ログインユーザーの名前を取得
-        user_name = user_data.name
+        user_name = f"{user_data.family_name} {user_data.first_name}"
 
         # テンプレートを描画
         return render(request, "mypage.html", {**meta_mypage, "user_name": user_name})
@@ -42,13 +45,15 @@ class AppointmentView(LoginRequiredMixin, View):
         # セッションを取得
         appointment_data = request.session.get(SESSION_KEY_APPOINTMENT, {})
 
-        # 保持している初診・再診の選択を初期値にする
+        # 初期値を初期化（ラジオボタンの初期値設定がある場合）
         initial = {}
+
+        # セッションの選択を初期値に設定（戻る操作時に対応）
         if "visit" in appointment_data:
             initial["visit"] = appointment_data["visit"]
 
         # フォームを取得
-        form = AppointmentVisitForm(request.POST or None, initial=initial)
+        form = AppointmentVisitForm(initial=initial)
 
         # テンプレートを描画
         return render(request, "appointment.html", {**meta_appointment, "form": form})
@@ -102,8 +107,38 @@ class AppointmentQuestionnaireView(LoginRequiredMixin, View):
         if appointment_data is None:
             return redirect("appointment")
 
+        # 初期値を初期化（ラジオボタンの初期値設定がある場合）
+        initial = {}
+
+        # セッションの選択を初期値に設定（戻る操作時に対応）
+        if "pregnancy" in appointment_data:
+            initial = {
+                "symptom": appointment_data.get("symptom"),
+                "symptom_other": appointment_data.get("symptom_other") or None,
+                "symptom_start": appointment_data.get("symptom_start"),
+                "medical_history": appointment_data.get("medical_history"),
+                "has_medical_history": appointment_data.get("has_medical_history") or None,
+                "under_treatment": appointment_data.get("under_treatment"),
+                "has_under_treatment": appointment_data.get("has_under_treatment") or None,
+                "current_medication": appointment_data.get("current_medication"),
+                "has_current_medication": appointment_data.get("has_current_medication") or None,
+                "smoking": appointment_data.get("smoking"),
+                "has_smoking_per_day": appointment_data.get("has_smoking_per_day") or None,
+                "has_smoking_years": appointment_data.get("has_smoking_years") or None,
+                "has_quit_smoking_years": appointment_data.get("has_quit_smoking_years") or None,
+                "has_until_smoking_years": appointment_data.get("has_until_smoking_years") or None,
+                "alcohol": appointment_data.get("alcohol"),
+                "alcohol_per_week": appointment_data.get("alcohol_per_week") or None,
+                "alcohol_type": appointment_data.get("alcohol_type") or None,
+                "alcohol_amount": appointment_data.get("alcohol_amount") or None,
+                "allergy": appointment_data.get("allergy"),
+                "has_allergy": appointment_data.get("has_allergy") or None,
+                "pregnancy": appointment_data.get("pregnancy"),
+                "especially": appointment_data.get("especially") or None,
+            }
+
         # フォームを取得
-        form = AppointmentQuestionnaireForm(request.POST or None)
+        form = AppointmentQuestionnaireForm(initial=initial)
 
         # テンプレートを描画
         return render(request, "appointment_questionnaire.html", {**meta_appointment_questionnaire, "form": form})
@@ -197,8 +232,12 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
                     label = f"{day['date_data']} {time_data}"
                     choices.append((value, label))
 
-        # フォームを取得
-        form = AppointmentDatetimeForm(request.POST or None)
+        # セッションの選択を初期値に設定（戻る操作時に対応）
+        appointment_dt = appointment_data.get("appointment_dt")
+        initial = {"appointment_dt": appointment_dt}
+
+        # フォームを取得（戻る操作時はセッションの選択を初期値に設定）
+        form = AppointmentDatetimeForm(initial=initial)
 
         # フォームの選択肢を定義
         form.fields["appointment_dt"].choices = choices
@@ -277,6 +316,92 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
                 **meta_appointment_datetime,
                 **calendar_data,
                 "back_url": back_url,
+                "form": form,
+            },
+        )
+
+
+# =====================================================================================================
+# 診察予約（連絡先入力）
+# =====================================================================================================
+class AppointmentContactView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+
+        # セッションを取得
+        appointment_data = session_check(request, session_key=SESSION_KEY_APPOINTMENT)
+
+        # セッション判定
+        if appointment_data is None:
+            return redirect("appointment")
+
+        # ログインユーザーを取得
+        user_data = request.user
+
+        # フォームの初期値を定義
+        initial = {
+            "user_family_name": user_data.family_name,
+            "user_first_name": user_data.first_name,
+            "email": user_data.email,
+            "phone": user_data.phone,
+            "birthdate": user_data.birthdate,
+            "gender": user_data.gender,
+            "card_number": user_data.card_number,
+        }
+
+        # フォームを取得
+        form = AppointmentContactForm(initial=initial)
+
+        # テンプレートを描画
+        return render(
+            request,
+            "appointment_contact.html",
+            {
+                **meta_appointment_contact,
+                "form": form,
+            },
+        )
+
+    def post(self, request, *args, **kwargs):
+
+        # セッションを取得
+        appointment_data = session_check(request, session_key=SESSION_KEY_APPOINTMENT)
+
+        # セッション判定
+        if appointment_data is None:
+            return redirect("appointment")
+
+        # フォームを取得
+        form = AppointmentContactForm(request.POST or None)
+
+        # バリデーションを実行
+        if form.is_valid():
+
+            # 入力値を辞書に格納
+            appointment_data.update(
+                {
+                    "user_family_name": form.cleaned_data.get("user_family_name"),
+                    "user_first_name": form.cleaned_data.get("user_first_name"),
+                    "email": form.cleaned_data.get("email"),
+                    "phone": form.cleaned_data.get("phone"),
+                    "birthdate": f"{form.cleaned_data.get('birthdate')}",
+                    "gender": form.cleaned_data.get("gender"),
+                    "card_number": form.cleaned_data.get("card_number") or None,
+                    "privacy": form.cleaned_data.get("privacy"),
+                }
+            )
+
+            # セッションに保存
+            request.session[SESSION_KEY_APPOINTMENT] = appointment_data
+
+            # 確認ページへリダイレクト
+            return redirect("appointment_confirm")
+
+        # テンプレートを描画
+        return render(
+            request,
+            "appointment_contact.html",
+            {
+                **meta_appointment_contact,
                 "form": form,
             },
         )
