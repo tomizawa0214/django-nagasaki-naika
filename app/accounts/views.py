@@ -171,11 +171,11 @@ class SignupView(views.SignupView):
                 "user_first_name": form.cleaned_data.get("user_first_name"),
                 "email": form.cleaned_data.get("email"),
                 "phone": form.cleaned_data.get("phone"),
-                "password1": form.cleaned_data("password1"),
-                "password2": form.cleaned_data("password1"),
+                "password1": form.cleaned_data.get("password1"),
+                "password2": form.cleaned_data.get("password1"),
                 "birthdate": f"{form.cleaned_data.get('birthdate')}",
                 "gender": form.cleaned_data.get("gender"),
-                "card_number": form.cleaned_data.get("card_number"),
+                "card_number": form.cleaned_data.get("card_number") or None,
                 "privacy": form.cleaned_data.get("privacy"),
                 "updated_at": created_at.isoformat(),
             }
@@ -252,7 +252,8 @@ class SignupConfirmView(View):
 
             # DB登録
             user_data = User()
-            user_data.name = f"{signup_data.get('user_family_name')} {signup_data.get('user_first_name')}"
+            user_data.family_name = signup_data.get("user_family_name")
+            user_data.first_name = signup_data.get("user_first_name")
             user_data.email = user_email
             user_data.phone = signup_data.get("phone")
             user_data.set_password(signup_data.get("password1"))
@@ -393,7 +394,7 @@ class EmailChangeView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         # フォームを取得
-        form = CustomEmailChangeForm(request.POST or None, current_email=request.user.email)
+        form = CustomEmailChangeForm(current_email=request.user.email)
 
         # ログインユーザーを取得
         user_data = request.user
@@ -536,7 +537,7 @@ class PhoneChangeView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         # フォームを取得
-        form = PhoneChangeForm(request.POST or None, current_phone=request.user.phone)
+        form = PhoneChangeForm(current_phone=request.user.phone)
 
         # ログインユーザーを取得
         user_data = request.user
