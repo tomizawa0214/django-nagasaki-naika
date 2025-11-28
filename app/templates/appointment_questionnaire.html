@@ -27,7 +27,7 @@
             {% with selected=form.symptom.value %}
               {% for value, label in form.symptom.field.choices %}
                 <label class="c-text" for="symptom{{ forloop.counter }}">
-                  <input class="c-checkbox{% if value == 'other' %} js-symptom-other{% endif %}" type="checkbox" name="{{ form.symptom.name }}" id="symptom{{ forloop.counter }}" value="{{ value }}" {% if selected and value in selected %}checked{% endif %} required>
+                  <input class="c-checkbox{% if value == 'other' %} js-symptom-other{% endif %}" type="checkbox" name="{{ form.symptom.name }}" id="symptom{{ forloop.counter }}" value="{{ value }}" {% if selected and value in selected %}checked{% endif %}>
                   <span>{{ label }}</span>
                 </label>
               {% endfor %}
