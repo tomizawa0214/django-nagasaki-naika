@@ -152,14 +152,14 @@ $('input[name="current_medication"]').change(toggleCurrentMedicationRadio)
 // ===================================================
 function toggleSmokingRadio() {
   if ($('.js-smoking').prop('checked')) {
-    $('.js-has-quit-smoking').fadeOut(0).prop('disabled', true)
-    $('.js-has-smoking').fadeIn(300).prop('disabled', false)
+    $('.js-has-quit-smoking').fadeOut(0).find('select, input').prop('disabled', true)
+    $('.js-has-smoking').fadeIn(300).find('select, input').prop('disabled', false)
   } else if ($('.js-quit-smoking').prop('checked')) {
-    $('.js-has-smoking').fadeOut(0).prop('disabled', true)
-    $('.js-has-quit-smoking').fadeIn(300).prop('disabled', false)
+    $('.js-has-smoking').fadeOut(0).find('select, input').prop('disabled', true)
+    $('.js-has-quit-smoking').fadeIn(300).find('select, input').prop('disabled', false)
   } else {
-    $('.js-has-smoking').fadeOut(300).prop('disabled', true)
-    $('.js-has-quit-smoking').fadeOut(300).prop('disabled', true)
+    $('.js-has-smoking').fadeOut(300).find('select, input').prop('disabled', true)
+    $('.js-has-quit-smoking').fadeOut(300).find('select, input').prop('disabled', true)
   }
 }
 $(function () {

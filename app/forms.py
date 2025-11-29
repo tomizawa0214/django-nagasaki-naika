@@ -116,7 +116,7 @@ class AppointmentQuestionnaireForm(forms.Form):
     )
     has_smoking_years = forms.ChoiceField(
         label="喫煙の期間",
-        choices=settings.SMOKING_YEARS_CHOICES,
+        choices=settings.YEARS_CHOICES,
         widget=forms.Select(
             attrs={
                 "class": "c-text c-select",
@@ -138,7 +138,7 @@ class AppointmentQuestionnaireForm(forms.Form):
     )
     has_until_smoking_years = forms.ChoiceField(
         label="禁煙するまでの喫煙期間",
-        choices=settings.UNTIL_SMOKING_YEARS_CHOICES,
+        choices=settings.YEARS_CHOICES,
         widget=forms.Select(
             attrs={
                 "class": "c-text c-select",
@@ -231,14 +231,8 @@ class AppointmentQuestionnaireForm(forms.Form):
         # 昨日
         yesterday = today - timedelta(days=1)
 
-        # 2日前
-        ago_2days = today - timedelta(days=2)
-
         # 3日前
         ago_3days = today - timedelta(days=3)
-
-        # 4日前
-        ago_4days = today - timedelta(days=4)
 
         # 6日前
         ago_6days = today - timedelta(days=6)
@@ -250,8 +244,8 @@ class AppointmentQuestionnaireForm(forms.Form):
             ("", "選択してください"),
             (today, "今日から"),
             (yesterday, "昨日から"),
-            (f"{ago_2days},{ago_3days}", "2〜3日前から"),
-            (f"{ago_4days},{ago_6days}", "4〜6日前から"),
+            (ago_3days, "2〜3日前から"),
+            (ago_6days, "4〜6日前から"),
             (gt_7days, "1週間以上前から"),
         )
         self.fields["symptom_start"].choices = choices

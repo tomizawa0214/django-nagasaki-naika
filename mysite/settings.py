@@ -207,14 +207,11 @@ SMOKING_CHOICES = (
 SMOKING_PER_DAY_CHOICES = (
     [("", "---")] + [(str(i), f"{i}本") for i in range(1, 20)] + [("20_over", "20本以上")]
 )
-SMOKING_YEARS_CHOICES = (
+YEARS_CHOICES = (
     [("", "---"), ("1_under", "1年未満")] + [(str(i), f"{i}年間") for i in range(2, 20)] + [("20_over", "20年以上")]
 )
 QUIT_SMOKING_YEARS_CHOICES = (
-    [("", "---")] + [(str(i), f"{i}本") for i in range(1, 20)] + [("20_over", "20本以上")]
-)
-UNTIL_SMOKING_YEARS_CHOICES = (
-    [("", "---"), ("1_under", "1年未満")] + [(str(i), f"{i}年間") for i in range(2, 20)] + [("20_over", "20年以上")]
+    [("", "---")] + [(str(i), f"{i}年") for i in range(1, 20)] + [("20_over", "20年以上")]
 )
 ALCOHOL_CHOICES = (
     ("no", "飲まない"),

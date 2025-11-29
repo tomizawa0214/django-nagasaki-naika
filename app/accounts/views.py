@@ -147,10 +147,10 @@ class SignupView(views.SignupView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         if self.request.method == "GET":
-            session_data = self.request.session.get(SESSION_KEY_SIGNUP)
-            if session_data:
+            signup_data = session_check(self.request, session_key=SESSION_KEY_SIGNUP)
+            if signup_data:
                 initial = kwargs.get("initial", {}).copy()
-                initial.update(session_data)
+                initial.update(signup_data)
                 kwargs["initial"] = initial
         return kwargs
 
@@ -210,15 +210,6 @@ class SignupConfirmView(View):
         if signup_data is None:
             return redirect("account_signup")
 
-        # 性別を出力用に変換
-        gender_choices = dict(settings.GENDER_CHOICES)
-        gender_display = gender_choices.get(signup_data.get("gender"))
-
-        # 生年月日を出力用に変換
-        birthdate_str = signup_data.get("birthdate")
-        birthdate_dt = date.fromisoformat(birthdate_str)
-        birthdate_display = f"{birthdate_dt.year}年{birthdate_dt.month}月{birthdate_dt.day}日"
-
         # テンプレートを描画
         return render(
             request,
@@ -226,8 +217,6 @@ class SignupConfirmView(View):
             {
                 **meta_signup_confirm,
                 **signup_data,
-                "gender_display": gender_display,
-                "birthdate_display": birthdate_display,
             },
         )
 

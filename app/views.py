@@ -43,7 +43,7 @@ class AppointmentView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         # セッションを取得
-        appointment_data = request.session.get(SESSION_KEY_APPOINTMENT, {})
+        appointment_data = session_check(request, session_key=SESSION_KEY_APPOINTMENT)
 
         # 初期値を初期化（ラジオボタンの初期値設定がある場合）
         initial = {}
@@ -348,6 +348,19 @@ class AppointmentContactView(LoginRequiredMixin, View):
             "card_number": user_data.card_number,
         }
 
+        # セッションの選択を初期値に設定（戻る操作時に対応）
+        if "privacy" in appointment_data:
+            initial = {
+                "user_family_name": appointment_data.get("user_family_name"),
+                "user_first_name": appointment_data.get("user_first_name"),
+                "email": appointment_data.get("email"),
+                "phone": appointment_data.get("phone"),
+                "birthdate": appointment_data.get("birthdate"),
+                "gender": appointment_data.get("gender"),
+                "card_number": appointment_data.get("card_number") or None,
+                "privacy": appointment_data.get("privacy"),
+            }
+
         # フォームを取得
         form = AppointmentContactForm(initial=initial)
 
@@ -405,6 +418,72 @@ class AppointmentContactView(LoginRequiredMixin, View):
                 "form": form,
             },
         )
+
+
+# =====================================================================================================
+# 診察予約（確認）
+# =====================================================================================================
+class AppointmentConfirmView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+
+        # セッションを取得
+        appointment_data = session_check(request, session_key=SESSION_KEY_APPOINTMENT)
+
+        print(appointment_data)
+
+        # セッション判定
+        if appointment_data is None:
+            return redirect("appointment")
+
+        # テンプレートを描画
+        return render(
+            request,
+            "appointment_confirm.html",
+            {
+                **meta_appointment_confirm,
+                **appointment_data,
+            },
+        )
+
+    def post(self, request, *args, **kwargs):
+
+        # セッションを取得
+        appointment_data = session_check(request, session_key=SESSION_KEY_APPOINTMENT)
+
+        # セッション判定
+        if appointment_data is None:
+            return redirect("appointment")
+
+        # フォームを取得
+        form = AppointmentContactForm(appointment_data)
+
+        # 予約可否を判定
+
+
+        # バリデーションを実行
+        if form.is_valid():
+
+            # DB登録
+            # user_data = User()
+            # user_data.family_name = signup_data.get("user_family_name")
+            # user_data.first_name = signup_data.get("user_first_name")
+            # user_data.email = user_email
+            # user_data.phone = signup_data.get("phone")
+            # user_data.set_password(signup_data.get("password1"))
+            # user_data.birthdate = signup_data.get("birthdate")
+            # user_data.gender = signup_data.get("gender")
+            # user_data.card_number = signup_data.get("card_number")
+            # user_data.is_active = False
+            # user_data.save()
+
+            # セッションを削除
+            request.session.pop(SESSION_KEY_APPOINTMENT, None)
+
+            # 完了ページへリダイレクト
+            return redirect("appointment_complete")
+
+        # 仮にバリデーションが失敗する場合は入力ページへリダイレクト
+        return redirect("appointment")
 
 
 # =====================================================================================================
