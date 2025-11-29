@@ -1,6 +1,5 @@
 import email.utils
 import logging
-from datetime import date
 
 from allauth.account import views
 from django.conf import settings
@@ -17,6 +16,7 @@ from django.contrib.auth.views import (
 )
 from django.core.mail import send_mail
 from django.core.signing import BadSignature, SignatureExpired, dumps, loads
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
@@ -173,7 +173,7 @@ class SignupView(views.SignupView):
                 "phone": form.cleaned_data.get("phone"),
                 "password1": form.cleaned_data.get("password1"),
                 "password2": form.cleaned_data.get("password1"),
-                "birthdate": f"{form.cleaned_data.get('birthdate')}",
+                "birthdate": form.cleaned_data.get("birthdate").isoformat(),
                 "gender": form.cleaned_data.get("gender"),
                 "card_number": form.cleaned_data.get("card_number") or None,
                 "privacy": form.cleaned_data.get("privacy"),
@@ -235,50 +235,58 @@ class SignupConfirmView(View):
         # バリデーションを実行
         if form.is_valid():
 
-            # 同じメールアドレスかつ仮登録のアカウントを削除（本登録忘れや入力間違いに対応）
-            user_email = signup_data["email"]
-            User.objects.filter(email__iexact=user_email, is_active=False).delete()
+            # トランザクション内でまとめて処理
+            with transaction.atomic():
 
-            # DB登録
-            user_data = User()
-            user_data.family_name = signup_data.get("user_family_name")
-            user_data.first_name = signup_data.get("user_first_name")
-            user_data.email = user_email
-            user_data.phone = signup_data.get("phone")
-            user_data.set_password(signup_data.get("password1"))
-            user_data.birthdate = signup_data.get("birthdate")
-            user_data.gender = signup_data.get("gender")
-            user_data.card_number = signup_data.get("card_number")
-            user_data.is_active = False
-            user_data.save()
+                # 同じメールアドレスかつ仮登録のアカウントを削除（本登録忘れや入力間違いに対応）
+                user_email = signup_data.get("email")
+                User.objects.filter(email__iexact=user_email, is_active=False).delete()
 
-            # メールに使用する変数
-            context = {
-                "base_url": settings.BASE_URL,
-                "token": dumps(user_data.pk),
-                "user_data": user_data,
-            }
-
-            # メール設定
-            subject = render_to_string("account/mail_template/signup_subject.txt", context)
-            message = render_to_string("account/mail_template/signup_message.txt", context)
-            from_email = email.utils.formataddr((settings.SITE_NAME, settings.EMAIL_HOST_USER))
-            to_list = [user_data.email]
-
-            # メール送信
-            try:
-                send_mail(
-                    subject=subject,
-                    message=message,
-                    from_email=from_email,
-                    recipient_list=to_list,
+                # ユーザー情報をセット
+                user_data = User(
+                    family_name=signup_data.get("user_family_name"),
+                    first_name=signup_data.get("user_first_name"),
+                    email=user_email,
+                    phone=signup_data.get("phone"),
+                    birthdate=signup_data.get("birthdate"),
+                    gender=signup_data.get("gender"),
+                    card_number=signup_data.get("card_number"),
+                    is_active=False,
                 )
-            except Exception as exc:
-                logger.exception("signup mail failed: %s", exc)
-                return HttpResponse("メール送信に失敗しました")
 
-            # セッションを削除
-            request.session.pop(SESSION_KEY_SIGNUP, None)
+                # パスワード登録処理
+                user_data.set_password(signup_data.get("password1"))
+
+                # 登録処理
+                user_data.save()
+
+                # メールに使用する変数
+                context = {
+                    "base_url": settings.BASE_URL,
+                    "token": dumps(user_data.pk),
+                    "user_data": user_data,
+                }
+
+                # メール設定
+                subject = render_to_string("account/mail_template/signup_subject.txt", context)
+                message = render_to_string("account/mail_template/signup_message.txt", context)
+                from_email = email.utils.formataddr((settings.SITE_NAME, settings.EMAIL_HOST_USER))
+                to_list = [user_data.email]
+
+                # メール送信
+                try:
+                    send_mail(
+                        subject=subject,
+                        message=message,
+                        from_email=from_email,
+                        recipient_list=to_list,
+                    )
+                except Exception as exc:
+                    logger.exception("signup mail failed: %s", exc)
+                    return HttpResponse("メール送信に失敗しました")
+
+                # セッションを削除
+                request.session.pop(SESSION_KEY_SIGNUP, None)
 
             # 認証ページへリダイレクト
             return redirect("signup_verify")
