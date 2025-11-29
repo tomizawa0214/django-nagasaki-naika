@@ -27,8 +27,8 @@ class CustomUserManager(BaseUserManager):
 # カスタムユーザー
 # =====================================================================================================
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    family_name = models.CharField("お名前 （姓）", max_length=100, default="")
-    first_name = models.CharField("お名前 （名）", max_length=100, default="")
+    family_name = models.CharField("お名前 （姓）", max_length=100)
+    first_name = models.CharField("お名前 （名）", max_length=100)
     email = models.EmailField("メールアドレス", max_length=256, unique=True)
     phone = models.CharField("電話番号", max_length=13)
     birthdate = models.DateField("生年月日")

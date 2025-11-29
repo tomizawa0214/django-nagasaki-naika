@@ -13,11 +13,10 @@ from .models import *
 # フィルターのテキスト変更
 # =====================================================================================================
 class IsActiveFilter(admin.SimpleListFilter):
-    title = "ログイン権限"  # サイドバーに表示される見出し
-    parameter_name = "is_active"  # URLクエリに使われるパラメータ名
+    title = "ログイン権限"
+    parameter_name = "is_active"
 
     def lookups(self, request, model_admin):
-        # 左側に表示する選択肢 (value, ラベル)
         return (
             ("1", "利用可"),
             ("0", "利用不可"),
@@ -49,7 +48,6 @@ class CustomUserAdmin(UserAdmin):
         "gender",
         "card_number",
         "created_at_display",
-        "updated_at_display",
         "is_active",
     )
 
@@ -100,7 +98,7 @@ class CustomUserAdmin(UserAdmin):
     # 編集画面: 表示のみ（編集不可）
     readonly_fields = ("last_login_display", "created_at_display", "updated_at_display")
 
-    # 生年月日の表示形式を変更
+    # お名前の表示形式を変更
     def name_display(self, model):
         return f"{model.family_name} {model.first_name}"
 

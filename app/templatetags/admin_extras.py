@@ -25,6 +25,8 @@ def sort_apps(app_list):
 # 一覧画面: モデルの順番指定
 # =====================================================================================================
 MODEL_ORDER = [
+    "Appointment",
+    "Questionnaire",
     "RegularClosing",
     "SummerClosing",
     "NewYearClosing",

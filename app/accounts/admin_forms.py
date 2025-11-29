@@ -4,6 +4,9 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from .models import CustomUser
 
 
+# =====================================================================================================
+# 編集画面: パスワード
+# =====================================================================================================
 class CustomUserChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField(label="パスワード")
 
@@ -26,6 +29,9 @@ class CustomUserChangeForm(forms.ModelForm):
         return self.initial.get("password")
 
 
+# =====================================================================================================
+# 新規画面: パスワード
+# =====================================================================================================
 class CustomUserCreateForm(forms.ModelForm):
     password1 = forms.CharField(label="パスワード", widget=forms.PasswordInput)
     password2 = forms.CharField(label="パスワード確認用", widget=forms.PasswordInput)

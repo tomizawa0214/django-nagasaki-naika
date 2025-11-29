@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.generic import View
@@ -43,7 +44,7 @@ class AppointmentView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         # セッションを取得
-        appointment_data = session_check(request, session_key=SESSION_KEY_APPOINTMENT)
+        appointment_data = session_check(request, session_key=SESSION_KEY_APPOINTMENT) or {}
 
         # 初期値を初期化（ラジオボタンの初期値設定がある場合）
         initial = {}
@@ -396,7 +397,7 @@ class AppointmentContactView(LoginRequiredMixin, View):
                     "user_first_name": form.cleaned_data.get("user_first_name"),
                     "email": form.cleaned_data.get("email"),
                     "phone": form.cleaned_data.get("phone"),
-                    "birthdate": f"{form.cleaned_data.get('birthdate')}",
+                    "birthdate": form.cleaned_data.get("birthdate").isoformat(),
                     "gender": form.cleaned_data.get("gender"),
                     "card_number": form.cleaned_data.get("card_number") or None,
                     "privacy": form.cleaned_data.get("privacy"),
@@ -465,7 +466,9 @@ class AppointmentConfirmView(LoginRequiredMixin, View):
         summer_closing = list(SummerClosing.objects.values("start_date", "end_date"))
         new_year_closing = list(NewYearClosing.objects.values("start_date", "end_date"))
         temp_closing = list(TempClosing.objects.values("date", "closed_hours"))
-        holiday_list = [date for date, _ in jpholiday.between(datetime.date.today(), datetime.date.today() + timedelta(days=60))]
+        holiday_list = [
+            date for date, _ in jpholiday.between(datetime.date.today(), datetime.date.today() + timedelta(days=60))
+        ]
 
         # 予約可否を判定
         status = status_check(
@@ -497,27 +500,120 @@ class AppointmentConfirmView(LoginRequiredMixin, View):
         # バリデーションを実行
         if form.is_valid():
 
-            # DB登録
-            # user_data = User()
-            # user_data.family_name = signup_data.get("user_family_name")
-            # user_data.first_name = signup_data.get("user_first_name")
-            # user_data.email = user_email
-            # user_data.phone = signup_data.get("phone")
-            # user_data.set_password(signup_data.get("password1"))
-            # user_data.birthdate = signup_data.get("birthdate")
-            # user_data.gender = signup_data.get("gender")
-            # user_data.card_number = signup_data.get("card_number")
-            # user_data.is_active = False
-            # user_data.save()
+            # 入力値を取得
+            visit = appointment_data.get("visit")
+            appointment_dt = timezone.make_aware(
+                datetime.datetime.fromisoformat(appointment_data["appointment_dt"]), timezone.get_current_timezone()
+            )
+            user_family_name = appointment_data.get("user_family_name")
+            user_first_name = appointment_data.get("user_first_name")
+            email = appointment_data.get("email")
+            phone = appointment_data.get("phone")
+            birthdate = datetime.date.fromisoformat(appointment_data["birthdate"])
+            gender = appointment_data.get("gender")
+            card_number = appointment_data.get("card_number") or None
 
-            # セッションを削除
-            request.session.pop(SESSION_KEY_APPOINTMENT, None)
+            # トランザクション内でまとめて処理
+            with transaction.atomic():
+
+                # 予約情報をセット
+                appointment_create = Appointment(
+                    user=request.user,
+                    visit=visit,
+                    appointment_dt=appointment_dt,
+                    family_name=user_family_name,
+                    first_name=user_first_name,
+                    email=email,
+                    phone=phone,
+                    birthdate=birthdate,
+                    gender=gender,
+                    card_number=card_number,
+                )
+
+                # 登録処理
+                appointment_create.save()
+
+                # 初診の場合
+                if visit == "first":
+
+                    # 入力値を取得
+                    symptom = appointment_data.get("symptom")
+                    symptom_other = appointment_data.get("symptom_other") or None
+                    symptom_start = datetime.date.fromisoformat(appointment_data["symptom_start"])
+                    medical_history = appointment_data.get("medical_history")
+                    has_medical_history = appointment_data.get("has_medical_history") or None
+                    under_treatment = appointment_data.get("under_treatment")
+                    has_under_treatment = appointment_data.get("has_under_treatment") or None
+                    current_medication = appointment_data.get("current_medication")
+                    has_current_medication = appointment_data.get("has_current_medication") or None
+                    smoking = appointment_data.get("smoking")
+                    has_smoking_per_day = appointment_data.get("has_smoking_per_day") or None
+                    has_smoking_years = appointment_data.get("has_smoking_years") or None
+                    has_quit_smoking_years = appointment_data.get("has_quit_smoking_years") or None
+                    has_until_smoking_years = appointment_data.get("has_until_smoking_years") or None
+                    alcohol = appointment_data.get("alcohol")
+                    alcohol_per_week = appointment_data.get("alcohol_per_week") or None
+                    alcohol_type = appointment_data.get("alcohol_type") or None
+                    alcohol_amount = appointment_data.get("alcohol_amount") or None
+                    allergy = appointment_data.get("allergy")
+                    has_allergy = appointment_data.get("has_allergy") or None
+                    pregnancy = appointment_data.get("pregnancy")
+                    especially = appointment_data.get("especially") or None
+
+                    # 問診票をセット
+                    questionnaire_create = Questionnaire(
+                        appointment=appointment_create,
+                        symptom=symptom,
+                        symptom_other=symptom_other,
+                        symptom_start=symptom_start,
+                        medical_history=medical_history,
+                        has_medical_history=has_medical_history,
+                        under_treatment=under_treatment,
+                        has_under_treatment=has_under_treatment,
+                        current_medication=current_medication,
+                        has_current_medication=has_current_medication,
+                        smoking=smoking,
+                        has_smoking_per_day=has_smoking_per_day,
+                        has_smoking_years=has_smoking_years,
+                        has_quit_smoking_years=has_quit_smoking_years,
+                        has_until_smoking_years=has_until_smoking_years,
+                        alcohol=alcohol,
+                        alcohol_per_week=alcohol_per_week,
+                        alcohol_type=alcohol_type,
+                        alcohol_amount=alcohol_amount,
+                        allergy=allergy,
+                        has_allergy=has_allergy,
+                        pregnancy=pregnancy,
+                        especially=especially,
+                    )
+
+                    # 登録処理
+                    questionnaire_create.save()
+
+                # セッションを削除
+                request.session.pop(SESSION_KEY_APPOINTMENT, None)
 
             # 完了ページへリダイレクト
             return redirect("appointment_complete")
 
         # 仮にバリデーションが失敗する場合は入力ページへリダイレクト
         return redirect("appointment")
+
+
+# =====================================================================================================
+# 診察予約（完了）
+# =====================================================================================================
+class AppointmentCompleteView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+
+        # テンプレートを描画
+        return render(
+            request,
+            "appointment_complete.html",
+            {
+                **meta_appointment_complete,
+            },
+        )
 
 
 # =====================================================================================================

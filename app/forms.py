@@ -98,7 +98,7 @@ class AppointmentQuestionnaireForm(forms.Form):
         required=False,
     )
     smoking = forms.ChoiceField(
-        label="喫煙",
+        label="煙草",
         choices=settings.SMOKING_CHOICES,
         widget=forms.widgets.RadioSelect,
         error_messages={"required": "いずれかを選択してください。"},
@@ -154,7 +154,7 @@ class AppointmentQuestionnaireForm(forms.Form):
         error_messages={"required": "いずれかを選択してください。"},
     )
     alcohol_per_week = forms.ChoiceField(
-        label="飲酒の頻度",
+        label="1週間の飲酒の頻度",
         choices=settings.ALCOHOL_PER_WEEK_CHOICES,
         widget=forms.Select(
             attrs={
