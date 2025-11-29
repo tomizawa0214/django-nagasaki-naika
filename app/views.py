@@ -33,8 +33,29 @@ class MypageView(LoginRequiredMixin, View):
         # ログインユーザーの名前を取得
         user_name = f"{user_data.family_name} {user_data.first_name}"
 
+        # 現在時刻を取得
+        dt_now = timezone.localtime(timezone.now())
+
+        # ログインユーザーの予約情報を取得
+        appointment_data = Appointment.objects.filter(user=user_data).order_by("-appointment_dt")
+
+        # 来院予定の予約情報
+        appointment_schedule = appointment_data.filter(appointment_dt__gte=dt_now)
+        
+        # 来院済みの予約情報
+        appointment_done = appointment_data.filter(appointment_dt__lt=dt_now)
+
         # テンプレートを描画
-        return render(request, "mypage.html", {**meta_mypage, "user_name": user_name})
+        return render(
+            request,
+            "mypage.html",
+            {
+                **meta_mypage,
+                "appointment_schedule": appointment_schedule,
+                "appointment_done": appointment_done,
+                "user_name": user_name,
+            },
+        )
 
 
 # =====================================================================================================
