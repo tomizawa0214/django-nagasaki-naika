@@ -491,6 +491,25 @@ class AppointmentConfirmView(LoginRequiredMixin, View):
             date for date, _ in jpholiday.between(datetime.date.today(), datetime.date.today() + timedelta(days=60))
         ]
 
+        # 来院日時のみをリストで取得
+        reservation_appointment_dt = Appointment.objects.values_list("appointment_dt", flat=True)
+
+        # 予約枠ごとの件数を格納する辞書を定義
+        reservation_map = {}
+        for appointment_dt in reservation_appointment_dt:
+
+            # 現在のタイムゾーンに変換
+            slot_dt = timezone.localtime(appointment_dt)
+
+            # 30分単位に切り捨て
+            slot_dt = slot_dt.replace(minute=(slot_dt.minute // 30) * 30, second=0, microsecond=0)
+
+            # 枠を表すキーを作成
+            key = (slot_dt.date(), slot_dt.time())
+
+            # 同枠に対して件数を加算
+            reservation_map[key] = reservation_map.get(key, 0) + 1
+
         # 予約可否を判定
         status = status_check(
             date_data=date_data,
@@ -502,6 +521,7 @@ class AppointmentConfirmView(LoginRequiredMixin, View):
             new_year_closing=new_year_closing,
             temp_closing=temp_closing,
             holiday_list=holiday_list,
+            reservation_map=reservation_map,
         )
 
         # 予約不可の場合
