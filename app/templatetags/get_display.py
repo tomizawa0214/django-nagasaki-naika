@@ -1,5 +1,4 @@
 import datetime
-from datetime import date
 
 from django import template
 from django.conf import settings
@@ -24,7 +23,16 @@ def gender_display(value):
 # =====================================================================================================
 @register.filter
 def date_display(value):
-    dt = date.fromisoformat(value)
+    date = datetime.date.fromisoformat(value)
+    return date
+
+
+# =====================================================================================================
+# datetime型
+# =====================================================================================================
+@register.filter
+def dt_display(value):
+    dt = datetime.datetime.fromisoformat(value)
     return dt
 
 
@@ -51,7 +59,7 @@ def symptom_display(values):
 # =====================================================================================================
 @register.filter
 def symptom_start_display(value):
-    dt = date.fromisoformat(value)
+    dt = datetime.date.fromisoformat(value)
     today = datetime.date.today()
     diff = (today - dt).days
     if diff == 0:

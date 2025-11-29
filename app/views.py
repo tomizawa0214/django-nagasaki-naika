@@ -429,8 +429,6 @@ class AppointmentConfirmView(LoginRequiredMixin, View):
         # セッションを取得
         appointment_data = session_check(request, session_key=SESSION_KEY_APPOINTMENT)
 
-        print(appointment_data)
-
         # セッション判定
         if appointment_data is None:
             return redirect("appointment")
@@ -457,8 +455,44 @@ class AppointmentConfirmView(LoginRequiredMixin, View):
         # フォームを取得
         form = AppointmentContactForm(appointment_data)
 
-        # 予約可否を判定
+        # 予約可否の判定用
+        dt = datetime.datetime.fromisoformat(appointment_data["appointment_dt"])
+        date_data = dt.date()
+        time_data = dt.strftime("%H:%M")
+        tomorrow = datetime.date.today() + timedelta(days=1)
+        weekday_index = date_data.weekday()
+        regular_closing = list(RegularClosing.objects.values("weekday", "closed_hours"))
+        summer_closing = list(SummerClosing.objects.values("start_date", "end_date"))
+        new_year_closing = list(NewYearClosing.objects.values("start_date", "end_date"))
+        temp_closing = list(TempClosing.objects.values("date", "closed_hours"))
+        holiday_list = [date for date, _ in jpholiday.between(datetime.date.today(), datetime.date.today() + timedelta(days=60))]
 
+        # 予約可否を判定
+        status = status_check(
+            date_data=date_data,
+            time_data=time_data,
+            tomorrow=tomorrow,
+            weekday_index=weekday_index,
+            regular_closing=regular_closing,
+            summer_closing=summer_closing,
+            new_year_closing=new_year_closing,
+            temp_closing=temp_closing,
+            holiday_list=holiday_list,
+        )
+
+        # 予約不可の場合
+        if status == "closed":
+
+            # テンプレートを描画
+            return render(
+                request,
+                "appointment_confirm.html",
+                {
+                    **meta_appointment_confirm,
+                    **appointment_data,
+                    "status": status,
+                },
+            )
 
         # バリデーションを実行
         if form.is_valid():
