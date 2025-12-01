@@ -204,11 +204,7 @@
               </div>
               <div class="l-confirm__group l-confirm__group--vertical">
                 <dt class="c-text">診察券番号</dt>
-                {% if card_number %}
-                  <dd class="c-text">{{ card_number }}</dd>
-                {% else %}
-                  <dd class="c-text">なし</dd>
-                {% endif %}
+                <dd class="c-text">{{ card_number|default:"なし" }}</dd>
               </div>
             </dl>
           </section>
