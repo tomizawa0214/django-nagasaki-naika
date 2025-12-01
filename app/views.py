@@ -253,10 +253,10 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
         # フォーム用の選択肢を格納
         choices = []
         for day in calendar_data["appointment_dt_list"]:
-            for time_data in settings.TIME_LIST:
-                if day[time_data] != "closed":
-                    value = f"{day['date_data'].isoformat()}T{time_data}"
-                    label = f"{day['date_data']} {time_data}"
+            for time_str in settings.TIME_LIST:
+                if day[time_str] != "closed":
+                    value = f"{day['date_obj'].isoformat()}T{time_str}"
+                    label = f"{day['date_obj']} {time_str}"
                     choices.append((value, label))
 
         # セッションの選択を初期値に設定（戻る操作時に対応）
@@ -311,10 +311,10 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
         # フォーム用の選択肢を格納
         choices = []
         for day in calendar_data["appointment_dt_list"]:
-            for time_data in settings.TIME_LIST:
-                if day[time_data] != "closed":
-                    value = f"{day['date_data'].isoformat()}T{time_data}"
-                    label = f"{day['date_data']} {time_data}"
+            for time_str in settings.TIME_LIST:
+                if day[time_str] != "closed":
+                    value = f"{day['date_obj'].isoformat()}T{time_str}"
+                    label = f"{day['date_obj']} {time_str}"
                     choices.append((value, label))
 
         # フォームを取得
@@ -489,49 +489,15 @@ class AppointmentConfirmView(LoginRequiredMixin, View):
 
         # 予約可否の判定用
         dt = datetime.datetime.fromisoformat(appointment_data["appointment_dt"])
-        date_data = dt.date()
-        time_data = dt.strftime("%H:%M")
-        tomorrow = datetime.date.today() + timedelta(days=1)
-        weekday_index = date_data.weekday()
-        regular_closing = list(RegularClosing.objects.values("weekday", "closed_hours"))
-        summer_closing = list(SummerClosing.objects.values("start_date", "end_date"))
-        new_year_closing = list(NewYearClosing.objects.values("start_date", "end_date"))
-        temp_closing = list(TempClosing.objects.values("date", "closed_hours"))
-        holiday_list = [
-            date for date, _ in jpholiday.between(datetime.date.today(), datetime.date.today() + timedelta(days=60))
-        ]
-
-        # 来院日時のみをリストで取得
-        reservation_appointment_dt = Appointment.objects.values_list("appointment_dt", flat=True)
-
-        # 予約枠ごとの件数を格納する辞書を定義
-        reservation_map = {}
-        for appointment_dt in reservation_appointment_dt:
-
-            # 現在のタイムゾーンに変換
-            slot_dt = timezone.localtime(appointment_dt)
-
-            # 30分単位に切り捨て
-            slot_dt = slot_dt.replace(minute=(slot_dt.minute // 30) * 30, second=0, microsecond=0)
-
-            # 枠を表すキーを作成
-            key = (slot_dt.date(), slot_dt.time())
-
-            # 同枠に対して件数を加算
-            reservation_map[key] = reservation_map.get(key, 0) + 1
+        date_obj = dt.date()
+        time_str = dt.strftime("%H:%M")
 
         # 予約可否を判定
         status = status_check(
-            date_data=date_data,
-            time_data=time_data,
-            tomorrow=tomorrow,
-            weekday_index=weekday_index,
-            regular_closing=regular_closing,
-            summer_closing=summer_closing,
-            new_year_closing=new_year_closing,
-            temp_closing=temp_closing,
-            holiday_list=holiday_list,
-            reservation_map=reservation_map,
+            date_obj=date_obj,
+            time_str=time_str,
+            closing_map=closing_map(),
+            reservation_map=reservation_map(),
         )
 
         # 予約不可の場合
@@ -700,10 +666,10 @@ class AppointmentEditDatetimeView(LoginRequiredMixin, View):
         # フォーム用の選択肢を格納
         choices = []
         for day in calendar_data["appointment_dt_list"]:
-            for time_data in settings.TIME_LIST:
-                if day[time_data] != "closed":
-                    value = f"{day['date_data'].isoformat()}T{time_data}"
-                    label = f"{day['date_data']} {time_data}"
+            for time_str in settings.TIME_LIST:
+                if day[time_str] != "closed":
+                    value = f"{day['date_obj'].isoformat()}T{time_str}"
+                    label = f"{day['date_obj']} {time_str}"
                     choices.append((value, label))
 
         # フォームを取得
@@ -746,10 +712,10 @@ class AppointmentEditDatetimeView(LoginRequiredMixin, View):
         # フォーム用の選択肢を格納
         choices = []
         for day in calendar_data["appointment_dt_list"]:
-            for time_data in settings.TIME_LIST:
-                if day[time_data] != "closed":
-                    value = f"{day['date_data'].isoformat()}T{time_data}"
-                    label = f"{day['date_data']} {time_data}"
+            for time_str in settings.TIME_LIST:
+                if day[time_str] != "closed":
+                    value = f"{day['date_obj'].isoformat()}T{time_str}"
+                    label = f"{day['date_obj']} {time_str}"
                     choices.append((value, label))
 
         # フォームを取得
@@ -794,7 +760,7 @@ class AppointmentEditDatetimeView(LoginRequiredMixin, View):
 
             # 完了ページへリダイレクト
             return redirect("appointment_edit_datetime_complete", pk=pk)
-
+        
         # テンプレートを描画
         return render(
             request,

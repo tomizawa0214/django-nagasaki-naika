@@ -29,7 +29,7 @@
             {# 日付ヘッダー #}
             {% for day in appointment_dt_list %}
               <th>
-                <span class="c-calendar__date {{ day.class_name }}">{{ day.date_data|date:"j" }}</span>
+                <span class="c-calendar__date {{ day.class_name }}">{{ day.date_obj|date:"j" }}</span>
                 <span class="c-calendar__weekday {{ day.class_name }}">{{ day.weekday_display }}</span>
               </th>
             {% endfor %}
@@ -37,16 +37,16 @@
         </thead>
         <tbody class="c-calendar__table-body">
         {# 時間帯ごとの予約可否 #}
-        {% for time_data in time_list %}
+        {% for time_str in time_list %}
           <tr>
             {# 時間帯 #}
-            <th class="c-text">{{ time_data }}</th>
+            <th class="c-text">{{ time_str }}</th>
             {% for day in appointment_dt_list %}
-              {% with status=day|get_item:time_data %}
+              {% with status=day|get_item:time_str %}
                 {# 予約可否 #}
                 <td class="c-calendar__status-cell c-calendar__status-cell--{{ status }}">
                   <label class="c-calendar__status-label c-calendar__status-label--{{ status }}">
-                    <input class="c-calendar__status-radio" type="radio" name="{{ form.appointment_dt.name }}" value="{{ day.date_data|date:'Y-m-d' }}T{{ time_data }}" {% if form.initial.appointment_dt == day.date_data|date:'Y-m-d'|add:"T"|add:time_data %}checked{% endif %} {% if status == 'closed' %}disabled{% endif %}>
+                    <input class="c-calendar__status-radio" type="radio" name="{{ form.appointment_dt.name }}" value="{{ day.date_obj|date:'Y-m-d' }}T{{ time_str }}" {% if form.initial.appointment_dt == day.date_obj|date:'Y-m-d'|add:"T"|add:time_str %}checked{% endif %} {% if status == 'closed' %}disabled{% endif %}>
                     <span class="c-calendar__status c-calendar__status--{{ status }}" aria-label="{% if status == 'open' %}予約可{% elif status == 'limited' %}残りわずか{% else %}予約不可{% endif %}"></span>
                     <span class="c-calendar__status-box"></span>
                   </label>
@@ -66,7 +66,7 @@
     {% if form.appointment_dt.errors %}
       <div>
         {% for error in form.appointment_dt.errors %}
-          <p class="c-text c-text--sm c-text--alert c-text--center">{{ error }}</p>
+          <p class="c-text c-text--sm c-text--alert c-text--center">{{ error|linebreaksbr }}</p>
         {% endfor %}
       </div>
     {% endif %}

@@ -264,7 +264,10 @@ class AppointmentDatetimeForm(forms.Form):
                 "class": "c-calendar__status-radio",
             },
         ),
-        error_messages={"required": "予約日時を選択してください。"},
+        error_messages={
+            "required": "予約日時を選択してください。",
+            "invalid_choice": "ご希望の日時ではご予約をお取りできませんでした。\n別の日時でもう一度お試しください。",
+        },
     )
 
 

@@ -3,217 +3,217 @@
 
 {% block content %}
   <main class="l-contents">
-    {# 予約不可 #}
-    {% if status == 'closed' %}
-      <div class="l-step">
-        <ol class="l-step__inner">
-          <li class="c-step done">初診 /<br class="only-sp"> 再診</li>
-          <li class="c-step done">問診票</li>
-          <li class="c-step done">日時<br class="only-sp">選択</li>
-          <li class="c-step done">連絡先<br class="only-sp">入力</li>
-          <li class="c-step current alert">失敗</li>
-        </ol>
+  {# 予約不可 #}
+  {% if status == 'closed' %}
+    <div class="l-step">
+      <ol class="l-step__inner">
+        <li class="c-step done">初診 /<br class="only-sp"> 再診</li>
+        <li class="c-step done">問診票</li>
+        <li class="c-step done">日時<br class="only-sp">選択</li>
+        <li class="c-step done">連絡先<br class="only-sp">入力</li>
+        <li class="c-step current alert">失敗</li>
+      </ol>
+    </div>
+    <section class="l-contents__inner">
+      <h1 class="l-contents__page-title c-title">予約失敗</h1>
+      <p class="l-contents__lead c-text">申し訳ございません。<br>ご希望の日時ではご予約を<br class="only-sp">お取りできませんでした。<br>別の日時でもう一度お試しください。</p>
+      <div class="l-contents__button">
+        <a class="c-button c-button--primary" href="{% url 'appointment_datetime' %}">別の日時を選択する</a>
       </div>
-      <section class="l-contents__inner">
-        <h1 class="l-contents__page-title c-title">予約失敗</h1>
-        <p class="l-contents__lead c-text">申し訳ございません。<br>ご希望の日時ではご予約を<br class="only-sp">お取りできませんでした。<br>別の日時でもう一度お試しください。</p>
-        <div class="l-contents__button">
-          <a class="c-button c-button--primary" href="{% url 'appointment_datetime' %}">別の日時を選択する</a>
-        </div>
-      </section>
-    {# 予約可 #}
-    {% else %}
-      <div class="l-step">
-        <ol class="l-step__inner">
-          <li class="c-step done">初診 /<br class="only-sp"> 再診</li>
-          <li class="c-step done">問診票</li>
-          <li class="c-step done">日時<br class="only-sp">選択</li>
-          <li class="c-step done">連絡先<br class="only-sp">入力</li>
-          <li class="c-step current">確認</li>
-          <li class="c-step">完了</li>
-        </ol>
-      </div>
-      <section class="l-contents__inner">
-        <h1 class="l-contents__page-title c-title">診察予約</h1>
-        <p class="l-contents__lead c-text">以下の内容で送信してよろしいですか？</p>
-        <form action="" method="post">
-        {% csrf_token %}
-          {# 診察情報 #}
-            <section class="l-contents__section">
-              <h2 class="c-heading c-text">診察情報</h2>
-              <dl>
-                {# 初診 または 再診 #}
-                <div class="l-confirm__group l-confirm__group--vertical">
-                  <dt class="c-text">初診 または 再診</dt>
-                  <dd class="c-text">{{ visit|visit_display }}</dd>
-                </div>
-                {# 予約日時 #}
-                <div class="l-confirm__group l-confirm__group--vertical">
-                  <dt class="c-text">ご来院日時</dt>
-                  <dd class="c-text">{{ appointment_dt|dt_display|date:'Y年n月j日(D) G:i' }}</dd>
-                </div>
-                {# 問診票 #}
-                {% if visit == 'first' %}
-                  {# 本日はどうなさいましたか？ #}
-                  <div class="l-confirm__group l-confirm__group--vertical">
-                    <dt class="c-text">本日はどうなさいましたか？</dt>
-                    <dd class="c-text">
-                      {{ symptom|symptom_display|join:"、 " }}
-                      {# その他 #}
-                      {% if "other" in symptom and symptom_other %} (
-                          {{ symptom_other }}
-                      )
-                      {% endif %}
-                    </dd>
-                  </div>
-                  {# 症状はいつ頃から #}
-                  <div class="l-confirm__group l-confirm__group--vertical">
-                    <dt class="c-text">症状はいつ頃からありますか？</dt>
-                    <dd class="c-text">
-                      {{ symptom_start|symptom_start_display }} (
-                        {{ symptom_start|date_display|date:'n月j日' }}頃
-                      )
-                    </dd>
-                  </div>
-                  {# 大きな病気での治療や手術 #}
-                  <div class="l-confirm__group l-confirm__group--vertical">
-                    <dt class="c-text">過去に大きな病気で治療や手術を受けられたことはありますか？</dt>
-                    <dd class="c-text">
-                      {{ medical_history|yes_or_no_display }}
-                      {# ある #}
-                      {% if medical_history == "yes" and has_medical_history %}
-                        <br>(
-                          {{ has_medical_history }}
-                        )
-                      {% endif %}
-                    </dd>
-                  </div>
-                  {# 治療中の病気 #}
-                  <div class="l-confirm__group l-confirm__group--vertical">
-                    <dt class="c-text">現在、治療中の病気はありますか？</dt>
-                    <dd class="c-text">
-                      {{ under_treatment|yes_or_no_display }}
-                      {# ある #}
-                      {% if under_treatment == "yes" and has_under_treatment %}
-                        <br>(
-                          {{ has_under_treatment }}
-                        )
-                      {% endif %}
-                    </dd>
-                  </div>
-                  {# 飲んでいるお薬 #}
-                  <div class="l-confirm__group l-confirm__group--vertical">
-                    <dt class="c-text">現在、飲んでいるお薬はありますか？</dt>
-                    <dd class="c-text">
-                      {{ current_medication|yes_or_no_display }}
-                      {# ある #}
-                      {% if current_medication == "yes" and has_current_medication %}
-                        <br>(
-                          {{ has_current_medication }}
-                        )
-                      {% endif %}
-                    </dd>
-                  </div>
-                  {# 喫煙、飲酒について #}
-                  <div class="l-confirm__group l-confirm__group--vertical">
-                    <dt class="c-text">喫煙、飲酒について教えてください。</dt>
-                    {# 煙草 #}
-                    <dd class="c-text">
-                      【煙草】 {{ smoking|smoking_display }}
-                        {# 吸う #}
-                        {% if smoking == "smoking" %}
-                          {% if has_smoking_per_day or has_smoking_years %}
-                            <br class="only-sp">(
-                              {% if has_smoking_per_day %}1日{{ has_smoking_per_day|smoking_per_day_display }}{% endif %}
-                              {% if has_smoking_per_day and has_smoking_years %}×{% endif %}
-                              {% if has_smoking_years %}{{ has_smoking_years|years_display }}{% endif %}
-                            )
-                          {% endif %}
-                        {# 禁煙した #}
-                        {% elif smoking == "quit-smoking" %}
-                          {% if has_quit_smoking_years or has_until_smoking_years %}
-                            <br class="only-sp">(
-                              {% if has_quit_smoking_years %}{{ has_quit_smoking_years|quit_smoking_years_display }}前から{% endif %}
-                              {% if has_quit_smoking_years and has_until_smoking_years %} / {% endif %}
-                              {% if has_until_smoking_years %}それまで{{ has_until_smoking_years|years_display }}喫煙{% endif %}
-                            )
-                          {% endif %}
-                        {% endif %}
-                    </dd>
-                    {# 飲酒 #}
-                    <dd class="c-text">
-                      【飲酒】 {{ alcohol|alcohol_display }}
-                      {# 飲む #}
-                      {% if alcohol == "yes" and alcohol_per_week or alcohol_type or alcohol_amount %}
-                        <br class="only-sp">(
-                          {% if alcohol_per_week %}週{{ alcohol_per_week|alcohol_per_week_display }}{% endif %}
-                          {% if alcohol_type %}{% if alcohol_per_week %} / {% endif %}種類: {{ alcohol_type }}{% endif %}
-                          {% if alcohol_amount %}{% if alcohol_per_week or alcohol_type %} / {% endif %}量: {{ alcohol_amount }}{% endif %}
-                        )
-                      {% endif %}
-                    </dd>
-                  </div>
-                  {# お薬・食べ物のアレルギー #}
-                  <div class="l-confirm__group l-confirm__group--vertical">
-                    <dt class="c-text">お薬・食べ物のアレルギーはありますか？</dt>
-                    <dd class="c-text">
-                      {{ allergy|yes_or_no_display }}
-                      {# ある #}
-                      {% if allergy == "yes" and has_allergy %}
-                        <br>
-                        ({{ has_allergy }})
-                      {% endif %}
-                    </dd>
-                  </div>
-                  {# 妊娠の可能性 #}
-                  <div class="l-confirm__group l-confirm__group--vertical">
-                    <dt class="c-text">現在、妊娠中あるいは妊娠の可能性、または授乳中ですか？</dt>
-                    <dd class="c-text">{{ pregnancy|pregnancy_display }}</dd>
-                  </div>
-                  {# 特に調べてほしいこと #}
-                  <div class="l-confirm__group l-confirm__group--vertical">
-                    <dt class="c-text">特に調べてほしいこと、検査、治療がありましたらご記入ください。</dt>
-                    <dd class="c-text">{{ especially|linebreaksbr }}</dd>
-                  </div>
-                {% endif %}
-              </dl>
-            </section>
-          {# 連絡先情報 #}
+    </section>
+  {# 予約可 #}
+  {% else %}
+    <div class="l-step">
+      <ol class="l-step__inner">
+        <li class="c-step done">初診 /<br class="only-sp"> 再診</li>
+        <li class="c-step done">問診票</li>
+        <li class="c-step done">日時<br class="only-sp">選択</li>
+        <li class="c-step done">連絡先<br class="only-sp">入力</li>
+        <li class="c-step current">確認</li>
+        <li class="c-step">完了</li>
+      </ol>
+    </div>
+    <section class="l-contents__inner">
+      <h1 class="l-contents__page-title c-title">診察予約</h1>
+      <p class="l-contents__lead c-text">以下の内容で送信してよろしいですか？</p>
+      <form action="" method="post">
+      {% csrf_token %}
+        {# 診察情報 #}
           <section class="l-contents__section">
-            <h2 class="c-heading c-text">連絡先情報</h2>
-            <dl class="l-confirm">
+            <h2 class="c-heading c-text">診察情報</h2>
+            <dl>
+              {# 初診 または 再診 #}
               <div class="l-confirm__group l-confirm__group--vertical">
-                <dt class="c-text">お名前</dt>
-                <dd class="c-text">{{ user_family_name }} {{ user_first_name }}</dd>
+                <dt class="c-text">初診 または 再診</dt>
+                <dd class="c-text">{{ visit|visit_display }}</dd>
               </div>
+              {# 予約日時 #}
               <div class="l-confirm__group l-confirm__group--vertical">
-                <dt class="c-text">メールアドレス</dt>
-                <dd class="c-text">{{ email }}</dd>
+                <dt class="c-text">ご来院日時</dt>
+                <dd class="c-text">{{ appointment_dt|dt_display|date:'Y年n月j日(D) G:i' }}</dd>
               </div>
-              <div class="l-confirm__group l-confirm__group--vertical">
-                <dt class="c-text">電話番号</dt>
-                <dd class="c-text">{{ phone }}</dd>
-              </div>
-              <div class="l-confirm__group l-confirm__group--vertical">
-                <dt class="c-text">生年月日</dt>
-                <dd class="c-text">{{ birthdate|date_display|date:'Y年n月j日' }}</dd>
-              </div>
-              <div class="l-confirm__group l-confirm__group--vertical">
-                <dt class="c-text">性別</dt>
-                <dd class="c-text">{{ gender|gender_display }}</dd>
-              </div>
-              <div class="l-confirm__group l-confirm__group--vertical">
-                <dt class="c-text">診察券番号</dt>
-                <dd class="c-text">{{ card_number|default:"なし" }}</dd>
-              </div>
+              {# 問診票 #}
+              {% if visit == 'first' %}
+                {# 本日はどうなさいましたか？ #}
+                <div class="l-confirm__group l-confirm__group--vertical">
+                  <dt class="c-text">本日はどうなさいましたか？</dt>
+                  <dd class="c-text">
+                    {{ symptom|symptom_display|join:"、 " }}
+                    {# その他 #}
+                    {% if "other" in symptom and symptom_other %} (
+                        {{ symptom_other }}
+                    )
+                    {% endif %}
+                  </dd>
+                </div>
+                {# 症状はいつ頃から #}
+                <div class="l-confirm__group l-confirm__group--vertical">
+                  <dt class="c-text">症状はいつ頃からありますか？</dt>
+                  <dd class="c-text">
+                    {{ symptom_start|symptom_start_display }} (
+                      {{ symptom_start|date_display|date:'n月j日' }}頃
+                    )
+                  </dd>
+                </div>
+                {# 大きな病気での治療や手術 #}
+                <div class="l-confirm__group l-confirm__group--vertical">
+                  <dt class="c-text">過去に大きな病気で治療や手術を受けられたことはありますか？</dt>
+                  <dd class="c-text">
+                    {{ medical_history|yes_or_no_display }}
+                    {# ある #}
+                    {% if medical_history == "yes" and has_medical_history %}
+                      <br>(
+                        {{ has_medical_history }}
+                      )
+                    {% endif %}
+                  </dd>
+                </div>
+                {# 治療中の病気 #}
+                <div class="l-confirm__group l-confirm__group--vertical">
+                  <dt class="c-text">現在、治療中の病気はありますか？</dt>
+                  <dd class="c-text">
+                    {{ under_treatment|yes_or_no_display }}
+                    {# ある #}
+                    {% if under_treatment == "yes" and has_under_treatment %}
+                      <br>(
+                        {{ has_under_treatment }}
+                      )
+                    {% endif %}
+                  </dd>
+                </div>
+                {# 飲んでいるお薬 #}
+                <div class="l-confirm__group l-confirm__group--vertical">
+                  <dt class="c-text">現在、飲んでいるお薬はありますか？</dt>
+                  <dd class="c-text">
+                    {{ current_medication|yes_or_no_display }}
+                    {# ある #}
+                    {% if current_medication == "yes" and has_current_medication %}
+                      <br>(
+                        {{ has_current_medication }}
+                      )
+                    {% endif %}
+                  </dd>
+                </div>
+                {# 喫煙、飲酒について #}
+                <div class="l-confirm__group l-confirm__group--vertical">
+                  <dt class="c-text">喫煙、飲酒について教えてください。</dt>
+                  {# 煙草 #}
+                  <dd class="c-text">
+                    【煙草】 {{ smoking|smoking_display }}
+                      {# 吸う #}
+                      {% if smoking == "smoking" %}
+                        {% if has_smoking_per_day or has_smoking_years %}
+                          <br class="only-sp">(
+                            {% if has_smoking_per_day %}1日{{ has_smoking_per_day|smoking_per_day_display }}{% endif %}
+                            {% if has_smoking_per_day and has_smoking_years %}×{% endif %}
+                            {% if has_smoking_years %}{{ has_smoking_years|years_display }}{% endif %}
+                          )
+                        {% endif %}
+                      {# 禁煙した #}
+                      {% elif smoking == "quit-smoking" %}
+                        {% if has_quit_smoking_years or has_until_smoking_years %}
+                          <br class="only-sp">(
+                            {% if has_quit_smoking_years %}{{ has_quit_smoking_years|quit_smoking_years_display }}前から{% endif %}
+                            {% if has_quit_smoking_years and has_until_smoking_years %} / {% endif %}
+                            {% if has_until_smoking_years %}それまで{{ has_until_smoking_years|years_display }}喫煙{% endif %}
+                          )
+                        {% endif %}
+                      {% endif %}
+                  </dd>
+                  {# 飲酒 #}
+                  <dd class="c-text">
+                    【飲酒】 {{ alcohol|alcohol_display }}
+                    {# 飲む #}
+                    {% if alcohol == "yes" and alcohol_per_week or alcohol_type or alcohol_amount %}
+                      <br class="only-sp">(
+                        {% if alcohol_per_week %}週{{ alcohol_per_week|alcohol_per_week_display }}{% endif %}
+                        {% if alcohol_type %}{% if alcohol_per_week %} / {% endif %}種類: {{ alcohol_type }}{% endif %}
+                        {% if alcohol_amount %}{% if alcohol_per_week or alcohol_type %} / {% endif %}量: {{ alcohol_amount }}{% endif %}
+                      )
+                    {% endif %}
+                  </dd>
+                </div>
+                {# お薬・食べ物のアレルギー #}
+                <div class="l-confirm__group l-confirm__group--vertical">
+                  <dt class="c-text">お薬・食べ物のアレルギーはありますか？</dt>
+                  <dd class="c-text">
+                    {{ allergy|yes_or_no_display }}
+                    {# ある #}
+                    {% if allergy == "yes" and has_allergy %}
+                      <br>
+                      ({{ has_allergy }})
+                    {% endif %}
+                  </dd>
+                </div>
+                {# 妊娠の可能性 #}
+                <div class="l-confirm__group l-confirm__group--vertical">
+                  <dt class="c-text">現在、妊娠中あるいは妊娠の可能性、または授乳中ですか？</dt>
+                  <dd class="c-text">{{ pregnancy|pregnancy_display }}</dd>
+                </div>
+                {# 特に調べてほしいこと #}
+                <div class="l-confirm__group l-confirm__group--vertical">
+                  <dt class="c-text">特に調べてほしいこと、検査、治療がありましたらご記入ください。</dt>
+                  <dd class="c-text">{{ especially|linebreaksbr }}</dd>
+                </div>
+              {% endif %}
             </dl>
           </section>
-          <div class="l-contents__button">
-            <a class="c-button c-button--secondary" href="{% url 'appointment_contact' %}">戻る</a>
-            <button class="c-button c-button--primary" type="submit" onclick="this.disabled = true; this.form.submit();">送信する</button>
-          </div>
-        </form>
-      </section>
-    {% endif %}
+        {# 連絡先情報 #}
+        <section class="l-contents__section">
+          <h2 class="c-heading c-text">連絡先情報</h2>
+          <dl class="l-confirm">
+            <div class="l-confirm__group l-confirm__group--vertical">
+              <dt class="c-text">お名前</dt>
+              <dd class="c-text">{{ user_family_name }} {{ user_first_name }}</dd>
+            </div>
+            <div class="l-confirm__group l-confirm__group--vertical">
+              <dt class="c-text">メールアドレス</dt>
+              <dd class="c-text">{{ email }}</dd>
+            </div>
+            <div class="l-confirm__group l-confirm__group--vertical">
+              <dt class="c-text">電話番号</dt>
+              <dd class="c-text">{{ phone }}</dd>
+            </div>
+            <div class="l-confirm__group l-confirm__group--vertical">
+              <dt class="c-text">生年月日</dt>
+              <dd class="c-text">{{ birthdate|date_display|date:'Y年n月j日' }}</dd>
+            </div>
+            <div class="l-confirm__group l-confirm__group--vertical">
+              <dt class="c-text">性別</dt>
+              <dd class="c-text">{{ gender|gender_display }}</dd>
+            </div>
+            <div class="l-confirm__group l-confirm__group--vertical">
+              <dt class="c-text">診察券番号</dt>
+              <dd class="c-text">{{ card_number|default:"なし" }}</dd>
+            </div>
+          </dl>
+        </section>
+        <div class="l-contents__button">
+          <a class="c-button c-button--secondary" href="{% url 'appointment_contact' %}">戻る</a>
+          <button class="c-button c-button--primary" type="submit" onclick="this.disabled = true; this.form.submit();">送信する</button>
+        </div>
+      </form>
+    </section>
+  {% endif %}
   </main>
 {% endblock %}

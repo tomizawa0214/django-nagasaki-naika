@@ -3,7 +3,6 @@ from datetime import timedelta
 
 import jpholiday
 from django.conf import settings
-from django.db.models import Count
 from django.utils import timezone
 
 from .models import *
@@ -37,42 +36,77 @@ def session_check(request, session_key):
 
 
 # =====================================================================================================
+# 休診設定の取得
+# =====================================================================================================
+def closing_map():
+    return {
+        "regular": list(RegularClosing.objects.values("weekday", "closed_hours")),
+        "summer": list(SummerClosing.objects.values("start_date", "end_date")),
+        "new_year": list(NewYearClosing.objects.values("start_date", "end_date")),
+        "temp": list(TempClosing.objects.values("date", "closed_hours")),
+        "holiday": [
+            date
+            for date, _ in jpholiday.between(
+                datetime.date.today(),
+                datetime.date.today() + timedelta(days=60),
+            )
+        ],
+    }
+
+# =====================================================================================================
+# 予約済み枠の取得
+# =====================================================================================================
+def reservation_map():
+
+    # 来院日時のみをリストで取得
+    reservation_appointment_dt = Appointment.objects.values_list("appointment_dt", flat=True)
+
+    # 予約枠ごとの件数を格納する辞書を定義
+    reservation_map = {}
+    for appointment_dt in reservation_appointment_dt:
+
+        # 現在のタイムゾーンに変換
+        slot_dt = timezone.localtime(appointment_dt)
+
+        # 30分単位に切り捨て
+        slot_dt = slot_dt.replace(minute=(slot_dt.minute // 30) * 30, second=0, microsecond=0)
+
+        # 枠を表すキーを作成
+        key = (slot_dt.date(), slot_dt.time())
+
+        # 同枠に対して件数を加算
+        reservation_map[key] = reservation_map.get(key, 0) + 1
+
+    return reservation_map
+
+# =====================================================================================================
 # 予約可否判定
 # =====================================================================================================
-def status_check(
-    date_data,
-    time_data,
-    tomorrow,
-    weekday_index,
-    regular_closing,
-    summer_closing,
-    new_year_closing,
-    temp_closing,
-    holiday_list,
-    reservation_map,
-):
+def status_check(date_obj, time_str, closing_map, reservation_map):
 
     # 時間帯の午前判定
-    is_morning = time_data < "12:00"
+    is_morning = time_str < "12:00"
 
     # 初期値
     status = "open"
 
     # 今日以前は終日予約不可
-    if date_data < tomorrow:
+    if date_obj < datetime.date.today() + timedelta(days=1):
         status = "closed"
 
     # 休診日（時間帯設定を考慮）
     if status == "open":
 
         # 曜日キーを取得
-        weekday_key = settings.MODEL_WEEKDAY_MAP.get(weekday_index)
+        weekday_key = settings.MODEL_WEEKDAY_MAP.get(date_obj.weekday())
 
         # 休診日の設定を取得
-        for closing in regular_closing:
+        for closing in closing_map.get("regular"):
 
             # 休診日の曜日一致 または 休診日の祝日一致かつ祝日の場合
-            if closing["weekday"] == weekday_key or (closing["weekday"] == "holiday" and date_data in holiday_list):
+            if closing["weekday"] == weekday_key or (
+                closing["weekday"] == "holiday" and date_obj in closing_map.get("holiday")
+            ):
 
                 # 終日休診の場合は予約不可に設定
                 if closing["closed_hours"] == "all_day":
@@ -90,10 +124,10 @@ def status_check(
     if status == "open":
 
         # 夏季休診の設定を取得
-        for closing in summer_closing:
+        for closing in closing_map.get("summer"):
 
             # 夏季休診期間内の場合は終日予約不可
-            if closing["start_date"] <= date_data <= closing["end_date"]:
+            if closing["start_date"] <= date_obj <= closing["end_date"]:
                 status = "closed"
                 break
 
@@ -101,10 +135,10 @@ def status_check(
     if status == "open":
 
         # 年末年始休診の設定を取得
-        for closing in new_year_closing:
+        for closing in closing_map.get("new_year"):
 
             # 年末年始休診期間内の場合は終日予約不可
-            if closing["start_date"] <= date_data <= closing["end_date"]:
+            if closing["start_date"] <= date_obj <= closing["end_date"]:
                 status = "closed"
                 break
 
@@ -112,10 +146,10 @@ def status_check(
     if status == "open":
 
         # 臨時休診日の設定を取得
-        for closing in temp_closing:
+        for closing in closing_map.get("temp"):
 
             # 臨時休診日に該当しない場合はスルー
-            if closing["date"] != date_data:
+            if closing["date"] != date_obj:
                 continue
 
             # 終日休診の場合は予約不可に設定
@@ -132,10 +166,10 @@ def status_check(
 
     # 予約枠の残数を確認（30分枠に対して最大3件）
     if status == "open":
-        target_time = datetime.time.fromisoformat(time_data)
+        target_time = datetime.time.fromisoformat(time_str)
 
         # 既存予約の件数を取得
-        reserved_count = reservation_map.get((date_data, target_time), 0)
+        reserved_count = reservation_map.get((date_obj, target_time), 0)
 
         # 予約不可
         if reserved_count >= 3:
@@ -165,9 +199,6 @@ def build_calendar(request, session_key):
     # 今週の月曜日
     this_monday = today - timedelta(days=today.weekday())
 
-    # 今日から60日間の祝日リスト
-    holiday_list = [date for date, _ in jpholiday.between(today, today + timedelta(days=60))]
-
     # セッションからカレンダーの開始日を取得（セッションが無ければ今週の月曜日を開始日に設定）
     session_data = request.session.get(session_key, {})
     session_start_date = session_data.get("start_date")
@@ -182,7 +213,6 @@ def build_calendar(request, session_key):
 
     # 次の週がクリックされた場合はカレンダーの開始日を+7日する
     if request.method == "POST" and "next_days" in request.POST:
-        print("ここ")
         start_date += timedelta(days=7)
 
     # 表示月のプルダウンを手動で切り替えた場合
@@ -206,43 +236,18 @@ def build_calendar(request, session_key):
     # 開始日の月の初日を取得
     current_month = start_date.replace(day=1)
 
-    # 休診設定を辞書のリストに変換して取得
-    regular_closing = list(RegularClosing.objects.values("weekday", "closed_hours"))
-    summer_closing = list(SummerClosing.objects.values("start_date", "end_date"))
-    new_year_closing = list(NewYearClosing.objects.values("start_date", "end_date"))
-    temp_closing = list(TempClosing.objects.values("date", "closed_hours"))
-
-    # 来院日時のみをリストで取得
-    reservation_appointment_dt = Appointment.objects.values_list("appointment_dt", flat=True)
-
-    # 予約枠ごとの件数を格納する辞書を定義
-    reservation_map = {}
-    for appointment_dt in reservation_appointment_dt:
-
-        # 現在のタイムゾーンに変換
-        slot_dt = timezone.localtime(appointment_dt)
-
-        # 30分単位に切り捨て
-        slot_dt = slot_dt.replace(minute=(slot_dt.minute // 30) * 30, second=0, microsecond=0)
-
-        # 枠を表すキーを作成
-        key = (slot_dt.date(), slot_dt.time())
-
-        # 同枠に対して件数を加算
-        reservation_map[key] = reservation_map.get(key, 0) + 1
-
     # 開始日から1週間分を取得してリストに格納
     appointment_dt_list = []
     for i in range(7):
 
         # 日付を取得
-        date_data = start_date + timedelta(days=i)
+        date_obj = start_date + timedelta(days=i)
 
         # 曜日のインデックスを取得
-        weekday_index = date_data.weekday()
+        weekday_index = date_obj.weekday()
 
         # 日付と曜日のクラス名を定義
-        if date_data in holiday_list:
+        if date_obj in closing_map().get("holiday"):
             class_name = "c-calendar__text c-text--holiday"
         elif weekday_index == 5:
             class_name = "c-calendar__text c-text--saturday"
@@ -253,24 +258,18 @@ def build_calendar(request, session_key):
 
         # 1日分のデータを格納
         oneday = {
-            "date_data": date_data,
+            "date_obj": date_obj,
             "weekday_display": settings.WEEKDAYS[weekday_index],
             "class_name": class_name,
         }
 
         # 各診察時間ごとの予約可否判定
-        for time_data in settings.TIME_LIST:
-            oneday[time_data] = status_check(
-                date_data=date_data,
-                time_data=time_data,
-                tomorrow=tomorrow,
-                weekday_index=weekday_index,
-                regular_closing=regular_closing,
-                summer_closing=summer_closing,
-                new_year_closing=new_year_closing,
-                temp_closing=temp_closing,
-                holiday_list=holiday_list,
-                reservation_map=reservation_map,
+        for time_str in settings.TIME_LIST:
+            oneday[time_str] = status_check(
+                date_obj=date_obj,
+                time_str=time_str,
+                closing_map=closing_map(),
+                reservation_map=reservation_map(),
             )
 
         # 予約状況のリストに追加
