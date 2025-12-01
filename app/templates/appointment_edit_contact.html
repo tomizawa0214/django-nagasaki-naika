@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+  <main class="l-contents">
+    <div class="l-step">
+      <ol class="l-step__inner">
+        <li class="c-step current">連絡先変更</li>
+        <li class="c-step">確認</li>
+        <li class="c-step">完了</li>
+      </ol>
+    </div>
+    <section class="l-contents__inner">
+      <h1 class="l-contents__page-title c-title">連絡先変更</h1>
+      <p class="l-contents__lead c-text">現在のご予約情報が入力されています。<br>変更が必要な箇所のみ修正してください。</p>
+      <form class="l-form" action="" method="post">
+      {% csrf_token %}
+        {# お名前 #}
+        <div class="l-form__group l-form__group--two">
+          <div>
+            <label class="c-text c-label" for="user_family_name">お名前 （姓）</label>
+            {% render_field form.user_family_name %}
+            {# エラーメッセージ #}
+            {% if form.user_family_name.errors %}
+              <div class="js-form-error">
+                {% for error in form.user_family_name.errors %}
+                  <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <div>
+            <label class="c-text c-label" for="user_first_name">お名前 （名）</label>
+            {% render_field form.user_first_name %}
+            {# エラーメッセージ #}
+            {% if form.user_first_name.errors %}
+              <div class="js-form-error">
+                {% for error in form.user_first_name.errors %}
+                  <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        {# メールアドレス #}
+        <div class="l-form__group">
+          <label class="c-text c-label" for="email">メールアドレス</label>
+          {% render_field form.email %}
+          {# エラーメッセージ #}
+          {% if form.email.errors %}
+            <div class="js-form-error">
+              {% for error in form.email.errors %}
+                <p class="c-text c-text--sm c-text--alert">{{ error|linebreaksbr }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        {# 電話番号 #}
+        <div class="l-form__group">
+          <label class="c-text c-label" for="phone">電話番号</label>
+          {% render_field form.phone %}
+          {# エラーメッセージ #}
+          {% if form.phone.errors %}
+            <div class="js-form-error">
+              {% for error in form.phone.errors %}
+                <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        {# 生年月日 #}
+        <div class="l-form__group">
+          <label class="c-text c-label" for="birthdate">生年月日</label>
+          {% render_field form.birthdate %}
+          {# エラーメッセージ #}
+          {% if form.birthdate.errors %}
+            <div class="js-form-error">
+              {% for error in form.birthdate.errors %}
+                <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        {# 性別 #}
+        <div class="l-form__group">
+          <fieldset>
+            <legend class="c-text c-label">性別</legend>
+            <div class="l-form__radio-checkbox-group">
+            {# 選択値を保持して描画 #}
+            {% with selected=form.gender.value %}
+              {% for value, label in form.gender.field.choices %}
+                <label class="c-text" for="gender{{ forloop.counter }}">
+                  <input class="c-radio" type="radio" name="{{ form.gender.name }}" id="gender{{ forloop.counter }}" value="{{ value }}" {% if selected == value %}checked{% endif %} required>
+                  <span>{{ label }}</span>
+                </label>
+              {% endfor %}
+            {% endwith %}
+            </div>
+            {# エラーメッセージ #}
+            {% if form.gender.errors %}
+              <div class="js-form-error">
+                {% for error in form.gender.errors %}
+                  <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+            </div>
+          </fieldset>
+        </div>
+        {# 診察券番号 #}
+        <div class="l-form__group">
+          <label class="c-text c-label" for="card-number">診察券番号</label>
+          {% render_field form.card_number %}
+          {# エラーメッセージ #}
+          {% if form.card_number.errors %}
+            <div class="js-form-error">
+              {% for error in form.card_number.errors %}
+                <p class="c-text c-text--sm c-text--alert">{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        {# プライバシーポリシーは常に同意 #}
+        {{ form.privacy }}
+        <div class="l-contents__button">
+          <a class="c-button c-button--secondary" href="{% url 'appointment_detail' pk %}">戻る</a>
+          <button class="c-button c-button--primary" type="submit">確認画面へ進む</button>
+        </div>
+      </form>
+    </section>
+  </main>
+{% endblock %}

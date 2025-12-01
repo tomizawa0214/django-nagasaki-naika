@@ -694,19 +694,6 @@ class AppointmentDetailView(LoginRequiredMixin, View):
 class AppointmentEditDatetimeView(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
 
-        # # セッションを取得
-        # appointment_edit = session_check(request, session_key=SESSION_KEY_APPOINTMENT_EDIT)
-
-        # # セッション判定
-        # if appointment_edit is None:
-        #     return redirect("appointment_detail", pk=pk)
-
-        # # 現在日時を取得
-        # created_at = timezone.localtime(timezone.now())
-
-        # # セッションを保存
-        # request.session[SESSION_KEY_APPOINTMENT_EDIT] = {"updated_at": created_at.isoformat()}
-
         # カレンダーを取得
         calendar_data = build_calendar(request, session_key=SESSION_KEY_CALENDAR_APPOINTMENT_EDIT)
 
@@ -753,13 +740,6 @@ class AppointmentEditDatetimeView(LoginRequiredMixin, View):
 
     def post(self, request, pk, *args, **kwargs):
 
-        # # セッションを取得
-        # appointment_edit = session_check(request, session_key=SESSION_KEY_APPOINTMENT_EDIT)
-
-        # # セッション判定
-        # if appointment_edit is None:
-        #     return redirect("appointment_detail", pk=pk)
-
         # カレンダーを取得
         calendar_data = build_calendar(request, session_key=SESSION_KEY_CALENDAR_APPOINTMENT_EDIT)
 
@@ -793,31 +773,24 @@ class AppointmentEditDatetimeView(LoginRequiredMixin, View):
         # バリデーションを実行
         if form.is_valid():
 
-            # # 入力値を辞書に格納
-            # appointment_edit.update(
-            #     {
-            #         "appointment_dt": form.cleaned_data.get("appointment_dt"),
-            #     }
-            # )
-
-            # # セッションに保存
-            # request.session[SESSION_KEY_APPOINTMENT_EDIT] = appointment_edit
-
-            # 予約データを取得
-            appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
-
             # 入力値を取得
             appointment_dt = timezone.make_aware(
                 datetime.datetime.fromisoformat(form.cleaned_data.get("appointment_dt")),
                 timezone.get_current_timezone(),
             )
 
-            # 更新処理
-            appointment.appointment_dt = appointment_dt
-            appointment.save(update_fields=["appointment_dt", "updated_at"])
+            # トランザクション内でまとめて処理
+            with transaction.atomic():
 
-            # セッションを削除
-            request.session.pop(SESSION_KEY_CALENDAR_APPOINTMENT_EDIT, None)
+                # 予約データを取得
+                appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
+
+                # 更新処理
+                appointment.appointment_dt = appointment_dt
+                appointment.save(update_fields=["appointment_dt", "updated_at"])
+
+                # セッションを削除
+                request.session.pop(SESSION_KEY_CALENDAR_APPOINTMENT_EDIT, None)
 
             # 完了ページへリダイレクト
             return redirect("appointment_edit_datetime_complete", pk=pk)
@@ -851,6 +824,212 @@ class AppointmentEditDatetimeCompleteView(LoginRequiredMixin, View):
 
         # テンプレートを描画
         return render(request, "appointment_edit_datetime_complete.html", {**meta})
+
+
+# =====================================================================================================
+# 予約の変更（連絡先の変更）
+# =====================================================================================================
+class AppointmentEditContactView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+
+        # セッションを取得
+        appointment_edit = session_check(request, session_key=SESSION_KEY_APPOINTMENT_EDIT)
+
+        # ログインユーザーを取得
+        user_data = request.user
+
+        # フォームの初期値を定義
+        initial = {
+            "user_family_name": user_data.family_name,
+            "user_first_name": user_data.first_name,
+            "email": user_data.email,
+            "phone": user_data.phone,
+            "birthdate": user_data.birthdate,
+            "gender": user_data.gender,
+            "card_number": user_data.card_number,
+            "privacy": True,
+        }
+
+        # セッションの選択を初期値に設定（戻る操作時に対応）
+        if appointment_edit:
+            initial = {
+                "user_family_name": appointment_edit.get("user_family_name"),
+                "user_first_name": appointment_edit.get("user_first_name"),
+                "email": appointment_edit.get("email"),
+                "phone": appointment_edit.get("phone"),
+                "birthdate": appointment_edit.get("birthdate"),
+                "gender": appointment_edit.get("gender"),
+                "card_number": appointment_edit.get("card_number") or None,
+                "privacy": True,
+            }
+
+        # フォームを取得
+        form = AppointmentContactForm(initial=initial)
+
+        # プライバシーポリシーは常に同意扱いでPOST送信
+        form.fields["privacy"].widget = forms.HiddenInput()
+
+        # メタタグにURLを追加
+        meta = {
+            **meta_appointment_edit_contact,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/edit/contact/",
+        }
+
+        # テンプレートを描画
+        return render(
+            request,
+            "appointment_edit_contact.html",
+            {
+                **meta,
+                "pk": pk,
+                "form": form,
+            },
+        )
+
+    def post(self, request, pk, *args, **kwargs):
+
+        # フォームを取得
+        form = AppointmentContactForm(request.POST or None)
+
+        # メタタグにURLを追加
+        meta = {
+            **meta_appointment_edit_contact,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/edit/contact/",
+        }
+
+        # バリデーションを実行
+        if form.is_valid():
+
+            # 現在日時を取得
+            created_at = timezone.localtime(timezone.now())
+
+            # 入力値を辞書に格納
+            appointment_edit = {
+                "user_family_name": form.cleaned_data.get("user_family_name"),
+                "user_first_name": form.cleaned_data.get("user_first_name"),
+                "email": form.cleaned_data.get("email"),
+                "phone": form.cleaned_data.get("phone"),
+                "birthdate": form.cleaned_data.get("birthdate").isoformat(),
+                "gender": form.cleaned_data.get("gender"),
+                "card_number": form.cleaned_data.get("card_number") or None,
+                "privacy": form.cleaned_data.get("privacy"),
+                "updated_at": created_at.isoformat(),
+            }
+
+            # セッションに保存
+            request.session[SESSION_KEY_APPOINTMENT_EDIT] = appointment_edit
+
+            # 確認ページへリダイレクト
+            return redirect("appointment_edit_contact_confirm", pk=pk)
+
+        # テンプレートを描画
+        return render(
+            request,
+            "appointment_edit_contact.html",
+            {
+                **meta,
+                "pk": pk,
+                "form": form,
+            },
+        )
+
+
+# =====================================================================================================
+# 予約の変更（変更確認）
+# =====================================================================================================
+class AppointmentEditContactConfirmView(LoginRequiredMixin, View):
+    def get(self, request, pk,  *args, **kwargs):
+
+        # セッションを取得
+        appointment_edit = session_check(request, session_key=SESSION_KEY_APPOINTMENT_EDIT)
+
+        # セッション判定
+        if appointment_edit is None:
+            return redirect("appointment_detail", pk=pk)
+
+        # メタタグにURLを追加
+        meta = {
+            **meta_appointment_edit_contact_confirm,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/edit/contact/confirm/",
+        }
+
+        # テンプレートを描画
+        return render(
+            request,
+            "appointment_edit_contact_confirm.html",
+            {
+                **meta,
+                "pk": pk,
+                **appointment_edit,
+            },
+        )
+
+    def post(self, request, pk, *args, **kwargs):
+
+        # セッションを取得
+        appointment_edit = session_check(request, session_key=SESSION_KEY_APPOINTMENT_EDIT)
+
+        # セッション判定
+        if appointment_edit is None:
+            return redirect("appointment_detail", pk=pk)
+
+        # フォームを取得
+        form = AppointmentContactForm(appointment_edit)
+
+        # バリデーションを実行
+        if form.is_valid():
+
+            # 入力値を取得
+            user_family_name = appointment_edit.get("user_family_name")
+            user_first_name = appointment_edit.get("user_first_name")
+            email = appointment_edit.get("email")
+            phone = appointment_edit.get("phone")
+            birthdate = datetime.date.fromisoformat(appointment_edit["birthdate"])
+            gender = appointment_edit.get("gender")
+            card_number = appointment_edit.get("card_number") or None
+
+            # トランザクション内でまとめて処理
+            with transaction.atomic():
+
+                # 予約データを取得
+                appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
+
+                # 変更情報をセット
+                appointment.family_name = user_family_name
+                appointment.first_name = user_first_name
+                appointment.email = email
+                appointment.phone = phone
+                appointment.birthdate = birthdate
+                appointment.gender = gender
+                appointment.card_number = card_number
+
+                # 更新処理
+                appointment.save()
+
+                # セッションを削除
+                request.session.pop(SESSION_KEY_APPOINTMENT_EDIT, None)
+
+            # 完了ページへリダイレクト
+            return redirect("appointment_edit_contact_complete", pk=pk)
+
+        # 仮にバリデーションが失敗する場合は予約確認ページへリダイレクト
+        return redirect("appointment_detail", pk=pk)
+
+
+# =====================================================================================================
+# 予約の変更（完了）
+# =====================================================================================================
+class AppointmentEditContactCompleteView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+
+        # メタタグにURLを追加
+        meta = {
+            **meta_appointment_edit_contact_complete,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/edit/contact/complete/",
+        }
+
+        # テンプレートを描画
+        return render(request, "appointment_edit_contact_complete.html", {**meta})
 
 
 # =====================================================================================================

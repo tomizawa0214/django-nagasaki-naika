@@ -146,6 +146,27 @@ meta_appointment_detail = {
     "meta_description": "",
 }
 
+# 予約の変更（連絡先の変更）
+meta_appointment_edit_contact = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"連絡先の変更{separate}{site_name}",
+    "meta_description": "",
+}
+
+# 予約の変更（変更確認）
+meta_appointment_edit_contact_confirm = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"連絡先の変更内容の確認{separate}{site_name}",
+    "meta_description": "",
+}
+
+# 予約の変更（完了）
+meta_appointment_edit_contact_complete = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"連絡先の変更完了{separate}{site_name}",
+    "meta_description": "",
+}
+
 # 予約の変更（日時変更）
 meta_appointment_edit_datetime = {
     "meta_robots": "noindex,follow",

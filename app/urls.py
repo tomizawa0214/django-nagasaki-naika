@@ -25,5 +25,20 @@ urlpatterns = [
         views.AppointmentEditDatetimeCompleteView.as_view(),
         name="appointment_edit_datetime_complete",
     ),
+    path(
+        "mypage/appointment/<int:pk>/edit/contact/",
+        views.AppointmentEditContactView.as_view(),
+        name="appointment_edit_contact",
+    ),
+    path(
+        "mypage/appointment/<int:pk>/edit/contact/confirm/",
+        views.AppointmentEditContactConfirmView.as_view(),
+        name="appointment_edit_contact_confirm",
+    ),
+    path(
+        "mypage/appointment/<int:pk>/edit/contact/complete/",
+        views.AppointmentEditContactCompleteView.as_view(),
+        name="appointment_edit_contact_complete",
+    ),
     path("privacy/", views.PrivacyView.as_view(), name="privacy"),
 ]

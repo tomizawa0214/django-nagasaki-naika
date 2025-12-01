@@ -54,7 +54,7 @@
                   <dl class="p-mypage__list">
                     <div class="p-mypage__list-group">
                       <dt class="c-text">来院日時</dt>
-                      <dd class="c-text">{{ appointment.appointment_dt|date:"Y年n月j日(D) G:i" }}〜</dd>
+                      <dd class="c-text">{{ appointment.appointment_dt|localtime|date:"Y年n月j日(D) G:i" }}〜</dd>
                     </div>
                     <div class="p-mypage__list-group">
                       <dt class="c-text">予約メニュー</dt>
@@ -70,7 +70,7 @@
                     {% if appointment.questionnaire %}
                       <a class="c-button c-button--secondary" href="/mypage/appointment/1/questionnaire/">問診票を見る</a>
                     {% endif %}
-                    <a class="c-button c-button--alert js-appointment-delete" appointment-id="{{ appointment.id }}" appointment-dt="{{ appointment.appointment_dt|date:'n月j日(D) G:i' }}〜" href="/mypage/appointment/delete/">予約の取消</a>
+                    <a class="c-button c-button--alert js-appointment-delete" appointment-id="{{ appointment.id }}" appointment-dt="{{ appointment.appointment_dt|localtime|date:'n月j日(D) G:i' }}〜" href="/mypage/appointment/delete/">予約の取消</a>
                   </div>
                 </li>
               {% endfor %}
@@ -87,7 +87,7 @@
                   <dl class="p-mypage__list">
                     <div class="p-mypage__list-group">
                       <dt class="c-text">来院日時</dt>
-                      <dd class="c-text">{{ appointment.appointment_dt|date:"Y年n月j日(D) G:i" }}〜</dd>
+                      <dd class="c-text">{{ appointment.appointment_dt|localtime|date:"Y年n月j日(D) G:i" }}〜</dd>
                     </div>
                     <div class="p-mypage__list-group">
                       <dt class="c-text">予約メニュー</dt>
