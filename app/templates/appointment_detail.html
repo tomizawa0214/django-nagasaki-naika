@@ -14,6 +14,7 @@
           </div>
         </dl>
         <div class="l-contents__button">
+          <a class="c-button c-button--secondary" href="{% url 'mypage' %}">戻る</a>
           <a class="c-button c-button--primary" href="{% url 'appointment_edit_datetime' appointment.id %}">日時を変更する</a>
         </div>
       </div>
@@ -44,9 +45,9 @@
             <dd class="c-text">{{ appointment.card_number|default:"なし" }}</dd>
           </div>
         </dl>
-        <div class="l-contents__button l-contents__button--vertical">
-          <a class="c-button c-button--primary" href="{% url 'appointment_edit_contact' appointment.id %}">連絡先を変更する</a>
+        <div class="l-contents__button">
           <a class="c-button c-button--secondary" href="{% url 'mypage' %}">戻る</a>
+          <a class="c-button c-button--primary" href="{% url 'appointment_edit_contact' appointment.id %}">連絡先を変更する</a>
         </div>
       </div>
     </section>
