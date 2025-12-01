@@ -182,6 +182,7 @@ def build_calendar(request, session_key):
 
     # 次の週がクリックされた場合はカレンダーの開始日を+7日する
     if request.method == "POST" and "next_days" in request.POST:
+        print("ここ")
         start_date += timedelta(days=7)
 
     # 表示月のプルダウンを手動で切り替えた場合

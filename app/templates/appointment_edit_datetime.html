@@ -1,0 +1,19 @@
+﻿{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+  <main class="l-contents">
+    <div class="l-step">
+      <ol class="l-step__inner">
+        <li class="c-step current">日時変更</li>
+        <li class="c-step">完了</li>
+      </ol>
+    </div>
+    <section class="l-contents__inner">
+      <h1 class="l-contents__page-title c-title">日時変更</h1>
+      <p class="l-contents__lead c-text">ご来院の日時をお選びください。</p>
+      {# カレンダー表示 #}
+      {% include "include/_calendar.html" %}
+    </section>
+  </main>
+{% endblock %}

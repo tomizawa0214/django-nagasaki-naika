@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <main class="l-contents">
+    <section class="l-contents__inner">
+      <h1 class="l-contents__page-title c-title">予約の変更</h1>
+      <p class="l-contents__lead c-text">以下の内容でご予約いただいております。<br>変更をご希望の場合は「日時を変更する」<br class="only-sp">または<br class="only-pc">「連絡先を変更する」を押してください。</p>
+      <div class="l-confirm">
+        <dl class="l-confirm__edit-date">
+          <div class="l-confirm__group">
+            <dt class="c-text">ご来院日時</dt>
+            <dd class="c-text">{{ appointment.appointment_dt|date:"Y年n月j日(D) G:i" }}〜</dd>
+          </div>
+        </dl>
+        <div class="l-contents__button">
+          <a class="c-button c-button--primary" href="{% url 'appointment_edit_datetime' appointment.id %}">日時を変更する</a>
+        </div>
+      </div>
+      <div>
+        <dl class="l-confirm__edit-contact">
+          <div class="l-confirm__group">
+            <dt class="c-text">お名前</dt>
+            <dd class="c-text">{{ appointment.user.family_name }} {{ appointment.user.first_name }}</dd>
+          </div>
+          <div class="l-confirm__group">
+            <dt class="c-text">メールアドレス</dt>
+            <dd class="c-text">{{ appointment.user.email }}</dd>
+          </div>
+          <div class="l-confirm__group">
+            <dt class="c-text">電話番号</dt>
+            <dd class="c-text">{{ appointment.user.phone }}</dd>
+          </div>
+          <div class="l-confirm__group">
+            <dt class="c-text">生年月日</dt>
+            <dd class="c-text">{{ appointment.birthdate|date:'Y年n月j日' }}</dd>
+          </div>
+          <div class="l-confirm__group">
+            <dt class="c-text">性別</dt>
+            <dd class="c-text">{{ appointment.user.get_gender_display }}</dd>
+          </div>
+          <div class="l-confirm__group">
+            <dt class="c-text">診察券番号</dt>
+            <dd class="c-text">{{ appointment.user.card_number|default:"なし" }}</dd>
+          </div>
+        </dl>
+        <div class="l-contents__button l-contents__button--vertical">
+          {% comment %} <a class="c-button c-button--primary" href="{% url 'appointment_edit_contact' appointment.id %}">連絡先を変更する</a> {% endcomment %}
+          <a class="c-button c-button--secondary" href="{% url 'mypage' %}">戻る</a>
+        </div>
+      </div>
+    </section>
+  </main>
+{% endblock %}

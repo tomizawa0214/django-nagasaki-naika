@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.generic import View
 
@@ -17,8 +17,10 @@ from .seo_meta import *
 User = get_user_model()
 
 # セッション管理
-SESSION_KEY_APPOINTMENT = "appointment_data"
-SESSION_KEY_APPOINTMENT_DT = "appointment_datetime"
+SESSION_KEY_APPOINTMENT = "session_appointment"
+SESSION_KEY_APPOINTMENT_EDIT = "session_appointment_edit"
+SESSION_KEY_CALENDAR_APPOINTMENT = "session_calendar_appointment"
+SESSION_KEY_CALENDAR_APPOINTMENT_EDIT = "session_calendar_appointment_edit"
 
 
 # =====================================================================================================
@@ -41,7 +43,7 @@ class MypageView(LoginRequiredMixin, View):
 
         # 来院予定の予約情報
         appointment_schedule = appointment_data.filter(appointment_dt__gte=dt_now)
-        
+
         # 来院済みの予約情報
         appointment_done = appointment_data.filter(appointment_dt__lt=dt_now)
 
@@ -242,8 +244,11 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
         if visit == "return":
             back_url = "appointment"
 
+        # ボタンテキストを定義
+        next_button_text = "次へ"
+
         # カレンダーを取得
-        calendar_data = build_calendar(request, session_key="appointment_datetime")
+        calendar_data = build_calendar(request, session_key=SESSION_KEY_CALENDAR_APPOINTMENT)
 
         # フォーム用の選択肢を格納
         choices = []
@@ -272,6 +277,7 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
                 **meta_appointment_datetime,
                 **calendar_data,
                 "back_url": back_url,
+                "next_button_text": next_button_text,
                 "form": form,
             },
         )
@@ -296,8 +302,11 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
         if visit == "return":
             back_url = "appointment"
 
+        # ボタンテキストを定義
+        next_button_text = "次へ"
+
         # カレンダーを取得
-        calendar_data = build_calendar(request, session_key=SESSION_KEY_APPOINTMENT_DT)
+        calendar_data = build_calendar(request, session_key=SESSION_KEY_CALENDAR_APPOINTMENT)
 
         # フォーム用の選択肢を格納
         choices = []
@@ -338,6 +347,7 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
                 **meta_appointment_datetime,
                 **calendar_data,
                 "back_url": back_url,
+                "next_button_text": next_button_text,
                 "form": form,
             },
         )
@@ -633,6 +643,7 @@ class AppointmentConfirmView(LoginRequiredMixin, View):
 
                 # セッションを削除
                 request.session.pop(SESSION_KEY_APPOINTMENT, None)
+                request.session.pop(SESSION_KEY_CALENDAR_APPOINTMENT, None)
 
             # 完了ページへリダイレクト
             return redirect("appointment_complete")
@@ -655,6 +666,191 @@ class AppointmentCompleteView(LoginRequiredMixin, View):
                 **meta_appointment_complete,
             },
         )
+
+
+# =====================================================================================================
+# 予約の変更（予約確認）
+# =====================================================================================================
+class AppointmentDetailView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+
+        # メタタグにURLを追加
+        meta = {**meta_appointment_detail, "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/"}
+
+        # 予約データを取得
+        appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
+
+        # テンプレートを描画
+        return render(
+            request,
+            "appointment_detail.html",
+            {**meta, "appointment": appointment},
+        )
+
+
+# =====================================================================================================
+# 予約の変更（日時変更）
+# =====================================================================================================
+class AppointmentEditDatetimeView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+
+        # # セッションを取得
+        # appointment_edit = session_check(request, session_key=SESSION_KEY_APPOINTMENT_EDIT)
+
+        # # セッション判定
+        # if appointment_edit is None:
+        #     return redirect("appointment_detail", pk=pk)
+
+        # # 現在日時を取得
+        # created_at = timezone.localtime(timezone.now())
+
+        # # セッションを保存
+        # request.session[SESSION_KEY_APPOINTMENT_EDIT] = {"updated_at": created_at.isoformat()}
+
+        # カレンダーを取得
+        calendar_data = build_calendar(request, session_key=SESSION_KEY_CALENDAR_APPOINTMENT_EDIT)
+
+        # フォーム用の選択肢を格納
+        choices = []
+        for day in calendar_data["appointment_dt_list"]:
+            for time_data in settings.TIME_LIST:
+                if day[time_data] != "closed":
+                    value = f"{day['date_data'].isoformat()}T{time_data}"
+                    label = f"{day['date_data']} {time_data}"
+                    choices.append((value, label))
+
+        # フォームを取得
+        form = AppointmentDatetimeForm()
+
+        # フォームの選択肢を定義
+        form.fields["appointment_dt"].choices = choices
+
+        # 戻るボタンのURLを定義
+        back_url = "appointment_detail"
+
+        # ボタンテキストを定義
+        next_button_text = "日時を変更する"
+
+        # メタタグにURLを追加
+        meta = {
+            **meta_appointment_edit_datetime,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/edit/datetime/",
+        }
+
+        # テンプレートを描画
+        return render(
+            request,
+            "appointment_edit_datetime.html",
+            {
+                **meta,
+                **calendar_data,
+                "back_url": back_url,
+                "next_button_text": next_button_text,
+                "pk": pk,
+                "form": form,
+            },
+        )
+
+    def post(self, request, pk, *args, **kwargs):
+
+        # # セッションを取得
+        # appointment_edit = session_check(request, session_key=SESSION_KEY_APPOINTMENT_EDIT)
+
+        # # セッション判定
+        # if appointment_edit is None:
+        #     return redirect("appointment_detail", pk=pk)
+
+        # カレンダーを取得
+        calendar_data = build_calendar(request, session_key=SESSION_KEY_CALENDAR_APPOINTMENT_EDIT)
+
+        # フォーム用の選択肢を格納
+        choices = []
+        for day in calendar_data["appointment_dt_list"]:
+            for time_data in settings.TIME_LIST:
+                if day[time_data] != "closed":
+                    value = f"{day['date_data'].isoformat()}T{time_data}"
+                    label = f"{day['date_data']} {time_data}"
+                    choices.append((value, label))
+
+        # フォームを取得
+        form = AppointmentDatetimeForm(request.POST or None)
+
+        # フォームの選択肢を定義
+        form.fields["appointment_dt"].choices = choices
+
+        # 戻るボタンのURLを定義
+        back_url = "appointment_detail"
+
+        # ボタンテキストを定義
+        next_button_text = "日時を変更する"
+
+        # メタタグにURLを追加
+        meta = {
+            **meta_appointment_edit_datetime,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/edit/datetime/",
+        }
+
+        # バリデーションを実行
+        if form.is_valid():
+
+            # # 入力値を辞書に格納
+            # appointment_edit.update(
+            #     {
+            #         "appointment_dt": form.cleaned_data.get("appointment_dt"),
+            #     }
+            # )
+
+            # # セッションに保存
+            # request.session[SESSION_KEY_APPOINTMENT_EDIT] = appointment_edit
+
+            # 予約データを取得
+            appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
+
+            # 入力値を取得
+            appointment_dt = timezone.make_aware(
+                datetime.datetime.fromisoformat(form.cleaned_data.get("appointment_dt")),
+                timezone.get_current_timezone(),
+            )
+
+            # 更新処理
+            appointment.appointment_dt = appointment_dt
+            appointment.save(update_fields=["appointment_dt", "updated_at"])
+
+            # セッションを削除
+            request.session.pop(SESSION_KEY_CALENDAR_APPOINTMENT_EDIT, None)
+
+            # 完了ページへリダイレクト
+            return redirect("appointment_edit_datetime_complete", pk=pk)
+
+        # テンプレートを描画
+        return render(
+            request,
+            "appointment_edit_datetime.html",
+            {
+                **meta,
+                **calendar_data,
+                "back_url": back_url,
+                "next_button_text": next_button_text,
+                "pk": pk,
+                "form": form,
+            },
+        )
+
+
+# =====================================================================================================
+# 予約の変更（完了）
+# =====================================================================================================
+class AppointmentEditDatetimeCompleteView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+
+        # メタタグにURLを追加
+        meta = {
+            **meta_appointment_edit_datetime_complete,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/edit/datetime/complete/",
+        }
+
+        # テンプレートを描画
+        return render(request, "appointment_edit_datetime_complete.html", {**meta})
 
 
 # =====================================================================================================

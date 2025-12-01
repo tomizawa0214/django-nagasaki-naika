@@ -72,7 +72,11 @@
     {% endif %}
   </div>
   <div class="l-contents__button">
-    <a class="c-button c-button--secondary" href="{% url back_url %}">戻る</a>
-    <button class="c-button c-button--primary" type="submit">次へ</button>
+    {% if pk %}
+      <a class="c-button c-button--secondary" href="{% url back_url pk %}">戻る</a>
+    {% else %}
+      <a class="c-button c-button--secondary" href="{% url back_url %}">戻る</a>
+    {% endif %}
+    <button class="c-button c-button--primary" type="submit">{{ next_button_text }}</button>
   </div>
 </form>

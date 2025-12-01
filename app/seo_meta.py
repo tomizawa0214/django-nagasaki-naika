@@ -139,6 +139,27 @@ meta_appointment_complete = {
     "url": f"{settings.BASE_URL}/mypage/appointment/complete/",
 }
 
+# 予約の変更（予約確認）
+meta_appointment_detail = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"予約内容の確認{separate}{site_name}",
+    "meta_description": "",
+}
+
+# 予約の変更（日時変更）
+meta_appointment_edit_datetime = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"予約日時の変更{separate}{site_name}",
+    "meta_description": "",
+}
+
+# 予約の変更（完了）
+meta_appointment_edit_datetime_complete = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"予約日時の変更完了{separate}{site_name}",
+    "meta_description": "",
+}
+
 # パスワード変更（入力）
 meta_password_change = {
     "meta_robots": "noindex,follow",
