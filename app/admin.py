@@ -150,7 +150,7 @@ admin.site.register(Appointment, AppointmentCustomAdmin)
 
 
 # =====================================================================================================
-# 問診表
+# 問診票
 # =====================================================================================================
 class QuestionnaireCustomAdmin(admin.ModelAdmin):
     form = QuestionnaireAdminForm

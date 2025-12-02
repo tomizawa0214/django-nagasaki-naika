@@ -36,7 +36,7 @@ class Appointment(models.Model):
 
 
 # =====================================================================================================
-# 問診表
+# 問診票
 # =====================================================================================================
 class Questionnaire(models.Model):
     appointment = models.OneToOneField(Appointment, on_delete=models.CASCADE, verbose_name="予約情報")
