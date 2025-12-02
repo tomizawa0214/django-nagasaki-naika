@@ -70,7 +70,10 @@
                     {% if appointment.questionnaire %}
                       <a class="c-button c-button--secondary" href="/mypage/appointment/1/questionnaire/">問診票を見る</a>
                     {% endif %}
-                    <a class="c-button c-button--alert js-appointment-delete" appointment-id="{{ appointment.id }}" appointment-dt="{{ appointment.appointment_dt|localtime|date:'n月j日(D) G:i' }}〜" href="/mypage/appointment/delete/">予約の取消</a>
+                    <form class="c-button c-button--alert js-appointment-delete" method="post" action="{% url 'appointment_delete' appointment.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="c-button c-button--alert" appointment-dt="{{ appointment.appointment_dt|localtime|date:'n月j日(D) G:i' }}〜">予約の取消</button>
+                    </form>
                   </div>
                 </li>
               {% endfor %}

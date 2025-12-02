@@ -40,5 +40,10 @@ urlpatterns = [
         views.AppointmentEditContactCompleteView.as_view(),
         name="appointment_edit_contact_complete",
     ),
+    path(
+        "mypage/appointment/<int:pk>/delete/",
+        views.AppointmentDeleteView.as_view(),
+        name="appointment_delete",
+    ),
     path("privacy/", views.PrivacyView.as_view(), name="privacy"),
 ]

@@ -181,6 +181,13 @@ meta_appointment_edit_datetime_complete = {
     "meta_description": "",
 }
 
+# 予約の取消（完了）
+meta_appointment_delete = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"予約の取消完了{separate}{site_name}",
+    "meta_description": "",
+}
+
 # パスワード変更（入力）
 meta_password_change = {
     "meta_robots": "noindex,follow",

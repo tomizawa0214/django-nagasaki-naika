@@ -80,7 +80,7 @@ $(function () {
 $(function () {
   $(document).on('submit', '.js-logout', function (event) {
     if (!window.confirm('ログアウトしますか？'))
-    event.preventDefault();
+    event.preventDefault()
   })
 })
 
@@ -199,37 +199,6 @@ $(function () {
 })
 $('input[name="allergy"]').change(toggleAllergyRadio)
 
-// Delete
-$(document).on('click', '.js-appointment-delete', function (event) {
-  event.preventDefault()
-
-  const appointmentDt = $(this).attr('appointment-dt')
-  const appointmentId = $(this).attr('appointment-id')
-
-  if (!window.confirm(`本当に${appointmentDt}の予約を取り消しますか？`)) {
-    return
-  }
-
-  const body = new URLSearchParams()
-  body.append('appointmentId', appointmentId)
-
-  fetch('/mypage/appointment/delete/', {
-    method: 'POST',
-    body: body,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
-      'X-CSRFToken': csrftoken,
-    },
-  })
-    .then((res) => {
-      window.location.href = '/mypage/'
-    })
-    .catch((err) => {
-      console.error(err)
-      window.alert('予約の取消に失敗しました。時間をおいて再度お試しください。')
-    })
-})
-
 // ===================================================
 // カレンダーの週移動・月変更
 // ===================================================
@@ -322,10 +291,10 @@ $(document)
 // 選択中のご来院日時の表示
 // ===================================================
 function appointmentDt() {
-  const $checked = $('input[name="appointment_dt"]:checked');
-  if (!$checked.length) return;
+  const $checked = $('input[name="appointment_dt"]:checked')
+  if (!$checked.length) return
 
-  const dt = new Date($checked.val());
+  const dt = new Date($checked.val())
   const weekdays = ['日', '月', '火', '水', '木', '金', '土']
   const year = dt.getFullYear()
   const month = dt.getMonth() + 1
@@ -339,6 +308,19 @@ function appointmentDt() {
   $('.js-appointment-dt').text(selectedDtText)
 }
 
-$(document).on('change', 'input[name="appointment_dt"]', appointmentDt);
-$(window).on('pageshow', appointmentDt);
-$(appointmentDt);
+$(document).on('change', 'input[name="appointment_dt"]', appointmentDt)
+$(window).on('pageshow', appointmentDt)
+$(appointmentDt)
+
+// ===================================================
+// 予約の取消
+// ===================================================
+$(function () {
+  $(document).on('submit', '.js-appointment-delete', function (event) {
+
+    const appointmentDt = $(event.target).find('button').attr('appointment-dt')
+
+    if (!window.confirm(`本当に${appointmentDt}の予約を取り消しますか？`))
+      event.preventDefault()
+  })
+})

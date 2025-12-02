@@ -999,6 +999,42 @@ class AppointmentEditContactCompleteView(LoginRequiredMixin, View):
 
 
 # =====================================================================================================
+# 予約の取消
+# =====================================================================================================
+class AppointmentDeleteView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+
+        # 直アクセスはマイページへリダイレクト
+        return redirect("mypage")
+
+    def post(self, request, pk, *args, **kwargs):
+
+        # 予約データを取得
+        appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
+
+        # 予約データの来院日時を取得
+        appointment_dt = timezone.localtime(appointment.appointment_dt)
+        weekday = settings.WEEKDAYS[appointment_dt.weekday()]
+        appointment_dt_str = f"{appointment_dt.strftime('%-m月%-d日')}({weekday}) {appointment_dt.strftime('%-H:%M')}〜"
+
+        # 予約を削除
+        # appointment.delete()
+
+        # メタタグにURLを追加
+        meta = {
+            **meta_appointment_delete,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/delete/",
+        }
+
+        # テンプレートを描画
+        return render(
+            request,
+            "appointment_delete.html",
+            {**meta, "appointment_dt_str": appointment_dt_str},
+        )
+
+
+# =====================================================================================================
 # プライバシーポリシー
 # =====================================================================================================
 class PrivacyView(View):
