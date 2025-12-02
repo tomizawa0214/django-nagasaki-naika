@@ -82,6 +82,7 @@
             {# ご来院済み #}
             <div id="panel-done" role="tabpanel" aria-labelledby="tab-done">
             {% if appointment_done %}
+              <ul>
               {% for appointment in appointment_done %}
                 <li class="p-mypage__card p-mypage__card--done">
                   <dl class="p-mypage__list">

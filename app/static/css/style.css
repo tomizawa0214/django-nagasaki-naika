@@ -1791,6 +1791,9 @@ img {
     margin: 8vw 0 0;
   }
 }
+.p-mypage__button .c-button {
+  max-width: none;
+}
 .p-mypage__empty {
   margin: 6rem 0 0;
   text-align: center;
