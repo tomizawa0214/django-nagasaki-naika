@@ -61,7 +61,7 @@
                     {{ symptom|symptom_display|join:"、 " }}
                     {# その他 #}
                     {% if "other" in symptom and symptom_other %} (
-                        {{ symptom_other }}
+                      {{ symptom_other }}
                     )
                     {% endif %}
                   </dd>
@@ -120,25 +120,25 @@
                   {# 煙草 #}
                   <dd class="c-text">
                     【煙草】 {{ smoking|smoking_display }}
-                      {# 吸う #}
-                      {% if smoking == "smoking" %}
-                        {% if has_smoking_per_day or has_smoking_years %}
-                          <br class="only-sp">(
-                            {% if has_smoking_per_day %}1日{{ has_smoking_per_day|smoking_per_day_display }}{% endif %}
-                            {% if has_smoking_per_day and has_smoking_years %}×{% endif %}
-                            {% if has_smoking_years %}{{ has_smoking_years|years_display }}{% endif %}
-                          )
-                        {% endif %}
-                      {# 禁煙した #}
-                      {% elif smoking == "quit-smoking" %}
-                        {% if has_quit_smoking_years or has_until_smoking_years %}
-                          <br class="only-sp">(
-                            {% if has_quit_smoking_years %}{{ has_quit_smoking_years|quit_smoking_years_display }}前から{% endif %}
-                            {% if has_quit_smoking_years and has_until_smoking_years %} / {% endif %}
-                            {% if has_until_smoking_years %}それまで{{ has_until_smoking_years|years_display }}喫煙{% endif %}
-                          )
-                        {% endif %}
+                    {# 吸う #}
+                    {% if smoking == "smoking" %}
+                      {% if has_smoking_per_day or has_smoking_years %}
+                        <br class="only-sp">(
+                          {% if has_smoking_per_day %}1日{{ has_smoking_per_day|smoking_per_day_display }}{% endif %}
+                          {% if has_smoking_per_day and has_smoking_years %}×{% endif %}
+                          {% if has_smoking_years %}{{ has_smoking_years|years_display }}{% endif %}
+                        )
                       {% endif %}
+                    {# 禁煙した #}
+                    {% elif smoking == "quit-smoking" %}
+                      {% if has_quit_smoking_years or has_until_smoking_years %}
+                        <br class="only-sp">(
+                          {% if has_quit_smoking_years %}{{ has_quit_smoking_years|quit_smoking_years_display }}前から{% endif %}
+                          {% if has_quit_smoking_years and has_until_smoking_years %} / {% endif %}
+                          {% if has_until_smoking_years %}それまで{{ has_until_smoking_years|years_display }}喫煙{% endif %}
+                        )
+                      {% endif %}
+                    {% endif %}
                   </dd>
                   {# 飲酒 #}
                   <dd class="c-text">
