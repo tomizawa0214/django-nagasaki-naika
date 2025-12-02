@@ -147,37 +147,65 @@ meta_appointment_detail = {
 }
 
 # 予約の変更（連絡先の変更）
-meta_appointment_edit_contact = {
+meta_appointment_contact_edit = {
     "meta_robots": "noindex,follow",
     "meta_title": f"連絡先の変更{separate}{site_name}",
     "meta_description": "",
 }
 
 # 予約の変更（変更確認）
-meta_appointment_edit_contact_confirm = {
+meta_appointment_contact_edit_confirm = {
     "meta_robots": "noindex,follow",
     "meta_title": f"連絡先の変更内容の確認{separate}{site_name}",
     "meta_description": "",
 }
 
 # 予約の変更（完了）
-meta_appointment_edit_contact_complete = {
+meta_appointment_contact_edit_complete = {
     "meta_robots": "noindex,follow",
     "meta_title": f"連絡先の変更完了{separate}{site_name}",
     "meta_description": "",
 }
 
 # 予約の変更（日時変更）
-meta_appointment_edit_datetime = {
+meta_appointment_datetime_edit = {
     "meta_robots": "noindex,follow",
     "meta_title": f"予約日時の変更{separate}{site_name}",
     "meta_description": "",
 }
 
 # 予約の変更（完了）
-meta_appointment_edit_datetime_complete = {
+meta_appointment_datetime_edit_complete = {
     "meta_robots": "noindex,follow",
     "meta_title": f"予約日時の変更完了{separate}{site_name}",
+    "meta_description": "",
+}
+
+# 問診票を見る（予約確認）
+meta_appointment_questionnaire_detail = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"問診票を見る{separate}{site_name}",
+    "meta_description": "",
+}
+
+# 問診票の変更（変更）
+meta_appointment_questionnaire_edit = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"問診票の変更{separate}{site_name}",
+    "meta_description": "",
+}
+
+# 問診票の変更（変更確認）
+meta_appointment_questionnaire_edit_confirm = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"問診票の変更内容の確認{separate}{site_name}",
+    "meta_description": "",
+}
+
+# 問診票の変更（完了）
+meta_appointment_questionnaire_edit_complete = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"問診票の変更完了{separate}{site_name}",
     "meta_description": "",
 }
 

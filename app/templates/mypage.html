@@ -9,8 +9,8 @@
         <nav>
           <ul class="p-mypage__menu-group">
             <li><a class="c-text p-mypage__menu-link p-mypage__menu-link--appointment" href="{% url 'appointment' %}">診察予約</a></li>
-            {% comment %} <li><a class="c-text p-mypage__menu-link p-mypage__menu-link--checkup" href="/mypage/checkup/">健康診断予約</a></li> {% endcomment %}
-            {% comment %} <li><a class="c-text p-mypage__menu-link p-mypage__menu-link--vaccine" href="/mypage/vaccine/">予防接種予約</a></li> {% endcomment %}
+            {% comment %} <li><a class="c-text p-mypage__menu-link p-mypage__menu-link--checkup" href="{% url 'checkup' %}">健康診断予約</a></li> {% endcomment %}
+            {% comment %} <li><a class="c-text p-mypage__menu-link p-mypage__menu-link--vaccine" href="{% url 'vaccine' %}">予防接種予約</a></li> {% endcomment %}
           </ul>
           <ul class="p-mypage__menu-group">
             <li><a class="c-text p-mypage__menu-link p-mypage__menu-link--password" href="{% url 'password_change' %}">パスワード変更</a></li>
@@ -62,13 +62,17 @@
                     </div>
                     <div class="p-mypage__list-group">
                       <dt class="c-text">予約受付日時</dt>
-                      <dd class="c-text">{{ appointment.updated_at|localtime|date:"Y/m/d H:i" }}</dd>
+                      {% if appointment.questionnaire and appointment.questionnaire.updated_at > appointment.updated_at %}
+                        <dd class="c-text">{{ appointment.questionnaire.updated_at|localtime|date:"Y/m/d H:i" }}</dd>
+                      {% else %}
+                        <dd class="c-text">{{ appointment.updated_at|localtime|date:"Y/m/d H:i" }}</dd>
+                      {% endif %}
                     </div>
                   </dl>
                   <div class="p-mypage__button l-contents__button">
                     <a class="c-button c-button--primary" href="{% url 'appointment_detail' appointment.id %}">予約の変更</a>
                     {% if appointment.questionnaire %}
-                      <a class="c-button c-button--secondary" href="/mypage/appointment/1/questionnaire/">問診票を見る</a>
+                      <a class="c-button c-button--secondary" href="{% url 'appointment_questionnaire_detail' appointment.id %}">問診票を見る</a>
                     {% endif %}
                     <form class="c-button c-button--alert js-appointment-delete" method="post" action="{% url 'appointment_delete' appointment.id %}">
                       {% csrf_token %}

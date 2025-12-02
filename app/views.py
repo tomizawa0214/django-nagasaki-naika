@@ -21,6 +21,7 @@ SESSION_KEY_APPOINTMENT = "session_appointment"
 SESSION_KEY_APPOINTMENT_EDIT = "session_appointment_edit"
 SESSION_KEY_CALENDAR_APPOINTMENT = "session_calendar_appointment"
 SESSION_KEY_CALENDAR_APPOINTMENT_EDIT = "session_calendar_appointment_edit"
+SESSION_KEY_QUESTIONNAIRE_EDIT = "session_questionnaire_edit"
 
 
 # =====================================================================================================
@@ -519,19 +520,31 @@ class AppointmentConfirmView(LoginRequiredMixin, View):
 
             # 入力値を取得
             visit = appointment_data.get("visit")
-            appointment_dt = timezone.make_aware(
-                datetime.datetime.fromisoformat(appointment_data["appointment_dt"]), timezone.get_current_timezone()
-            )
-            user_family_name = appointment_data.get("user_family_name")
-            user_first_name = appointment_data.get("user_first_name")
-            email = appointment_data.get("email")
-            phone = appointment_data.get("phone")
-            birthdate = datetime.date.fromisoformat(appointment_data["birthdate"])
-            gender = appointment_data.get("gender")
-            card_number = appointment_data.get("card_number") or None
+
+            # 問診票のバリデーション
+            if visit == "first":
+
+                # 問診票のフォームを取得
+                q_form = AppointmentQuestionnaireForm(appointment_data)
+
+                # バリデーションが失敗する場合は問診票ページへリダイレクト
+                if not q_form.is_valid():
+                    return redirect("appointment_questionnaire")
 
             # トランザクション内でまとめて処理
             with transaction.atomic():
+
+                # 入力値を取得
+                appointment_dt = timezone.make_aware(
+                    datetime.datetime.fromisoformat(appointment_data["appointment_dt"]), timezone.get_current_timezone()
+                )
+                user_family_name = appointment_data.get("user_family_name")
+                user_first_name = appointment_data.get("user_first_name")
+                email = appointment_data.get("email")
+                phone = appointment_data.get("phone")
+                birthdate = datetime.date.fromisoformat(appointment_data["birthdate"])
+                gender = appointment_data.get("gender")
+                card_number = appointment_data.get("card_number") or None
 
                 # 予約情報をセット
                 appointment_create = Appointment(
@@ -643,7 +656,7 @@ class AppointmentDetailView(LoginRequiredMixin, View):
         # メタタグにURLを追加
         meta = {**meta_appointment_detail, "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/"}
 
-        # 予約データを取得
+        # ログインユーザーの当該予約データを取得
         appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
 
         # テンプレートを描画
@@ -657,7 +670,7 @@ class AppointmentDetailView(LoginRequiredMixin, View):
 # =====================================================================================================
 # 予約の変更（日時変更）
 # =====================================================================================================
-class AppointmentEditDatetimeView(LoginRequiredMixin, View):
+class AppointmentDatetimeEditView(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
 
         # カレンダーを取得
@@ -686,8 +699,8 @@ class AppointmentEditDatetimeView(LoginRequiredMixin, View):
 
         # メタタグにURLを追加
         meta = {
-            **meta_appointment_edit_datetime,
-            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/edit/datetime/",
+            **meta_appointment_datetime_edit,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/datetime/edit/",
         }
 
         # テンプレートを描画
@@ -732,8 +745,8 @@ class AppointmentEditDatetimeView(LoginRequiredMixin, View):
 
         # メタタグにURLを追加
         meta = {
-            **meta_appointment_edit_datetime,
-            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/edit/datetime/",
+            **meta_appointment_datetime_edit,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/datetime/edit",
         }
 
         # バリデーションを実行
@@ -748,7 +761,7 @@ class AppointmentEditDatetimeView(LoginRequiredMixin, View):
             # トランザクション内でまとめて処理
             with transaction.atomic():
 
-                # 予約データを取得
+                # ログインユーザーの当該予約データを取得
                 appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
 
                 # 更新処理
@@ -760,7 +773,7 @@ class AppointmentEditDatetimeView(LoginRequiredMixin, View):
 
             # 完了ページへリダイレクト
             return redirect("appointment_edit_datetime_complete", pk=pk)
-        
+
         # テンプレートを描画
         return render(
             request,
@@ -779,13 +792,13 @@ class AppointmentEditDatetimeView(LoginRequiredMixin, View):
 # =====================================================================================================
 # 予約の変更（完了）
 # =====================================================================================================
-class AppointmentEditDatetimeCompleteView(LoginRequiredMixin, View):
+class AppointmentDatetimeEditCompleteView(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
 
         # メタタグにURLを追加
         meta = {
-            **meta_appointment_edit_datetime_complete,
-            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/edit/datetime/complete/",
+            **meta_appointment_datetime_edit_complete,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/datetime/edit/complete/",
         }
 
         # テンプレートを描画
@@ -795,24 +808,24 @@ class AppointmentEditDatetimeCompleteView(LoginRequiredMixin, View):
 # =====================================================================================================
 # 予約の変更（連絡先の変更）
 # =====================================================================================================
-class AppointmentEditContactView(LoginRequiredMixin, View):
+class AppointmentContactEditView(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
 
         # セッションを取得
         appointment_edit = session_check(request, session_key=SESSION_KEY_APPOINTMENT_EDIT)
 
-        # ログインユーザーを取得
-        user_data = request.user
+        # ログインユーザーの当該予約データを取得
+        appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
 
         # フォームの初期値を定義
         initial = {
-            "user_family_name": user_data.family_name,
-            "user_first_name": user_data.first_name,
-            "email": user_data.email,
-            "phone": user_data.phone,
-            "birthdate": user_data.birthdate,
-            "gender": user_data.gender,
-            "card_number": user_data.card_number,
+            "user_family_name": appointment.family_name,
+            "user_first_name": appointment.first_name,
+            "email": appointment.email,
+            "phone": appointment.phone,
+            "birthdate": appointment.birthdate,
+            "gender": appointment.gender,
+            "card_number": appointment.card_number,
             "privacy": True,
         }
 
@@ -837,8 +850,8 @@ class AppointmentEditContactView(LoginRequiredMixin, View):
 
         # メタタグにURLを追加
         meta = {
-            **meta_appointment_edit_contact,
-            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/edit/contact/",
+            **meta_appointment_contact_edit,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/contact/edit/",
         }
 
         # テンプレートを描画
@@ -859,8 +872,8 @@ class AppointmentEditContactView(LoginRequiredMixin, View):
 
         # メタタグにURLを追加
         meta = {
-            **meta_appointment_edit_contact,
-            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/edit/contact/",
+            **meta_appointment_contact_edit,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/contact/edit/",
         }
 
         # バリデーションを実行
@@ -903,8 +916,8 @@ class AppointmentEditContactView(LoginRequiredMixin, View):
 # =====================================================================================================
 # 予約の変更（変更確認）
 # =====================================================================================================
-class AppointmentEditContactConfirmView(LoginRequiredMixin, View):
-    def get(self, request, pk,  *args, **kwargs):
+class AppointmentContactEditConfirmView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
 
         # セッションを取得
         appointment_edit = session_check(request, session_key=SESSION_KEY_APPOINTMENT_EDIT)
@@ -915,8 +928,8 @@ class AppointmentEditContactConfirmView(LoginRequiredMixin, View):
 
         # メタタグにURLを追加
         meta = {
-            **meta_appointment_edit_contact_confirm,
-            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/edit/contact/confirm/",
+            **meta_appointment_contact_edit_confirm,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/contact/edit/confirm/",
         }
 
         # テンプレートを描画
@@ -957,7 +970,7 @@ class AppointmentEditContactConfirmView(LoginRequiredMixin, View):
             # トランザクション内でまとめて処理
             with transaction.atomic():
 
-                # 予約データを取得
+                # ログインユーザーの当該予約データを取得
                 appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
 
                 # 変更情報をセット
@@ -985,17 +998,285 @@ class AppointmentEditContactConfirmView(LoginRequiredMixin, View):
 # =====================================================================================================
 # 予約の変更（完了）
 # =====================================================================================================
-class AppointmentEditContactCompleteView(LoginRequiredMixin, View):
+class AppointmentContactEditCompleteView(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
 
         # メタタグにURLを追加
         meta = {
-            **meta_appointment_edit_contact_complete,
-            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/edit/contact/complete/",
+            **meta_appointment_contact_edit_complete,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/contact/edit/complete/",
         }
 
         # テンプレートを描画
         return render(request, "appointment_edit_contact_complete.html", {**meta})
+
+
+# =====================================================================================================
+# 問診票を見る（予約確認）
+# =====================================================================================================
+class AppointmentQuestionnaireDetailView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+
+        # メタタグにURLを追加
+        meta = {
+            **meta_appointment_questionnaire_detail,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/questionnaire/",
+        }
+
+        # ログインユーザーの当該予約データに紐づく問診票データを取得
+        questionnaire = get_object_or_404(Questionnaire, appointment__pk=pk, appointment__user=request.user)
+
+        # テンプレートを描画
+        return render(
+            request,
+            "appointment_questionnaire_detail.html",
+            {**meta, "pk": pk, "questionnaire": questionnaire},
+        )
+
+
+# =====================================================================================================
+# 問診票の変更（変更）
+# =====================================================================================================
+class AppointmentQuestionnaireEditView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+
+        # セッションを取得
+        questionnaire_edit = session_check(request, session_key=SESSION_KEY_QUESTIONNAIRE_EDIT)
+
+        # ログインユーザーの当該予約データに紐づく問診票データを取得
+        questionnaire = get_object_or_404(Questionnaire, appointment__pk=pk, appointment__user=request.user)
+
+        # フォームの初期値を定義
+        initial = {
+            "symptom": questionnaire.symptom,
+            "symptom_other": questionnaire.symptom_other,
+            "symptom_start": questionnaire.symptom_start,
+            "medical_history": questionnaire.medical_history,
+            "has_medical_history": questionnaire.has_medical_history,
+            "under_treatment": questionnaire.under_treatment,
+            "has_under_treatment": questionnaire.has_under_treatment,
+            "current_medication": questionnaire.current_medication,
+            "has_current_medication": questionnaire.has_current_medication,
+            "smoking": questionnaire.smoking,
+            "has_smoking_per_day": questionnaire.has_smoking_per_day,
+            "has_smoking_years": questionnaire.has_smoking_years,
+            "has_quit_smoking_years": questionnaire.has_quit_smoking_years,
+            "has_until_smoking_years": questionnaire.has_until_smoking_years,
+            "alcohol": questionnaire.alcohol,
+            "alcohol_per_week": questionnaire.alcohol_per_week,
+            "alcohol_type": questionnaire.alcohol_type,
+            "alcohol_amount": questionnaire.alcohol_amount,
+            "allergy": questionnaire.allergy,
+            "has_allergy": questionnaire.has_allergy,
+            "pregnancy": questionnaire.pregnancy,
+            "especially": questionnaire.especially,
+        }
+
+        # セッションの選択を初期値に設定（戻る操作時に対応）
+        if questionnaire_edit:
+            initial = {
+                "symptom": questionnaire_edit.get("symptom"),
+                "symptom_other": questionnaire_edit.get("symptom_other") or None,
+                "symptom_start": questionnaire_edit.get("symptom_start"),
+                "medical_history": questionnaire_edit.get("medical_history"),
+                "has_medical_history": questionnaire_edit.get("has_medical_history") or None,
+                "under_treatment": questionnaire_edit.get("under_treatment"),
+                "has_under_treatment": questionnaire_edit.get("has_under_treatment") or None,
+                "current_medication": questionnaire_edit.get("current_medication"),
+                "has_current_medication": questionnaire_edit.get("has_current_medication") or None,
+                "smoking": questionnaire_edit.get("smoking"),
+                "has_smoking_per_day": questionnaire_edit.get("has_smoking_per_day") or None,
+                "has_smoking_years": questionnaire_edit.get("has_smoking_years") or None,
+                "has_quit_smoking_years": questionnaire_edit.get("has_quit_smoking_years") or None,
+                "has_until_smoking_years": questionnaire_edit.get("has_until_smoking_years") or None,
+                "alcohol": questionnaire_edit.get("alcohol"),
+                "alcohol_per_week": questionnaire_edit.get("alcohol_per_week") or None,
+                "alcohol_type": questionnaire_edit.get("alcohol_type") or None,
+                "alcohol_amount": questionnaire_edit.get("alcohol_amount") or None,
+                "allergy": questionnaire_edit.get("allergy"),
+                "has_allergy": questionnaire_edit.get("has_allergy") or None,
+                "pregnancy": questionnaire_edit.get("pregnancy"),
+                "especially": questionnaire_edit.get("especially") or None,
+            }
+
+        # フォームを取得
+        form = AppointmentQuestionnaireForm(initial=initial)
+
+        # メタタグにURLを追加
+        meta = {
+            **meta_appointment_questionnaire_edit,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/questionnaire/edit/",
+        }
+
+        # テンプレートを描画
+        return render(request, "appointment_edit_questionnaire.html", {**meta, "pk": pk, "form": form})
+
+    def post(self, request, pk, *args, **kwargs):
+
+        # フォームを取得
+        form = AppointmentQuestionnaireForm(request.POST or None)
+
+        # メタタグにURLを追加
+        meta = {
+            **meta_appointment_questionnaire_edit,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/questionnaire/edit/",
+        }
+
+        # バリデーションを実行
+        if form.is_valid():
+
+            # 現在日時を取得
+            created_at = timezone.localtime(timezone.now())
+
+            # 入力値を辞書に格納
+            questionnaire_edit = {
+                "symptom": form.cleaned_data.get("symptom"),
+                "symptom_other": form.cleaned_data.get("symptom_other") or None,
+                "symptom_start": form.cleaned_data.get("symptom_start"),
+                "medical_history": form.cleaned_data.get("medical_history"),
+                "has_medical_history": form.cleaned_data.get("has_medical_history") or None,
+                "under_treatment": form.cleaned_data.get("under_treatment"),
+                "has_under_treatment": form.cleaned_data.get("has_under_treatment") or None,
+                "current_medication": form.cleaned_data.get("current_medication"),
+                "has_current_medication": form.cleaned_data.get("has_current_medication") or None,
+                "smoking": form.cleaned_data.get("smoking"),
+                "has_smoking_per_day": form.cleaned_data.get("has_smoking_per_day") or None,
+                "has_smoking_years": form.cleaned_data.get("has_smoking_years") or None,
+                "has_quit_smoking_years": form.cleaned_data.get("has_quit_smoking_years") or None,
+                "has_until_smoking_years": form.cleaned_data.get("has_until_smoking_years") or None,
+                "alcohol": form.cleaned_data.get("alcohol"),
+                "alcohol_per_week": form.cleaned_data.get("alcohol_per_week") or None,
+                "alcohol_type": form.cleaned_data.get("alcohol_type") or None,
+                "alcohol_amount": form.cleaned_data.get("alcohol_amount") or None,
+                "allergy": form.cleaned_data.get("allergy"),
+                "has_allergy": form.cleaned_data.get("has_allergy") or None,
+                "pregnancy": form.cleaned_data.get("pregnancy"),
+                "especially": form.cleaned_data.get("especially") or None,
+                "updated_at": created_at.isoformat(),
+            }
+
+            # セッションに保存
+            request.session[SESSION_KEY_QUESTIONNAIRE_EDIT] = questionnaire_edit
+
+            # 確認ページへリダイレクト
+            return redirect("appointment_edit_questionnaire_confirm", pk=pk)
+
+        # テンプレートを描画
+        return render(
+            request,
+            "appointment_edit_questionnaire.html",
+            {
+                **meta,
+                "pk": pk,
+                "form": form,
+            },
+        )
+
+
+# =====================================================================================================
+# 問診票の変更（変更確認）
+# =====================================================================================================
+class AppointmentQuestionnaireEditConfirmView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+
+        # セッションを取得
+        questionnaire_edit = session_check(request, session_key=SESSION_KEY_QUESTIONNAIRE_EDIT)
+
+        # セッション判定
+        if questionnaire_edit is None:
+            return redirect("appointment_questionnaire_detail", pk=pk)
+
+        # メタタグにURLを追加
+        meta = {
+            **meta_appointment_questionnaire_edit_confirm,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/questionnaire/edit/confirm/",
+        }
+
+        # テンプレートを描画
+        return render(
+            request,
+            "appointment_edit_questionnaire_confirm.html",
+            {
+                **meta,
+                "pk": pk,
+                **questionnaire_edit,
+            },
+        )
+
+    def post(self, request, pk, *args, **kwargs):
+
+        # セッションを取得
+        questionnaire_edit = session_check(request, session_key=SESSION_KEY_QUESTIONNAIRE_EDIT)
+
+        # セッション判定
+        if questionnaire_edit is None:
+            return redirect("appointment_questionnaire_detail", pk=pk)
+
+        # フォームを取得
+        form = AppointmentQuestionnaireForm(questionnaire_edit)
+
+        # バリデーションを実行
+        if form.is_valid():
+
+            # トランザクション内でまとめて処理
+            with transaction.atomic():
+
+                # ログインユーザーの当該予約データに紐づく問診票データを取得
+                questionnaire = get_object_or_404(Questionnaire, appointment__pk=pk, appointment__user=request.user)
+
+                # 入力値を取得
+                questionnaire.symptom = questionnaire_edit.get("symptom")
+                questionnaire.symptom_other = questionnaire_edit.get("symptom_other") or None
+                questionnaire.symptom_start = datetime.date.fromisoformat(questionnaire_edit["symptom_start"])
+                questionnaire.medical_history = questionnaire_edit.get("medical_history")
+                questionnaire.has_medical_history = questionnaire_edit.get("has_medical_history") or None
+                questionnaire.under_treatment = questionnaire_edit.get("under_treatment")
+                questionnaire.has_under_treatment = questionnaire_edit.get("has_under_treatment") or None
+                questionnaire.current_medication = questionnaire_edit.get("current_medication")
+                questionnaire.has_current_medication = (
+                    questionnaire_edit.get("has_current_medication") or None
+                )
+                questionnaire.smoking = questionnaire_edit.get("smoking")
+                questionnaire.has_smoking_per_day = questionnaire_edit.get("has_smoking_per_day") or None
+                questionnaire.has_smoking_years = questionnaire_edit.get("has_smoking_years") or None
+                questionnaire.has_quit_smoking_years = questionnaire_edit.get("has_quit_smoking_years") or None
+                questionnaire.has_until_smoking_years = questionnaire_edit.get("has_until_smoking_years") or None
+                questionnaire.alcohol = questionnaire_edit.get("alcohol")
+                questionnaire.alcohol_per_week = questionnaire_edit.get("alcohol_per_week") or None
+                questionnaire.alcohol_type = questionnaire_edit.get("alcohol_type") or None
+                questionnaire.alcohol_amount = questionnaire_edit.get("alcohol_amount") or None
+                questionnaire.allergy = questionnaire_edit.get("allergy")
+                questionnaire.has_allergy = questionnaire_edit.get("has_allergy") or None
+                questionnaire.pregnancy = questionnaire_edit.get("pregnancy")
+                questionnaire.especially = questionnaire_edit.get("especially") or None
+
+                # 更新処理
+                questionnaire.save()
+
+                # セッションを削除
+                request.session.pop(SESSION_KEY_QUESTIONNAIRE_EDIT, None)
+
+            # 完了ページへリダイレクト
+            return redirect("appointment_edit_questionnaire_complete", pk=pk)
+
+        # 仮にバリデーションが失敗する場合は問診票の確認ページへリダイレクト
+        return redirect("appointment_questionnaire_detail", pk=pk)
+
+
+# =====================================================================================================
+# 問診票の変更（完了）
+# =====================================================================================================
+class AppointmentQuestionnaireEditCompleteView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+
+        # メタタグにURLを追加
+        meta = {
+            **meta_appointment_questionnaire_edit_complete,
+            "url": f"{settings.BASE_URL}/mypage/appointment/{pk}/questionnaire/edit/complete/",
+        }
+
+        # テンプレートを描画
+        return render(request, "appointment_edit_questionnaire_complete.html", {**meta})
 
 
 # =====================================================================================================
