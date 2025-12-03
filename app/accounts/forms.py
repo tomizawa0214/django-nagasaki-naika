@@ -11,6 +11,8 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import PasswordResetForm
+from django_recaptcha.widgets import ReCaptchaV3
+from django_recaptcha.fields import ReCaptchaField
 
 # =====================================================================================================
 # 初期設定
@@ -260,6 +262,7 @@ class CustomPasswordResetForm(PasswordResetForm):
 # 利用登録フォーム
 # =====================================================================================================
 class CustomSignupForm(BaseContactFieldsMixin, SignupForm):
+    recaptcha = ReCaptchaField(widget=ReCaptchaV3)
 
     # メールアドレスのバリデーション
     def clean_email(self):

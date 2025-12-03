@@ -152,6 +152,11 @@
           <a class="c-button c-button--secondary" href="{% url 'account_login' %}">戻る</a>
           <button class="c-button c-button--primary" type="submit">確認画面へ進む</button>
         </div>
+        {# reCAPTHA #}
+        <div class="l-form__recaptcha">
+          <small class="c-text c-text--xs">このページはreCAPTCHAによって保護されています。<br class="only-sp">Googleの<a class="c-text c-text--xs c-link" href="https://policies.google.com/privacy" target="_blank" rel="noopener">プライバシーポリシー</a>と<a class="c-text c-text--xs c-link" href="https://policies.google.com/terms" target="_blank" rel="noopener">利用規約</a>が適用されます。</small>
+        </div>
+        {{ form.recaptcha }}
       </form>
     </section>
   </main>

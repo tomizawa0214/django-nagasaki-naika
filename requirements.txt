@@ -7,6 +7,7 @@ pytz~=2025.2                     # タイムゾーンを扱う
 isort~=7.0.0                     # import文の自動整形
 django-admin-rangefilter~=0.13.3 # 管理画面の期間絞り込み機能
 django-allauth~=65.13.0          # ログイン認証機能
+django-recaptcha~=4.1.0          # reCAPTCHA
 
 # GitHubから最新バージョンを取得（pipの最新は1.5.0のため）
 django-widget-tweaks @ git+https://github.com/jazzband/django-widget-tweaks.git@1.5.1

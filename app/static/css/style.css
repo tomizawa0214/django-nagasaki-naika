@@ -417,6 +417,14 @@ img {
     gap: 2.6666666667vw;
   }
 }
+.l-form__recaptcha {
+  margin: 2rem 0 0;
+  text-align: center;
+}
+
+.grecaptcha-badge {
+  visibility: hidden;
+}
 
 .l-confirm {
   margin: 0 0 3rem;

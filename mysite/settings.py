@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "widget_tweaks",
+    "django_recaptcha",
 ]
 
 MIDDLEWARE = [
@@ -260,6 +261,10 @@ MODEL_WEEKDAY_MAP = {
 # セッションの有効期限
 SESSION_AGE_TIME = 60
 
+# RECAPTCHA設定
+RECAPTCHA_PRIVATE_KEY = "シークレットキー値を入力"
+RECAPTCHA_PUBLIC_KEY = "サイトキー値を入力"
+
 try:
     from .local_settings import *
 except ImportError:
@@ -335,6 +340,10 @@ else:
     EMAIL_USE_TLS = env("EMAIL_USE_TLS")
     FROM_EMAIL = SITE_NAME + "<" + EMAIL_HOST_USER + ">"
     TO_EMAIL = env("TO_EMAIL")
+
+    # reCAPTCHA
+    RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY")
+    RECAPTCHA_PRIVATE_KEY = env("RECAPTCHA_PRIVATE_KEY")
 
     # ログ
     LOGGING = {

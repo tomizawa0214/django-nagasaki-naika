@@ -140,7 +140,7 @@ class SignupView(views.SignupView):
     form_class = CustomSignupForm
 
     # メタタグを定義
-    extra_context = meta_signup
+    extra_context = {**meta_signup, "recaptcha": True}
 
     # 戻る操作などでセッションが残っていればフォームの初期値に代入
     def get_form_kwargs(self):

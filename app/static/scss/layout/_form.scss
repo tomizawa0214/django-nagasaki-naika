@@ -154,6 +154,15 @@
       }
     }
   }
+
+  &__recaptcha {
+    margin: 2rem 0 0;
+    text-align: center;
+  }
+}
+
+.grecaptcha-badge {
+  visibility: hidden;
 }
 
 .l-confirm {
