@@ -1,4 +1,5 @@
 {% load static %}
+{% load get_fullpath %}
 
 <head>
   <meta charset="utf-8">
@@ -23,12 +24,12 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="{{ meta_title }}">
   <meta property="og:description" content="{{ meta_description }}">
-  <meta property="og:image" content="{% static 'img/ogp.png' %}">
+  <meta property="og:image" content="{% get_fullpath 'img/ogp.png' %}">
   <meta property="og:image:alt" content="長﨑医院 ロゴ">
   <meta property="og:locale" content="ja_JP">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:description" content="{{ meta_description }}">
-  <meta name="twitter:image" content="{% static 'img/ogp.png' %}">
+  <meta name="twitter:image" content="{% get_fullpath 'img/ogp.png' %}">
   <meta name="twitter:image:alt" content="長﨑医院 ロゴ">
   {# Font #}
   <link rel="preconnect" href="https://fonts.googleapis.com">
