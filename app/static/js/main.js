@@ -20,10 +20,10 @@ const csrftoken = getCookie('csrftoken')
 // ===================================================
 $(document).on('click', 'a[href^="#"]', function (e) {
   e.preventDefault()
-  let href = $(this).attr('href')
-  let target = $(href)
+  const href = $(this).attr('href')
+  const target = $(href)
   if (target.length) {
-    let position = target.offset().top
+    const position = target.offset().top
     $('html, body').stop().animate({ scrollTop: position }, 500)
   }
 })
