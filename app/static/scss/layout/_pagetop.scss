@@ -9,6 +9,7 @@
   right: 3rem;
   bottom: 3rem;
   z-index: 999;
+  display: none;
 
   @include mix.mq('sp-tb') {
     display: none;

@@ -494,6 +494,7 @@ img {
   right: 3rem;
   bottom: 3rem;
   z-index: 999;
+  display: none;
 }
 @media screen and (max-width: 1023px) {
   .l-pagetop {
