@@ -173,7 +173,7 @@
                 {# 特に調べてほしいこと #}
                 <div class="l-confirm__group l-confirm__group--vertical">
                   <dt class="c-text">特に調べてほしいこと、検査、治療がありましたらご記入ください。</dt>
-                  <dd class="c-text">{{ especially|linebreaksbr }}</dd>
+                  <dd class="c-text">{{ especially|default:"なし"|linebreaksbr }}</dd>
                 </div>
               {% endif %}
             </dl>
