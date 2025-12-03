@@ -2,51 +2,71 @@
 {% load get_display %}
 
 {% block content %}
-<main class="l-contents">
-  <div class="l-step">
-    <ol class="l-step__inner">
-      <li class="c-step done">入力</li>
-      <li class="c-step current">確認</li>
-      <li class="c-step">認証</li>
-      <li class="c-step">完了</li>
-    </ol>
-  </div>
-  <section class="l-contents__inner">
-    <h1 class="l-contents__page-title c-title">ご利用登録</h1>
-    <p class="l-contents__lead c-text">以下の内容で送信してよろしいですか？</p>
-    <form action="" method="post">
-    {% csrf_token %}
-      <dl class="l-confirm">
-        <div class="l-confirm__group">
-          <dt class="c-text">お名前</dt>
-          <dd class="c-text">{{ user_family_name }} {{ user_first_name }}</dd>
-        </div>
-        <div class="l-confirm__group">
-          <dt class="c-text">メールアドレス</dt>
-          <dd class="c-text">{{ email }}</dd>
-        </div>
-        <div class="l-confirm__group">
-          <dt class="c-text">電話番号</dt>
-          <dd class="c-text">{{ phone }}</dd>
-        </div>
-        <div class="l-confirm__group">
-          <dt class="c-text">生年月日</dt>
-          <dd class="c-text">{{ birthdate|date_display|date:'Y年n月j日' }}</dd>
-        </div>
-        <div class="l-confirm__group">
-          <dt class="c-text">性別</dt>
-          <dd class="c-text">{{ gender|gender_display }}</dd>
-        </div>
-        <div class="l-confirm__group">
-          <dt class="c-text">診察券番号</dt>
-          <dd class="c-text">{{ card_number|default:"なし" }}</dd>
-        </div>
-      </dl>
+  <main class="l-contents">
+  {# メール送信失敗 #}
+  {% if email_failed %}
+    <div class="l-step">
+      <ol class="l-step__inner">
+        <li class="c-step done">入力</li>
+        <li class="c-step curren alert">失敗</li>
+        <li class="c-step">認証</li>
+        <li class="c-step">完了</li>
+      </ol>
+    </div>
+    <section class="l-contents__inner">
+      <h1 class="l-contents__page-title c-title">メール送信失敗</h1>
+      <p class="l-contents__lead c-text">メールの送信中にエラーが発生しました。<br>時間をおいてもう一度お試しください。</p>
       <div class="l-contents__button">
-        <a class="c-button c-button--secondary" href="{% url 'account_signup' %}">戻る</a>
-        <button class="c-button c-button--primary" type="submit" onclick="this.disabled = true; this.form.submit();">送信する</button>
+        <a class="c-button c-button--primary" href="{% url 'account_signup' %}">入力画面に戻る</a>
       </div>
-    </form>
-  </section>
-</main>
+    </section>
+  {# 成功 #}
+  {% else %}
+    <div class="l-step">
+      <ol class="l-step__inner">
+        <li class="c-step done">入力</li>
+        <li class="c-step current">確認</li>
+        <li class="c-step">認証</li>
+        <li class="c-step">完了</li>
+      </ol>
+    </div>
+    <section class="l-contents__inner">
+      <h1 class="l-contents__page-title c-title">ご利用登録</h1>
+      <p class="l-contents__lead c-text">以下の内容で送信してよろしいですか？</p>
+      <form action="" method="post">
+      {% csrf_token %}
+        <dl class="l-confirm">
+          <div class="l-confirm__group">
+            <dt class="c-text">お名前</dt>
+            <dd class="c-text">{{ user_family_name }} {{ user_first_name }}</dd>
+          </div>
+          <div class="l-confirm__group">
+            <dt class="c-text">メールアドレス</dt>
+            <dd class="c-text">{{ email }}</dd>
+          </div>
+          <div class="l-confirm__group">
+            <dt class="c-text">電話番号</dt>
+            <dd class="c-text">{{ phone }}</dd>
+          </div>
+          <div class="l-confirm__group">
+            <dt class="c-text">生年月日</dt>
+            <dd class="c-text">{{ birthdate|date_display|date:'Y年n月j日' }}</dd>
+          </div>
+          <div class="l-confirm__group">
+            <dt class="c-text">性別</dt>
+            <dd class="c-text">{{ gender|gender_display }}</dd>
+          </div>
+          <div class="l-confirm__group">
+            <dt class="c-text">診察券番号</dt>
+            <dd class="c-text">{{ card_number|default:"なし" }}</dd>
+          </div>
+        </dl>
+        <div class="l-contents__button">
+          <a class="c-button c-button--secondary" href="{% url 'account_signup' %}">戻る</a>
+          <button class="c-button c-button--primary" type="submit" onclick="this.disabled = true; this.form.submit();">送信する</button>
+        </div>
+      </form>
+    </section>
+  {% endif %}
+  </main>
 {% endblock %}

@@ -3,6 +3,24 @@
 
 {% block content %}
   <main class="l-contents">
+  {# メール送信失敗 #}
+  {% if email_failed %}
+    <div class="l-step">
+      <ol class="l-step__inner">
+        <li class="c-step curren alert">失敗</li>
+        <li class="c-step">認証</li>
+        <li class="c-step">完了</li>
+      </ol>
+    </div>
+    <section class="l-contents__inner">
+      <h1 class="l-contents__page-title c-title">メール送信失敗</h1>
+      <p class="l-contents__lead c-text">メールの送信中にエラーが発生しました。<br>時間をおいてもう一度お試しください。</p>
+      <div class="l-contents__button">
+        <a class="c-button c-button--primary" href="{% url 'email_change' %}">入力画面に戻る</a>
+      </div>
+    </section>
+  {# 成功 #}
+  {% else %}
     <div class="l-step">
       <ol class="l-step__inner">
         <li class="c-step current">入力</li>
@@ -39,5 +57,6 @@
         </div>
       </form>
     </section>
+  {% endif %}
   </main>
 {% endblock %}

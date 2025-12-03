@@ -283,7 +283,16 @@ class SignupConfirmView(View):
                     )
                 except Exception as exc:
                     logger.exception("signup mail failed: %s", exc)
-                    return HttpResponse("メール送信に失敗しました")
+
+                    # テンプレートを描画
+                    return render(
+                        request,
+                        "account/signup_confirm.html",
+                        {
+                            **meta_signup_confirm,
+                            "email_failed": True,
+                        },
+                    )
 
                 # セッションを削除
                 request.session.pop(SESSION_KEY_SIGNUP, None)
@@ -448,7 +457,16 @@ class EmailChangeView(LoginRequiredMixin, View):
                 )
             except Exception as exc:
                 logger.exception("email change mail failed: %s", exc)
-                return HttpResponse("メール送信に失敗しました")
+
+                # テンプレートを描画
+                return render(
+                    request,
+                    "account/email_change.html",
+                    {
+                        **meta_email_change,
+                        "email_failed": True,
+                    },
+                )
 
             # 確認ページへリダイレクト
             return redirect("email_change_verify")
