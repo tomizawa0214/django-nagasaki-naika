@@ -309,3 +309,35 @@ meta_privacy = {
     "meta_description": "長﨑医院ネット予約でお預かりする個人情報の取り扱いについてご案内するプライバシーポリシーページです。",
     "url": f"{settings.BASE_URL}/privacy/",
 }
+
+# 400エラー
+meta_400 = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"ご指定のリクエストを処理できませんでした{separate}{site_name}",
+    "meta_description": "",
+    "url": "",
+}
+
+# 403エラー
+meta_403 = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"ご指定のページへのアクセスは制限されています{separate}{site_name}",
+    "meta_description": "",
+    "url": "",
+}
+
+# 404エラー
+meta_404 = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"お探しのページが見つかりません{separate}{site_name}",
+    "meta_description": "",
+    "url": "",
+}
+
+# 500エラー
+meta_500 = {
+    "meta_robots": "noindex,follow",
+    "meta_title": f"ご指定のページを表示できませんでした{separate}{site_name}",
+    "meta_description": "",
+    "url": "",
+}

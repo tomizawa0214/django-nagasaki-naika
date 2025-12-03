@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
@@ -12,6 +14,9 @@ from .seo_meta import *
 # =====================================================================================================
 # 初期設定
 # =====================================================================================================
+
+# ログ
+logger = logging.getLogger(__name__)
 
 # 登録ユーザーを取得
 User = get_user_model()
@@ -1298,7 +1303,7 @@ class AppointmentDeleteView(LoginRequiredMixin, View):
         appointment_dt_str = f"{appointment_dt.strftime('%-m月%-d日')}({weekday}) {appointment_dt.strftime('%-H:%M')}〜"
 
         # 予約を削除
-        # appointment.delete()
+        appointment.delete()
 
         # メタタグにURLを追加
         meta = {
@@ -1322,3 +1327,68 @@ class PrivacyView(View):
 
         # テンプレートを描画
         return render(request, "privacy.html", {**meta_privacy})
+
+
+# =====================================================================================================
+# 400 Bad Request: リクエスト自体が不正（形式ミスや不正な入力）で処理できない状態
+# =====================================================================================================
+def handler400_view(request, exception=None):
+
+    # ログに記録
+    logger.exception("status 400: %s", exception)
+
+    # メタタグにURLを追加
+    meta = {
+        **meta_400,
+        "url": request.build_absolute_uri(),
+    }
+
+    return render(request, "400.html", {**meta}, status=400)
+
+
+# =====================================================================================================
+# 403 Forbidden: 認証済みでも権限不足などでアクセスが許可されない状態
+# =====================================================================================================
+def handler403_view(request, exception=None):
+
+    # ログに記録
+    logger.exception("status 403: %s", exception)
+
+    # メタタグにURLを追加
+    meta = {
+        **meta_403,
+        "url": request.build_absolute_uri(),
+    }
+
+    return render(request, "403.html", {**meta}, status=403)
+
+
+# =====================================================================================================
+# 404 Not Found: 指定されたリソースやURLが存在しない状態
+# =====================================================================================================
+def handler404_view(request, exception=None):
+
+    # ログに記録
+    logger.exception("status 404: %s", exception)
+
+    # メタタグにURLを追加
+    meta = {
+        **meta_404,
+        "url": request.build_absolute_uri(),
+    }
+
+    return render(request, "404.html", {**meta}, status=404)
+
+
+# =====================================================================================================
+# 500 Internal Server Error: サーバー側で予期せぬエラーが起き、処理を完了できない状態
+# =====================================================================================================
+def handler500_view(request):
+
+    # メタタグにURLを追加
+    meta = {
+        **meta_500,
+        "url": request.build_absolute_uri(),
+    }
+
+    return render(request, "500.html", {**meta}, status=500)

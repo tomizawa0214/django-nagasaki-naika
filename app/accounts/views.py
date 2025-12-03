@@ -17,7 +17,6 @@ from django.contrib.auth.views import (
 from django.core.mail import send_mail
 from django.core.signing import BadSignature, SignatureExpired, dumps, loads
 from django.db import transaction
-from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -33,14 +32,14 @@ from .forms import *
 # 初期設定
 # =====================================================================================================
 
+# ログ
+logger = logging.getLogger(__name__)
+
 # 登録ユーザーを取得
 User = get_user_model()
 
 # セッション管理
 SESSION_KEY_SIGNUP = "signup_data"
-
-# ログ
-logger = logging.getLogger(__name__)
 
 
 # =====================================================================================================
