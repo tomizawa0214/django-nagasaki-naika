@@ -239,23 +239,23 @@ class SignupConfirmView(View):
             with transaction.atomic():
 
                 # 同じメールアドレスかつ仮登録のアカウントを削除（本登録忘れや入力間違いに対応）
-                user_email = signup_data.get("email")
+                user_email = form.cleaned_data.get("email")
                 User.objects.filter(email__iexact=user_email, is_active=False).delete()
 
                 # ユーザー情報をセット
                 user_data = User(
-                    family_name=signup_data.get("user_family_name"),
-                    first_name=signup_data.get("user_first_name"),
+                    family_name=form.cleaned_data.get("user_family_name"),
+                    first_name=form.cleaned_data.get("user_first_name"),
                     email=user_email,
-                    phone=signup_data.get("phone"),
-                    birthdate=signup_data.get("birthdate"),
-                    gender=signup_data.get("gender"),
-                    card_number=signup_data.get("card_number"),
+                    phone=form.cleaned_data.get("phone"),
+                    birthdate=form.cleaned_data.get("birthdate"),
+                    gender=form.cleaned_data.get("gender"),
+                    card_number=form.cleaned_data.get("card_number"),
                     is_active=False,
                 )
 
                 # パスワード登録処理
-                user_data.set_password(signup_data.get("password1"))
+                user_data.set_password(form.cleaned_data.get("password1"))
 
                 # 登録処理
                 user_data.save()

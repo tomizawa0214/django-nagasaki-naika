@@ -75,7 +75,7 @@ class AppointmentView(LoginRequiredMixin, View):
 
         # セッションの選択を初期値に設定（戻る操作時に対応）
         if "visit" in appointment_data:
-            initial["visit"] = appointment_data["visit"]
+            initial["visit"] = appointment_data.get("visit")
 
         # フォームを取得
         form = AppointmentVisitForm(initial=initial)
@@ -489,7 +489,7 @@ class AppointmentConfirmView(LoginRequiredMixin, View):
         form = AppointmentContactForm(appointment_data)
 
         # 予約可否の判定用
-        dt = datetime.datetime.fromisoformat(appointment_data["appointment_dt"])
+        dt = datetime.datetime.fromisoformat(appointment_data.get("appointment_dt"))
         date_obj = dt.date()
         time_str = dt.strftime("%H:%M")
 
@@ -536,15 +536,16 @@ class AppointmentConfirmView(LoginRequiredMixin, View):
 
                 # 入力値を取得
                 appointment_dt = timezone.make_aware(
-                    datetime.datetime.fromisoformat(appointment_data["appointment_dt"]), timezone.get_current_timezone()
+                    datetime.datetime.fromisoformat(appointment_data.get("appointment_dt")),
+                    timezone.get_current_timezone(),
                 )
-                user_family_name = appointment_data.get("user_family_name")
-                user_first_name = appointment_data.get("user_first_name")
-                email = appointment_data.get("email")
-                phone = appointment_data.get("phone")
-                birthdate = datetime.date.fromisoformat(appointment_data["birthdate"])
-                gender = appointment_data.get("gender")
-                card_number = appointment_data.get("card_number") or None
+                user_family_name = form.cleaned_data.get("user_family_name")
+                user_first_name = form.cleaned_data.get("user_first_name")
+                email = form.cleaned_data.get("email")
+                phone = form.cleaned_data.get("phone")
+                birthdate = form.cleaned_data.get("birthdate")
+                gender = form.cleaned_data.get("gender")
+                card_number = form.cleaned_data.get("card_number") or None
 
                 # 予約情報をセット
                 appointment_create = Appointment(
@@ -567,28 +568,28 @@ class AppointmentConfirmView(LoginRequiredMixin, View):
                 if visit == "first":
 
                     # 入力値を取得
-                    symptom = appointment_data.get("symptom")
-                    symptom_other = appointment_data.get("symptom_other") or None
-                    symptom_start = datetime.date.fromisoformat(appointment_data["symptom_start"])
-                    medical_history = appointment_data.get("medical_history")
-                    has_medical_history = appointment_data.get("has_medical_history") or None
-                    under_treatment = appointment_data.get("under_treatment")
-                    has_under_treatment = appointment_data.get("has_under_treatment") or None
-                    current_medication = appointment_data.get("current_medication")
-                    has_current_medication = appointment_data.get("has_current_medication") or None
-                    smoking = appointment_data.get("smoking")
-                    has_smoking_per_day = appointment_data.get("has_smoking_per_day") or None
-                    has_smoking_years = appointment_data.get("has_smoking_years") or None
-                    has_quit_smoking_years = appointment_data.get("has_quit_smoking_years") or None
-                    has_until_smoking_years = appointment_data.get("has_until_smoking_years") or None
-                    alcohol = appointment_data.get("alcohol")
-                    alcohol_per_week = appointment_data.get("alcohol_per_week") or None
-                    alcohol_type = appointment_data.get("alcohol_type") or None
-                    alcohol_amount = appointment_data.get("alcohol_amount") or None
-                    allergy = appointment_data.get("allergy")
-                    has_allergy = appointment_data.get("has_allergy") or None
-                    pregnancy = appointment_data.get("pregnancy")
-                    especially = appointment_data.get("especially") or None
+                    symptom = q_form.cleaned_data.get("symptom")
+                    symptom_other = q_form.cleaned_data.get("symptom_other") or None
+                    symptom_start = datetime.date.fromisoformat(q_form.cleaned_data.get("symptom_start"))
+                    medical_history = q_form.cleaned_data.get("medical_history")
+                    has_medical_history = q_form.cleaned_data.get("has_medical_history") or None
+                    under_treatment = q_form.cleaned_data.get("under_treatment")
+                    has_under_treatment = q_form.cleaned_data.get("has_under_treatment") or None
+                    current_medication = q_form.cleaned_data.get("current_medication")
+                    has_current_medication = q_form.cleaned_data.get("has_current_medication") or None
+                    smoking = q_form.cleaned_data.get("smoking")
+                    has_smoking_per_day = q_form.cleaned_data.get("has_smoking_per_day") or None
+                    has_smoking_years = q_form.cleaned_data.get("has_smoking_years") or None
+                    has_quit_smoking_years = q_form.cleaned_data.get("has_quit_smoking_years") or None
+                    has_until_smoking_years = q_form.cleaned_data.get("has_until_smoking_years") or None
+                    alcohol = q_form.cleaned_data.get("alcohol")
+                    alcohol_per_week = q_form.cleaned_data.get("alcohol_per_week") or None
+                    alcohol_type = q_form.cleaned_data.get("alcohol_type") or None
+                    alcohol_amount = q_form.cleaned_data.get("alcohol_amount") or None
+                    allergy = q_form.cleaned_data.get("allergy")
+                    has_allergy = q_form.cleaned_data.get("has_allergy") or None
+                    pregnancy = q_form.cleaned_data.get("pregnancy")
+                    especially = q_form.cleaned_data.get("especially") or None
 
                     # 問診票をセット
                     questionnaire_create = Questionnaire(
@@ -959,13 +960,13 @@ class AppointmentContactEditConfirmView(LoginRequiredMixin, View):
         if form.is_valid():
 
             # 入力値を取得
-            user_family_name = appointment_edit.get("user_family_name")
-            user_first_name = appointment_edit.get("user_first_name")
-            email = appointment_edit.get("email")
-            phone = appointment_edit.get("phone")
-            birthdate = datetime.date.fromisoformat(appointment_edit["birthdate"])
-            gender = appointment_edit.get("gender")
-            card_number = appointment_edit.get("card_number") or None
+            user_family_name = form.cleaned_data.get("user_family_name")
+            user_first_name = form.cleaned_data.get("user_first_name")
+            email = form.cleaned_data.get("email")
+            phone = form.cleaned_data.get("phone")
+            birthdate = form.cleaned_data.get("birthdate")
+            gender = form.cleaned_data.get("gender")
+            card_number = form.cleaned_data.get("card_number") or None
 
             # トランザクション内でまとめて処理
             with transaction.atomic():
@@ -1225,30 +1226,28 @@ class AppointmentQuestionnaireEditConfirmView(LoginRequiredMixin, View):
                 questionnaire = get_object_or_404(Questionnaire, appointment__pk=pk, appointment__user=request.user)
 
                 # 入力値を取得
-                questionnaire.symptom = questionnaire_edit.get("symptom")
-                questionnaire.symptom_other = questionnaire_edit.get("symptom_other") or None
-                questionnaire.symptom_start = datetime.date.fromisoformat(questionnaire_edit["symptom_start"])
-                questionnaire.medical_history = questionnaire_edit.get("medical_history")
-                questionnaire.has_medical_history = questionnaire_edit.get("has_medical_history") or None
-                questionnaire.under_treatment = questionnaire_edit.get("under_treatment")
-                questionnaire.has_under_treatment = questionnaire_edit.get("has_under_treatment") or None
-                questionnaire.current_medication = questionnaire_edit.get("current_medication")
-                questionnaire.has_current_medication = (
-                    questionnaire_edit.get("has_current_medication") or None
-                )
-                questionnaire.smoking = questionnaire_edit.get("smoking")
-                questionnaire.has_smoking_per_day = questionnaire_edit.get("has_smoking_per_day") or None
-                questionnaire.has_smoking_years = questionnaire_edit.get("has_smoking_years") or None
-                questionnaire.has_quit_smoking_years = questionnaire_edit.get("has_quit_smoking_years") or None
-                questionnaire.has_until_smoking_years = questionnaire_edit.get("has_until_smoking_years") or None
-                questionnaire.alcohol = questionnaire_edit.get("alcohol")
-                questionnaire.alcohol_per_week = questionnaire_edit.get("alcohol_per_week") or None
-                questionnaire.alcohol_type = questionnaire_edit.get("alcohol_type") or None
-                questionnaire.alcohol_amount = questionnaire_edit.get("alcohol_amount") or None
-                questionnaire.allergy = questionnaire_edit.get("allergy")
-                questionnaire.has_allergy = questionnaire_edit.get("has_allergy") or None
-                questionnaire.pregnancy = questionnaire_edit.get("pregnancy")
-                questionnaire.especially = questionnaire_edit.get("especially") or None
+                questionnaire.symptom = form.cleaned_data.get("symptom")
+                questionnaire.symptom_other = form.cleaned_data.get("symptom_other") or None
+                questionnaire.symptom_start = datetime.date.fromisoformat(form.cleaned_data.get("symptom_start"))
+                questionnaire.medical_history = form.cleaned_data.get("medical_history")
+                questionnaire.has_medical_history = form.cleaned_data.get("has_medical_history") or None
+                questionnaire.under_treatment = form.cleaned_data.get("under_treatment")
+                questionnaire.has_under_treatment = form.cleaned_data.get("has_under_treatment") or None
+                questionnaire.current_medication = form.cleaned_data.get("current_medication")
+                questionnaire.has_current_medication = form.cleaned_data.get("has_current_medication") or None
+                questionnaire.smoking = form.cleaned_data.get("smoking")
+                questionnaire.has_smoking_per_day = form.cleaned_data.get("has_smoking_per_day") or None
+                questionnaire.has_smoking_years = form.cleaned_data.get("has_smoking_years") or None
+                questionnaire.has_quit_smoking_years = form.cleaned_data.get("has_quit_smoking_years") or None
+                questionnaire.has_until_smoking_years = form.cleaned_data.get("has_until_smoking_years") or None
+                questionnaire.alcohol = form.cleaned_data.get("alcohol")
+                questionnaire.alcohol_per_week = form.cleaned_data.get("alcohol_per_week") or None
+                questionnaire.alcohol_type = form.cleaned_data.get("alcohol_type") or None
+                questionnaire.alcohol_amount = form.cleaned_data.get("alcohol_amount") or None
+                questionnaire.allergy = form.cleaned_data.get("allergy")
+                questionnaire.has_allergy = form.cleaned_data.get("has_allergy") or None
+                questionnaire.pregnancy = form.cleaned_data.get("pregnancy")
+                questionnaire.especially = form.cleaned_data.get("especially") or None
 
                 # 更新処理
                 questionnaire.save()
