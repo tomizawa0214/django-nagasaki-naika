@@ -1,10 +1,16 @@
 import datetime
+import io
+import zipfile
+from urllib.parse import quote
 
 from django.conf import settings
 from django.contrib import admin
+from django.http import HttpResponse
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.html import format_html
 from rangefilter.filters import DateRangeFilterBuilder
+from weasyprint import HTML
 
 from .admin_forms import *
 from .models import *
@@ -154,6 +160,7 @@ admin.site.register(Appointment, AppointmentCustomAdmin)
 # =====================================================================================================
 class QuestionnaireCustomAdmin(admin.ModelAdmin):
     form = QuestionnaireAdminForm
+    action_form = QuestionnaireActionForm
 
     # 一覧画面: 表示項目
     list_display = (
@@ -230,6 +237,9 @@ class QuestionnaireCustomAdmin(admin.ModelAdmin):
     # 編集画面: 表示のみ（編集不可）
     readonly_fields = ("created_at_display", "updated_at_display")
 
+    # PDFダウンロードボタンの設置
+    actions = ["download_pdf"]
+
     # 症状の表示を変更
     def symptom_display(self, model):
         label_map = dict(settings.SYMTOM_CHOICES)
@@ -258,6 +268,56 @@ class QuestionnaireCustomAdmin(admin.ModelAdmin):
         return dt.strftime("%Y年%-m月%-d日 %H:%M")
 
     updated_at_display.short_description = "更新日時"
+
+    # PDFダウンロード
+    def download_pdf(self, request, queryset):
+        if not queryset.exists():
+            return
+
+        # 現在日時を取得
+        dt_now = timezone.localtime(timezone.now())
+
+        # 1件ならそのまま返す
+        if queryset.count() == 1:
+            q = queryset.first()
+            context = {
+                "pk": q.appointment_id,
+                "questionnaire": q,
+                "dt_now": dt_now,
+            }
+            html_str = render_to_string("questionnaire_write.html", context, request=request)
+            pdf = HTML(string=html_str, base_url=request.build_absolute_uri("/")).write_pdf()
+
+            filename_utf8 = f"問診票_{dt_now.strftime("%Y%m%d%H%M")}.pdf"
+            resp = HttpResponse(pdf, content_type="application/pdf")
+            resp["Content-Disposition"] = (
+                'attachment; filename="questionnaire.pdf"; ' f"filename*=UTF-8''{quote(filename_utf8)}"
+            )
+            return resp
+
+        # 複数件ならZipにまとめる
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+            for i, q in enumerate(queryset, start=1):
+                context = {
+                    "pk": q.appointment_id,
+                    "questionnaire": q,
+                    "dt_now": dt_now,
+                }
+                html_str = render_to_string("questionnaire_write.html", context, request=request)
+                pdf_bytes = HTML(string=html_str, base_url=request.build_absolute_uri("/")).write_pdf()
+                filename = f"問診票_{i}.pdf"
+                zf.writestr(filename, pdf_bytes)
+
+        buffer.seek(0)
+        zip_name = f"問診票_{dt_now.strftime("%Y%m%d%H%M")}.zip"
+        resp = HttpResponse(buffer.getvalue(), content_type="application/zip")
+        resp["Content-Disposition"] = (
+            'attachment; filename="questionnaires.zip"; ' f"filename*=UTF-8''{quote(zip_name)}"
+        )
+        return resp
+
+    download_pdf.short_description = "PDFをダウンロード"
 
 
 admin.site.register(Questionnaire, QuestionnaireCustomAdmin)

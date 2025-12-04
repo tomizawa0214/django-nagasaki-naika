@@ -1,5 +1,7 @@
 from django import forms
 from django.conf import settings
+from django.contrib.admin.helpers import ActionForm
+
 from .models import Questionnaire
 
 
@@ -24,3 +26,13 @@ class QuestionnaireAdminForm(forms.ModelForm):
 
     def clean_symptom(self):
         return self.cleaned_data["symptom"]
+
+
+# =====================================================================================================
+# 一覧画面: 問診票の実行ドロップダウン路の初期値をPDFダウンロードにする
+# =====================================================================================================
+class QuestionnaireActionForm(ActionForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if "action" in self.fields:
+            self.fields["action"].initial = "download_pdf"

@@ -165,6 +165,18 @@ img {
     margin: 0 0 8vw;
   }
 }
+.l-contents__page-pdf {
+  padding: 1rem 0;
+  margin: 0 0 3rem;
+  color: #FFF;
+  text-align: center;
+  background-color: #62A045;
+}
+@media screen and (max-width: 1023px) {
+  .l-contents__page-pdf {
+    margin: 0 0 8vw;
+  }
+}
 .l-contents__lead {
   margin: 0 0 4rem;
   text-align: center;
@@ -1887,4 +1899,51 @@ img {
   .p-privacy ol {
     margin: 1.3333333333vw 0;
   }
+}
+
+.p-pdf {
+  max-width: 117rem;
+  margin: 0 auto;
+}
+.p-pdf__title {
+  padding: 1.5rem 0;
+  margin: 0 0 3rem;
+  color: #FFF;
+  text-align: center;
+  background-color: #62A045;
+  border-radius: 10rem;
+}
+.p-pdf__contents {
+  display: grid;
+  grid-template-columns: 30% 1fr;
+  gap: 4rem;
+  -ms-flex-line-pack: start;
+      align-content: flex-start;
+}
+.p-pdf__contact {
+  padding: 2rem;
+  background-color: #F8FCEE;
+  border-radius: 0.8rem;
+}
+.p-pdf__contact dt {
+  color: #808080;
+}
+.p-pdf__contact dd {
+  margin: 0 0 2rem;
+  font-weight: bold;
+}
+.p-pdf__q dt {
+  margin: 0 0 1rem;
+  color: #808080;
+  border-bottom: 0.1rem solid #CCC;
+}
+.p-pdf__q dd {
+  font-weight: bold;
+}
+.p-pdf__group {
+  margin: 0 0 2rem;
+}
+.p-pdf_created_at {
+  margin: 0 0 2rem;
+  text-align: right;
 }/*# sourceMappingURL=style.css.map */

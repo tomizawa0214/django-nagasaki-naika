@@ -68,6 +68,17 @@
     }
   }
 
+  &__page-pdf {
+    padding: 1rem 0;
+    margin: 0 0 3rem;
+    color: #FFF;
+    text-align: center;
+    background-color: map.get(color.$theme-colors, 'main');
+    @include mix.mq('sp-tb') {
+      margin: 0 0 calc(30 / 375) * 100vw;
+    }
+  }
+
   &__lead {
     margin: 0 0 4rem;
     text-align: center;

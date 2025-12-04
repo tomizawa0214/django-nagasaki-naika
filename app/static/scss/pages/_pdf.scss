@@ -1,0 +1,66 @@
+//////////////////////////////////
+// PDF用
+//////////////////////////////////
+
+@use 'sass:map';
+@use '../foundation/fonts' as font;
+@use '../foundation/colors' as color;
+@use '../foundation/mixins' as mix;
+
+.p-pdf {
+  max-width: 117rem;
+  margin: 0 auto;
+
+  &__title {
+    padding: 1.5rem 0;
+    margin: 0 0 3rem;
+    color: #FFF;
+    text-align: center;
+    background-color: map.get(color.$theme-colors, 'main');
+    border-radius: 10rem;
+  }
+  
+  
+  &__contents {
+    display: grid;
+    grid-template-columns: 30% 1fr;
+    gap: 4rem;
+    align-content: flex-start;
+  }
+
+  &__contact {
+    padding: 2rem;
+    background-color: map.get(color.$theme-colors, 'base');
+    border-radius: 0.8rem;
+
+    dt {
+      color: map.get(color.$theme-colors, 'sub')
+    }
+
+    dd {
+      margin: 0 0 2rem;
+      font-weight: bold;
+    }
+  }
+
+  &__q {
+    dt {
+      margin: 0 0 1rem;
+      color: map.get(color.$theme-colors, 'sub');
+      border-bottom: 0.1rem solid map.get(color.$theme-colors, 'border')
+    }
+
+    dd {
+      font-weight: bold;
+    }
+  }
+
+  &__group {
+    margin: 0 0 2rem;
+  }
+
+  &_created_at {
+    margin: 0 0 2rem;
+    text-align: right;
+  }
+}

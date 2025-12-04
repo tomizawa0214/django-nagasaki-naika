@@ -1,0 +1,183 @@
+{% load static %}
+{% load tz %}
+{% load get_display %}
+
+<!DOCTYPE html>
+<html lang="ja">
+{% include "include/_head.html" with meta_robots="noindex,follow" meta_title="問診票" meta_description="" url="" %}
+{# PDFの書き出しをA4サイズに指定 #}
+<style>
+  @page {
+    size: A4;
+    margin: 5mm;
+  }
+  
+  html {
+    font-size: calc(62.5% * 0.8);
+  }
+
+  body {
+    width: 100%;
+    max-width: 100%;
+  }
+</style>
+<body>
+  {# Contents #}
+  {% block content %}
+    <main class="p-pdf">
+      <section class="p-pdf__inner">
+        {# PDFのダウンロード日時 #}
+        <div class="p-pdf_created_at">
+          <ul>
+            <li class="c-text c-text--sm">PDFダウンロード日時： {{ dt_now|date:"Y年n月j日(D) G:i" }}</time></li>
+          </ul>
+        </div>
+        <h1 class="p-pdf__title c-title">問 診 票</h1>
+        <div class="p-pdf__contents">
+          {# 来院日時 & 連絡先情報 #}
+          <dl class="p-pdf__contact">
+            <dt class="c-text">来院日時</dt>
+            <dd class="c-text">{{ questionnaire.appointment.appointment_dt|localtime|date:"Y年n月j日(D) G:i～" }}</dd>
+            <dt class="c-text">お名前</dt>
+            <dd class="c-text">{{ questionnaire.appointment.family_name }} {{ questionnaire.appointment.first_name }} 様</dd>
+            <dt class="c-text">メールアドレス</dt>
+            <dd class="c-text">{{ questionnaire.appointment.email }}</dd>
+            <dt class="c-text">電話番号</dt>
+            <dd class="c-text">{{ questionnaire.appointment.phone }}</dd>
+            <dt class="c-text">生年月日</dt>
+            <dd class="c-text">{{ questionnaire.appointment.birthdate|date:'Y年n月j日' }}</dd>
+            <dt class="c-text">性別</dt>
+            <dd class="c-text">{{ questionnaire.appointment.gender|gender_display }}</dd>
+            <dt class="c-text">診察券番号</dt>
+            <dd class="c-text">{{ questionnaire.appointment.card_number|default:"なし" }}</dd>
+          </dl>
+          {# 問診票 #}
+          <dl class="p-pdf__q">
+            {# 本日はどうなさいましたか？ #}
+            <div class="p-pdf__group">
+              <dt class="c-text">Q1. 本日はどうなさいましたか？</dt>
+              <dd class="c-text">
+                {{ questionnaire.symptom|symptom_display|join:"、 " }}
+                {# その他 #}
+                {% if "other" in questionnaire.symptom and questionnaire.symptom_other %} (
+                  {{ questionnaire.symptom_other }}
+                )
+                {% endif %}
+              </dd>
+            </div>
+            {# 症状はいつ頃から #}
+            <div class="p-pdf__group">
+              <dt class="c-text">Q2. 症状はいつ頃からありますか？</dt>
+              <dd class="c-text">
+                {{ questionnaire.symptom_start|date:"Y-m-d"|symptom_start_display }} (
+                  {{ questionnaire.symptom_start|date:"n月j日" }}頃
+                )
+              </dd>
+            </div>
+            {# 大きな病気での治療や手術 #}
+            <div class="p-pdf__group">
+              <dt class="c-text">Q3. 過去に大きな病気で治療や手術を受けられたことはありますか？</dt>
+              <dd class="c-text">
+                {{ questionnaire.medical_history|yes_or_no_display }}
+                {# ある #}
+                {% if questionnaire.medical_history == "yes" and questionnaire.has_medical_history %}
+                  <br>(
+                    {{ questionnaire.has_medical_history }}
+                  )
+                {% endif %}
+              </dd>
+            </div>
+            {# 治療中の病気 #}
+            <div class="p-pdf__group">
+              <dt class="c-text">Q4. 現在、治療中の病気はありますか？</dt>
+              <dd class="c-text">
+                {{ questionnaire.under_treatment|yes_or_no_display }}
+                {# ある #}
+                {% if questionnaire.under_treatment == "yes" and questionnaire.has_under_treatment %}
+                  <br>(
+                    {{ questionnaire.has_under_treatment }}
+                  )
+                {% endif %}
+              </dd>
+            </div>
+            {# 飲んでいるお薬 #}
+            <div class="p-pdf__group">
+              <dt class="c-text">Q5. 現在、飲んでいるお薬はありますか？</dt>
+              <dd class="c-text">
+                {{ questionnaire.current_medication|yes_or_no_display }}
+                {# ある #}
+                {% if questionnaire.current_medication == "yes" and questionnaire.has_current_medication %}
+                  <br>(
+                    {{ questionnaire.has_current_medication }}
+                  )
+                {% endif %}
+              </dd>
+            </div>
+            {# 喫煙、飲酒について #}
+            <div class="p-pdf__group">
+              <dt class="c-text">Q6. 喫煙、飲酒について教えてください。</dt>
+              {# 煙草 #}
+              <dd class="c-text">
+                【煙草】 {{ questionnaire.smoking|smoking_display }}
+                {# 吸う #}
+                {% if questionnaire.smoking == "smoking" %}
+                  {% if questionnaire.has_smoking_per_day or questionnaire.has_smoking_years %}
+                    <br class="only-sp">(
+                      {% if questionnaire.has_smoking_per_day %}1日{{ questionnaire.has_smoking_per_day|smoking_per_day_display }}{% endif %}
+                      {% if questionnaire.has_smoking_per_day and questionnaire.has_smoking_years %}×{% endif %}
+                      {% if questionnaire.has_smoking_years %}{{ questionnaire.has_smoking_years|years_display }}{% endif %}
+                    )
+                  {% endif %}
+                {# 禁煙した #}
+                {% elif questionnaire.smoking == "quit-smoking" %}
+                  {% if questionnaire.has_quit_smoking_years or questionnaire.has_until_smoking_years %}
+                    <br class="only-sp">(
+                      {% if questionnaire.has_quit_smoking_years %}{{ questionnaire.has_quit_smoking_years|quit_smoking_years_display }}前から{% endif %}
+                      {% if questionnaire.has_quit_smoking_years and questionnaire.has_until_smoking_years %} / {% endif %}
+                      {% if questionnaire.has_until_smoking_years %}それまで{{ questionnaire.has_until_smoking_years|years_display }}喫煙{% endif %}
+                    )
+                  {% endif %}
+                {% endif %}
+              </dd>
+              {# 飲酒 #}
+              <dd class="c-text">
+                【飲酒】 {{ questionnaire.alcohol|alcohol_display }}
+                {# 飲む #}
+                {% if alcohol == "yes" and alcohol_per_week or alcohol_type or alcohol_amount %}
+                  <br class="only-sp">(
+                    {% if questionnaire.alcohol_per_week %}週{{ questionnaire.alcohol_per_week|alcohol_per_week_display }}{% endif %}
+                    {% if questionnaire.alcohol_type %}{% if questionnaire.alcohol_per_week %} / {% endif %}種類: {{ questionnaire.alcohol_type }}{% endif %}
+                    {% if questionnaire.alcohol_amount %}{% if questionnaire.alcohol_per_week or questionnaire.alcohol_type %} / {% endif %}量: {{ questionnaire.alcohol_amount }}{% endif %}
+                  )
+                {% endif %}
+              </dd>
+            </div>
+            {# お薬・食べ物のアレルギー #}
+            <div class="p-pdf__group">
+              <dt class="c-text">Q7. お薬・食べ物のアレルギーはありますか？</dt>
+              <dd class="c-text">
+                {{ questionnaire.allergy|yes_or_no_display }}
+                {# ある #}
+                {% if questionnaire.allergy == "yes" and questionnaire.has_allergy %}
+                  <br>
+                  ({{ questionnaire.has_allergy }})
+                {% endif %}
+              </dd>
+            </div>
+            {# 妊娠の可能性 #}
+            <div class="p-pdf__group">
+              <dt class="c-text">Q8. 現在、妊娠中あるいは妊娠の可能性、または授乳中ですか？</dt>
+              <dd class="c-text">{{ questionnaire.pregnancy|pregnancy_display }}</dd>
+            </div>
+            {# 特に調べてほしいこと #}
+            <div class="p-pdf__group">
+              <dt class="c-text">Q9. 特に調べてほしいこと、検査、治療がありましたらご記入ください。</dt>
+              <dd class="c-text">{{ questionnaire.especially|default:"なし"|linebreaksbr }}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+    </main>
+  {% endblock %}
+</body>
+</html>
