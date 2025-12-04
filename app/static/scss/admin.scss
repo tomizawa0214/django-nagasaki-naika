@@ -1,0 +1,203 @@
+// 基本的なスタイルや変数/mixin
+@use 'foundation/colors' as color;
+@use 'foundation/fonts' as font;
+@use 'foundation/mixins' as mix;
+@use 'sass:color' as color-fn;
+@use 'sass:map';
+
+// 管理画面
+html[data-theme="light"],
+:root {
+  --primary: #{map.get(color.$theme-colors, 'main')};
+  --secondary: #{map.get(color.$theme-colors, 'main')};
+  --accent: #{map.get(color.$theme-colors, 'accent')};
+  --primary-fg: #FFF;
+  --body-fg: #{map.get(color.$theme-colors, 'black')};
+  --body-bg: #FFF;
+  --body-quiet-color: #{map.get(color.$theme-colors, 'sub')};
+  --body-medium-color: #{map.get(color.$theme-colors, 'sub')};
+  --body-loud-color: #{map.get(color.$theme-colors, 'black')};
+  --header-color: #FFF;
+  --header-branding-color: #FFF;
+  --header-bg: var(--secondary);
+  --header-link-color: var(--primary-fg);
+  --breadcrumbs-fg: #{map.get(color.$theme-colors, 'black')};
+  --breadcrumbs-link-fg: #{map.get(color.$theme-colors, 'link')};
+  --breadcrumbs-bg: #FFF;
+  --link-fg: #{map.get(color.$theme-colors, 'link')};
+  --link-hover-color: #{color-fn.adjust(map.get(color.$theme-colors, 'link'), $lightness: 15%)};
+  --link-selected-fg: var(--secondary);
+  --hairline-color: #e8e8e8;
+  --border-color: #{map.get(color.$theme-colors, 'border')};
+  --error-fg: #{map.get(color.$theme-colors, 'alert')};
+  --message-success-bg: #dfd;
+  --message-warning-bg: #ffc;
+  --message-error-bg: #ffefef;
+  --darkened-bg: #f8f8f8; /* A bit darker than --body-bg */
+  --selected-bg: #e4e4e4; /* E.g. selected table cells */
+  --selected-row: #{map.get(color.$theme-colors, 'base')};
+  --button-fg: #fff;
+  --button-bg: var(--secondary);
+  --button-hover-bg: #{color-fn.adjust(map.get(color.$theme-colors, 'main'), $lightness: 15%)};
+  --default-button-bg: #{map.get(color.$theme-colors, 'main')};
+  --default-button-hover-bg: #{color-fn.adjust(map.get(color.$theme-colors, 'main'), $lightness: 15%)};
+  --close-button-bg: #{map.get(color.$theme-colors, 'main')};
+  --close-button-hover-bg: #{color-fn.adjust(map.get(color.$theme-colors, 'main'), $lightness: 15%)};
+  --delete-button-bg: #{map.get(color.$theme-colors, 'alert')};
+  --delete-button-hover-bg: #{color-fn.adjust(map.get(color.$theme-colors, 'alert'), $lightness: 15%)};
+  --object-tools-fg: var(--button-fg);
+  --object-tools-bg: var(--close-button-bg);
+  --object-tools-hover-bg: var(--close-button-hover-bg);
+
+  color-scheme: light;
+}
+
+html[data-theme="dark"],
+:root {
+  --breadcrumbs-fg: #FFF;
+  --breadcrumbs-bg: transparent;
+
+  color-scheme: dark;
+}
+
+html {
+  font-size: 120%;
+  font-weight: 500;
+}
+
+body {
+  font-family: map.get(font.$font-families, 'base');
+  font-feature-settings: 'palt';
+  line-height: map.get(font.$line-heights, 'sm');
+  letter-spacing: map.get(font.$letter-spacings, 'base');
+  line-break: strict;
+  overflow-wrap: anywhere;  
+}
+
+#site-name {
+  a {
+    &:link, &:visited {
+      color: #FFF;
+    }
+  }
+}
+
+.module caption,
+fieldset .fieldset-heading, fieldset .inline-heading, :not(.inline-related) .collapse summary,
+.button, input[type="submit"], input[type="button"], .submit-row input, a.button,
+.submit-row a.deletelink,
+.object-tools a:link, .object-tools a:visited,
+#header a:link, #header a:visited, #logout-form button {
+  font-weight: bold !important;
+}
+
+.calendar caption, .calendarbox h2 {
+  background: map.get(color.$theme-colors, 'base') !important;
+}
+
+#header a:link {
+  @include mix.hover-on {
+    @include mix.hover;
+  }
+}
+
+#user-tools a, #logout-form button {
+  border: none;
+}
+
+.flex-container {
+  align-items: center;
+}
+
+.aligned label {
+  width: auto !important;
+}
+
+#changelist-filter li.selected {
+  border-left: 5px solid map.get(color.$theme-colors, 'main') !important;
+}
+
+input:not([type]),
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="url"],
+input[type="number"],
+input[type="tel"],
+textarea,
+select,
+.vTextField,
+#toolbar #searchbar,
+#changelist .actions select {
+  padding: 10px 15px;
+  font-family: map.get(font.$font-families, 'base');
+  line-height: map.get(font.$line-heights, 'sm');
+  border: 1px solid map.get(color.$theme-colors, 'border');
+  border-radius: 4px;
+  @include mix.mq('sp-tb') {
+    padding: calc(10 / 375) * 100vw calc(15 / 375) * 100vw;
+    border: calc(1 / 375) * 100vw solid map.get(color.$theme-colors, 'border');
+    border-radius: calc(4 / 375) * 100vw;
+  }
+
+  // iOSでボックス内のテキストを左寄せ
+  &::-webkit-date-and-time-value {
+    text-align: left;
+  }
+
+  &:focus {
+    outline: 2px solid map.get(color.$theme-colors, 'accent');
+    border: none;
+    @include mix.mq('sp-tb') {
+      outline: calc(2 / 375) * 100vw solid map.get(color.$theme-colors, 'accent');
+    }
+  }
+}
+
+select {
+  height: 100%;
+}
+
+#changelist .actions .button {
+  color: #FFF !important;
+  background: map.get(color.$theme-colors, 'main') !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.field-is_active {
+  img {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// telリンク：PCでは無効、タッチ環境では有効
+@media (hover: hover) {
+  a[href^='tel:'] {
+    pointer-events: none;
+  }
+}
+@media (hover: none) {
+  a[href^='tel:'] {
+    pointer-events: auto;
+  }
+}
+
+// 改行ユーティリティ
+.only-sp {
+  display: none;
+}
+
+.only-pc {
+  display: block;
+}
+@include mix.mq('sp-tb') {
+  .only-sp {
+    display: block;
+  }
+
+  .only-pc {
+    display: none;
+  }
+}
