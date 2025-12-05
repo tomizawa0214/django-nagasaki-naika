@@ -117,7 +117,7 @@ class SummerClosing(models.Model):
     created_at = models.DateTimeField("変更日時", auto_now=True)
 
     def __str__(self):
-        return f"{self.start_date.strftime("%Y年%-m月%-d日")}～{self.end_date.strftime("%Y年%-m月%-d日")}"
+        return f"{self.start_date.strftime("%Y年%-m月%-d日")}～{self.end_date.strftime("%-m月%-d日")}"
 
     # バリデーション
     def clean(self):
@@ -139,7 +139,7 @@ class NewYearClosing(models.Model):
     created_at = models.DateTimeField("変更日時", auto_now=True)
 
     def __str__(self):
-        return f"{self.start_date.strftime("%Y年%-m月%-d日")}～{self.end_date.strftime("%Y年%-m月%-d日")}"
+        return f"{self.start_date.strftime("%Y年%-m月%-d日")}～{self.end_date.strftime("%-m月%-d日")}"
 
     # バリデーション
     def clean(self):

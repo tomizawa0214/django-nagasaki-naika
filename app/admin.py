@@ -140,14 +140,14 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
     # 受付日時の表示形式を変更
     def created_at_display(self, model):
         dt = timezone.localtime(model.created_at)
-        return dt.strftime("%Y年%-m月%-d日 %H:%M")
+        return dt.strftime("%Y/%m/%d %H:%M")
 
     created_at_display.short_description = "受付日時"
 
     # 更新日時の表示形式を変更
     def updated_at_display(self, model):
         dt = timezone.localtime(model.updated_at)
-        return dt.strftime("%Y年%-m月%-d日 %H:%M")
+        return dt.strftime("%Y/%m/%d %H:%M")
 
     updated_at_display.short_description = "更新日時"
 
@@ -258,14 +258,14 @@ class QuestionnaireCustomAdmin(admin.ModelAdmin):
     # 受付日時の表示形式を変更
     def created_at_display(self, model):
         dt = timezone.localtime(model.created_at)
-        return dt.strftime("%Y年%-m月%-d日 %H:%M")
+        return dt.strftime("%Y/%m/%d %H:%M")
 
     created_at_display.short_description = "受付日時"
 
     # 更新日時の表示形式を変更
     def updated_at_display(self, model):
         dt = timezone.localtime(model.updated_at)
-        return dt.strftime("%Y年%-m月%-d日 %H:%M")
+        return dt.strftime("%Y/%m/%d %H:%M")
 
     updated_at_display.short_description = "更新日時"
 
@@ -360,7 +360,7 @@ class RegularClosingCustomAdmin(admin.ModelAdmin):
     # 更新日時の表示形式を変更
     def created_at_display(self, model):
         dt = timezone.localtime(model.created_at)
-        return dt.strftime("%Y年%-m月%-d日 %H:%M")
+        return dt.strftime("%Y/%m/%d %H:%M")
 
     created_at_display.short_description = "更新日時"
 
@@ -403,14 +403,14 @@ class SummerClosingCustomAdmin(admin.ModelAdmin):
 
     # 開始日と終了日の表示形式を変更
     def summer_closing_display(self, model):
-        return f"{model.start_date.strftime("%Y年%-m月%-d日")}～{model.end_date.strftime("%Y年%-m月%-d日")}"
+        return f"{model.start_date.strftime("%Y年%-m月%-d日")}～{model.end_date.strftime("%-m月%-d日")}"
 
     summer_closing_display.short_description = "夏季休診期間"
 
     # 更新日時の表示形式を変更
     def created_at_display(self, model):
         dt = timezone.localtime(model.created_at)
-        return dt.strftime("%Y年%-m月%-d日 %H:%M")
+        return dt.strftime("%Y/%m/%d %H:%M")
 
     created_at_display.short_description = "更新日時"
 
@@ -453,14 +453,14 @@ class NewYearClosingCustomAdmin(admin.ModelAdmin):
 
     # 開始日と終了日の表示形式を変更
     def new_year_closing_display(self, model):
-        return f"{model.start_date.strftime("%Y年%-m月%-d日")}～{model.end_date.strftime("%Y年%-m月%-d日")}"
+        return f"{model.start_date.strftime("%Y年%-m月%-d日")}～{model.end_date.strftime("%-m月%-d日")}"
 
     new_year_closing_display.short_description = "年末年始の休診期間"
 
     # 更新日時の表示形式を変更
     def created_at_display(self, model):
         dt = timezone.localtime(model.created_at)
-        return dt.strftime("%Y年%-m月%-d日 %H:%M")
+        return dt.strftime("%Y/%m/%d %H:%M")
 
     created_at_display.short_description = "更新日時"
 
@@ -511,7 +511,7 @@ class TempClosingCustomAdmin(admin.ModelAdmin):
     # 更新日時の表示形式を変更
     def created_at_display(self, model):
         dt = timezone.localtime(model.created_at)
-        return dt.strftime("%Y年%-m月%-d日 %H:%M")
+        return dt.strftime("%Y/%m/%d %H:%M")
 
     created_at_display.short_description = "更新日時"
 
