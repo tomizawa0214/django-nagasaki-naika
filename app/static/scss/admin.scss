@@ -172,6 +172,24 @@ select {
   }
 }
 
+.field-appointment_dt_display,
+.field-visit,
+.field-email,
+.field-name_display,
+.field-phone,
+.field-birthdate_with_age,
+.field-gender,
+.field-card_number,
+.field-created_at_display,
+.field-symptom_display,
+.field-weekday,
+.field-closed_hours,
+.field-summer_closing_display,
+.field-new_year_closing_display,
+.field-date_display {
+  white-space: nowrap;
+}
+
 // telリンク：PCでは無効、タッチ環境では有効
 @media (hover: hover) {
   a[href^='tel:'] {

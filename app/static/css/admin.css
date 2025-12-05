@@ -210,6 +210,24 @@ select {
   height: 20px;
 }
 
+.field-appointment_dt_display,
+.field-visit,
+.field-email,
+.field-name_display,
+.field-phone,
+.field-birthdate_with_age,
+.field-gender,
+.field-card_number,
+.field-created_at_display,
+.field-symptom_display,
+.field-weekday,
+.field-closed_hours,
+.field-summer_closing_display,
+.field-new_year_closing_display,
+.field-date_display {
+  white-space: nowrap;
+}
+
 @media (hover: hover) {
   a[href^="tel:"] {
     pointer-events: none;
