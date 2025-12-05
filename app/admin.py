@@ -1,10 +1,14 @@
 import datetime
+import email.utils
 import io
+import logging
 import zipfile
 from urllib.parse import quote
 
 from django.conf import settings
 from django.contrib import admin
+from django.core.mail import send_mail
+from django.db import transaction
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -14,6 +18,13 @@ from weasyprint import HTML
 
 from .admin_forms import *
 from .models import *
+
+# =====================================================================================================
+# 初期設定
+# =====================================================================================================
+
+# ログ
+logger = logging.getLogger(__name__)
 
 
 # =====================================================================================================
@@ -113,6 +124,8 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
 
     # お名前の表示形式を変更
     def name_display(self, model):
+        if not (model.family_name or model.first_name):
+            return "-"
         return f"{model.family_name} {model.first_name}"
 
     name_display.short_description = "お名前"
@@ -150,6 +163,58 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
         return dt.strftime("%Y/%m/%d %H:%M")
 
     updated_at_display.short_description = "更新日時"
+
+    # 管理画面から手動で変更した場合はメールで通知
+    def save_model(self, request, model, form, change):
+
+        # 変更されていればTrue
+        run = change and ("appointment_dt" in form.changed_data)
+
+        # 変更前の値を取得
+        if run and model.pk:
+            before_obj = timezone.localtime(
+                model.__class__.objects.only("appointment_dt").get(pk=model.pk).appointment_dt
+            )
+
+        # 変更を保存
+        super().save_model(request, model, form, change)
+
+        # 変更の場合に実行
+        if run:
+
+            # 変更後の値を取得
+            after_obj = model.appointment_dt
+            user_family_name = model.family_name or model.user.family_name
+            user_first_name = model.first_name or model.user.first_name
+            user_email = model.email or model.user.email
+
+            # メールに使用する変数
+            context = {
+                "user_name": f"{user_family_name} {user_first_name}",
+                "before_str": f"{before_obj.strftime('%Y年%-m月%-d日')}({settings.WEEKDAYS[before_obj.weekday()]}) {before_obj.strftime('%H:%M')}",
+                "after_str": f"{after_obj.strftime('%Y年%-m月%-d日')}({settings.WEEKDAYS[after_obj.weekday()]}) {after_obj.strftime('%H:%M')}",
+            }
+
+            # メール設定
+            subject = render_to_string("account/mail_template/subject/admin_appointment_dt_change.txt", context)
+            message = render_to_string("account/mail_template/message/admin_appointment_dt_change.txt", context)
+            from_email = email.utils.formataddr((settings.SITE_NAME, settings.EMAIL_HOST_USER))
+            to_list = [user_email]
+
+            # 内部関数として定義
+            def _safe_send_mail():
+                try:
+                    send_mail(
+                        subject=subject,
+                        message=message,
+                        from_email=from_email,
+                        recipient_list=to_list,
+                    )
+                except Exception as exc:
+                    logger.exception("admin appointment_dt change mail failed: %s", exc)
+
+            # DB更新が確定した後にメール送信
+            transaction.on_commit(lambda: _safe_send_mail())
 
 
 admin.site.register(Appointment, AppointmentCustomAdmin)
