@@ -825,13 +825,13 @@ class AppointmentContactEditView(LoginRequiredMixin, View):
 
         # フォームの初期値を定義
         initial = {
-            "user_family_name": appointment.family_name,
-            "user_first_name": appointment.first_name,
-            "email": appointment.email,
-            "phone": appointment.phone,
-            "birthdate": appointment.birthdate,
-            "gender": appointment.gender,
-            "card_number": appointment.card_number,
+            "user_family_name": appointment.family_name or appointment.user.family_name,
+            "user_first_name": appointment.first_name or appointment.user.first_name,
+            "email": appointment.email or appointment.user.email,
+            "phone": appointment.phone or appointment.user.phone,
+            "birthdate": appointment.birthdate or appointment.user.birthdate,
+            "gender": appointment.gender or appointment.user.gender,
+            "card_number": appointment.card_number or appointment.user.card_number,
             "privacy": True,
         }
 

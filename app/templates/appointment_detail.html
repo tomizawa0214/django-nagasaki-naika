@@ -22,27 +22,27 @@
         <dl class="l-confirm__edit-contact">
           <div class="l-confirm__group">
             <dt class="c-text">お名前</dt>
-            <dd class="c-text">{{ appointment.family_name }} {{ appointment.first_name }}</dd>
+            <dd class="c-text">{{ appointment.family_name|default:appointment.user.family_name }} {{ appointment.first_name|default:appointment.user.first_name }}</dd>
           </div>
           <div class="l-confirm__group">
             <dt class="c-text">メールアドレス</dt>
-            <dd class="c-text">{{ appointment.email }}</dd>
+            <dd class="c-text">{{ appointment.email|default:appointment.user.email }}</dd>
           </div>
           <div class="l-confirm__group">
             <dt class="c-text">電話番号</dt>
-            <dd class="c-text">{{ appointment.phone }}</dd>
+            <dd class="c-text">{{ appointment.phone|default:appointment.user.phone }}</dd>
           </div>
           <div class="l-confirm__group">
             <dt class="c-text">生年月日</dt>
-            <dd class="c-text">{{ appointment.birthdate|date:'Y年n月j日' }}</dd>
+            <dd class="c-text">{{ appointment.birthdate|default:appointment.user.birthdate|date:'Y年n月j日' }}</dd>
           </div>
           <div class="l-confirm__group">
             <dt class="c-text">性別</dt>
-            <dd class="c-text">{{ appointment.get_gender_display }}</dd>
+            <dd class="c-text">{{ appointment.get_gender_display|default:appointment.user.get_gender_display }}</dd>
           </div>
           <div class="l-confirm__group">
             <dt class="c-text">診察券番号</dt>
-            <dd class="c-text">{{ appointment.card_number|default:"なし" }}</dd>
+            <dd class="c-text">{{ appointment.card_number|default:appointment.user.card_number|default:"なし" }}</dd>
           </div>
         </dl>
         <div class="l-contents__button">
