@@ -1708,14 +1708,14 @@ img {
 }
 .p-mypage__tab-label {
   padding: 0 0 1rem;
-  color: #808080;
+  color: #CCC;
   text-align: center;
-  border-bottom: 0.4rem solid #808080;
+  border-bottom: 0.4rem solid #CCC;
 }
 @media screen and (max-width: 1023px) {
   .p-mypage__tab-label {
     padding: 0 0 2.6666666667vw;
-    border-bottom: 1.0666666667vw solid #808080;
+    border-bottom: 1.0666666667vw solid #CCC;
   }
 }
 .p-mypage #panel-schedule, .p-mypage #panel-done {
