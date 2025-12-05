@@ -45,8 +45,23 @@
   }
 
   &--alert {
+    width: 15rem;
+    min-width: 15rem;
     color: #FFF;
     background-color: map.get(color.$theme-colors, 'alert');
+    @include mix.mq('sp-tb') {
+      width: 100%;
+    }
+  }
+
+  &--back {
+    width: 15rem;
+    min-width: 15rem;
+    color: map.get(color.$theme-colors, 'sub');
+    border: 0.1rem solid map.get(color.$theme-colors, 'sub');
+    @include mix.mq('sp-tb') {
+      width: 100%;
+    }
   }
 }
 

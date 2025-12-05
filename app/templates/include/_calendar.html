@@ -73,9 +73,9 @@
   </div>
   <div class="l-contents__button">
     {% if pk %}
-      <a class="c-button c-button--secondary" href="{% url back_url pk %}">戻る</a>
+      <a class="c-button c-button--secondary c-button--back" href="{% url back_url pk %}">戻る</a>
     {% else %}
-      <a class="c-button c-button--secondary" href="{% url back_url %}">戻る</a>
+      <a class="c-button c-button--secondary c-button--back" href="{% url back_url %}">戻る</a>
     {% endif %}
     <button class="c-button c-button--primary" type="submit">{{ next_button_text }}</button>
   </div>

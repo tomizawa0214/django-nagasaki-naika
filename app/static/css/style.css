@@ -1068,8 +1068,26 @@ img {
   }
 }
 .c-button--alert {
+  width: 15rem;
+  min-width: 15rem;
   color: #FFF;
   background-color: #DC3545;
+}
+@media screen and (max-width: 1023px) {
+  .c-button--alert {
+    width: 100%;
+  }
+}
+.c-button--back {
+  width: 15rem;
+  min-width: 15rem;
+  color: #808080;
+  border: 0.1rem solid #808080;
+}
+@media screen and (max-width: 1023px) {
+  .c-button--back {
+    width: 100%;
+  }
 }
 
 .c-step {
