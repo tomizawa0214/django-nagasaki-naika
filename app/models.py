@@ -20,8 +20,8 @@ class Appointment(models.Model):
     birthdate = models.DateField("生年月日", blank=True, null=True)
     gender = models.CharField("性別", max_length=10, choices=settings.GENDER_CHOICES, blank=True, null=True)
     card_number = models.CharField("診察券番号", max_length=10, blank=True, null=True)
-    created_at = models.DateTimeField("受付日時", default=timezone.now)
-    updated_at = models.DateTimeField("更新日時", auto_now=True)
+    created_at = models.DateTimeField("予約受付日時", default=timezone.now)
+    updated_at = models.DateTimeField("予約更新日時", auto_now=True)
 
     def __str__(self):
         family_name = self.user.family_name
@@ -72,7 +72,7 @@ class Questionnaire(models.Model):
     has_allergy = models.CharField("お薬・食べ物のアレルギー", blank=True, null=True)
     pregnancy = models.CharField("妊娠について", max_length=100, choices=settings.PREGNANCY_CHOICES)
     especially = models.TextField("特記事項", blank=True, null=True)
-    created_at = models.DateTimeField("受付日時", default=timezone.now)
+    created_at = models.DateTimeField("登録日時", default=timezone.now)
     updated_at = models.DateTimeField("更新日時", auto_now=True)
 
     def __str__(self):
@@ -98,7 +98,7 @@ class RegularClosing(models.Model):
         choices=settings.CLOSED_TIME_CHOICES,
         default="all_day",
     )
-    created_at = models.DateTimeField("変更日時", auto_now=True)
+    created_at = models.DateTimeField("更新日時", auto_now=True)
 
     def __str__(self):
         return f"{self.get_weekday_display()} ({self.get_closed_hours_display()})"
@@ -114,7 +114,7 @@ class RegularClosing(models.Model):
 class SummerClosing(models.Model):
     start_date = models.DateField("開始日")
     end_date = models.DateField("終了日")
-    created_at = models.DateTimeField("変更日時", auto_now=True)
+    created_at = models.DateTimeField("更新日時", auto_now=True)
 
     def __str__(self):
         return f"{self.start_date.strftime("%Y年%-m月%-d日")}～{self.end_date.strftime("%-m月%-d日")}"
@@ -136,7 +136,7 @@ class SummerClosing(models.Model):
 class NewYearClosing(models.Model):
     start_date = models.DateField("開始日")
     end_date = models.DateField("終了日")
-    created_at = models.DateTimeField("変更日時", auto_now=True)
+    created_at = models.DateTimeField("更新日時", auto_now=True)
 
     def __str__(self):
         return f"{self.start_date.strftime("%Y年%-m月%-d日")}～{self.end_date.strftime("%-m月%-d日")}"
@@ -163,7 +163,7 @@ class TempClosing(models.Model):
         choices=settings.CLOSED_TIME_CHOICES,
         default="all_day",
     )
-    created_at = models.DateTimeField("変更日時", auto_now=True)
+    created_at = models.DateTimeField("更新日時", auto_now=True)
 
     def __str__(self):
         return f"{self.date.strftime("%Y年%-m月%-d日")} ({self.get_closed_hours_display()})"

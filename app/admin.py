@@ -172,7 +172,7 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
 
         # 変更前の値を取得
         if run and model.pk:
-            before_obj = timezone.localtime(
+            before_appointment_dt = timezone.localtime(
                 model.__class__.objects.only("appointment_dt").get(pk=model.pk).appointment_dt
             )
 
@@ -183,16 +183,27 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
         if run:
 
             # 変更後の値を取得
-            after_obj = model.appointment_dt
+            after_appointment_dt = timezone.localtime(model.appointment_dt)
             user_family_name = model.family_name or model.user.family_name
             user_first_name = model.first_name or model.user.first_name
             user_email = model.email or model.user.email
+            user_phone = model.phone or model.user.phone
+            birthdate = model.birthdate or model.user.birthdate
+            gender = model.get_gender_display() or model.user.get_gender_display()
+            card_number = model.card_number or model.user.card_number
+            created_at = timezone.localtime(model.created_at)
 
             # メールに使用する変数
             context = {
+                "before_appointment_dt": before_appointment_dt,
+                "after_appointment_dt": after_appointment_dt,
                 "user_name": f"{user_family_name} {user_first_name}",
-                "before_str": f"{before_obj.strftime('%Y年%-m月%-d日')}({settings.WEEKDAYS[before_obj.weekday()]}) {before_obj.strftime('%H:%M')}",
-                "after_str": f"{after_obj.strftime('%Y年%-m月%-d日')}({settings.WEEKDAYS[after_obj.weekday()]}) {after_obj.strftime('%H:%M')}",
+                "user_email": user_email,
+                "user_phone": user_phone,
+                "birthdate": birthdate,
+                "gender": gender,
+                "card_number": card_number,
+                "created_at": created_at,
             }
 
             # メール設定
@@ -201,8 +212,8 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
             from_email = email.utils.formataddr((settings.SITE_NAME, settings.EMAIL_HOST_USER))
             to_list = [user_email]
 
-            # 内部関数として定義
-            def _safe_send_mail():
+            # トランザクション処理のため関数化
+            def safe_send_mail():
                 try:
                     send_mail(
                         subject=subject,
@@ -214,7 +225,62 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
                     logger.exception("admin appointment_dt change mail failed: %s", exc)
 
             # DB更新が確定した後にメール送信
-            transaction.on_commit(lambda: _safe_send_mail())
+            transaction.on_commit(lambda: safe_send_mail())
+
+    # 管理画面から手動で削除の場合はメールで通知
+    def send_delete_mail(self, snapshot):
+
+        # 該当の予約データを取得
+        appointment_dt = timezone.localtime(snapshot.appointment_dt)
+        user_family_name = snapshot.family_name or snapshot.user.family_name
+        user_first_name = snapshot.first_name or snapshot.user.first_name
+        user_email = snapshot.email or snapshot.user.email
+        user_phone = snapshot.phone or snapshot.user.phone
+        birthdate = snapshot.birthdate or snapshot.user.birthdate
+        gender = snapshot.get_gender_display() or snapshot.user.get_gender_display()
+        card_number = snapshot.card_number or snapshot.user.card_number
+        created_at = timezone.localtime(snapshot.created_at)
+
+        # メールに使用する変数
+        context = {
+            "appointment_dt": appointment_dt,
+            "user_name": f"{user_family_name} {user_first_name}",
+            "user_email": user_email,
+            "user_phone": user_phone,
+            "birthdate": birthdate,
+            "gender": gender,
+            "card_number": card_number,
+            "created_at": created_at,
+        }
+
+        # メール設定
+        subject = render_to_string("account/mail_template/subject/admin_appointment_delete.txt", context)
+        message = render_to_string("account/mail_template/message/admin_appointment_delete.txt", context)
+        from_email = email.utils.formataddr((settings.SITE_NAME, settings.EMAIL_HOST_USER))
+        to_list = [user_email]
+
+        # トランザクション処理のため関数化
+        def safe_send_mail():
+            try:
+                send_mail(subject=subject, message=message, from_email=from_email, recipient_list=to_list)
+            except Exception as exc:
+                logger.exception("admin appointment delete mail failed: %s", exc)
+
+        # DB更新が確定した後にメール送信
+        transaction.on_commit(lambda: safe_send_mail())
+
+    # 管理画面から手動で削除の場合はメールで通知
+    def delete_model(self, request, obj):
+        snapshot = Appointment.objects.get(pk=obj.pk)
+        super().delete_model(request, obj)
+        self.send_delete_mail(snapshot)
+
+    # 管理画面から手動で削除の場合はメールで通知（複数件削除に対応）
+    def delete_queryset(self, request, queryset):
+        snapshots = list(queryset)
+        super().delete_queryset(request, queryset)
+        for snapshot in snapshots:
+            self.send_delete_mail(snapshot)
 
 
 admin.site.register(Appointment, AppointmentCustomAdmin)
