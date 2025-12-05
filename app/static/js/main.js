@@ -303,7 +303,7 @@ function appointmentDt() {
   const hours = String(dt.getHours()).padStart(2, '0')
   const minutes = String(dt.getMinutes()).padStart(2, '0')
 
-  const selectedDtText = `${year}年${month}月${day}日（${weekday}） ${hours}：${minutes}〜`
+  const selectedDtText = `${year}年${month}月${day}日(${weekday}) ${hours}:${minutes}〜`
 
   $('.js-appointment-dt').text(selectedDtText)
 }
@@ -319,8 +319,51 @@ $(function () {
   $(document).on('submit', '.js-appointment-delete', function (event) {
 
     const appointmentDt = $(event.target).find('button').attr('appointment-dt')
+    const dt = new Date(appointmentDt)
+    const today = new Date()
 
-    if (!window.confirm(`本当に${appointmentDt}の予約を取り消しますか？`))
+    const isToday =
+      dt.getFullYear() === today.getFullYear() &&
+      dt.getMonth() === today.getMonth() &&
+      dt.getDate() === today.getDate()
+
+    if (isToday) {
+      alert('本日ご来院予定のキャンセルは、診療時間内にお電話にてご連絡ください。')
       event.preventDefault()
+      return
+    }
+
+    const weekdays = ['日', '月', '火', '水', '木', '金', '土']
+    const month = dt.getMonth() + 1
+    const day = dt.getDate()
+    const weekday = weekdays[dt.getDay()]
+    const hours = String(dt.getHours()).padStart(2, '0')
+    const minutes = String(dt.getMinutes()).padStart(2, '0')
+    const appointmentDtText = `${month}月${day}日(${weekday}) ${hours}:${minutes}〜`
+    if (!window.confirm(`本当に${appointmentDtText}の予約を取り消しますか？`))
+      event.preventDefault()
+  })
+})
+
+// ===================================================
+// 当日の予約変更
+// ===================================================
+$(function () {
+  $(document).on('click', '.js-appointment-change', function (event) {
+
+    const appointmentDt = $(this).attr('appointment-dt')
+    const dt = new Date(appointmentDt)
+    const today = new Date()
+
+    const isToday =
+      dt.getFullYear() === today.getFullYear() &&
+      dt.getMonth() === today.getMonth() &&
+      dt.getDate() === today.getDate()
+
+    if (isToday) {
+      alert('本日ご来院予定の変更は、診療時間内にお電話にてご連絡ください。')
+      event.preventDefault()
+      return
+    }
   })
 })

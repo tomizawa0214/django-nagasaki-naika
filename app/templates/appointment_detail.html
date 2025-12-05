@@ -15,7 +15,7 @@
         </dl>
         <div class="l-contents__button">
           <a class="c-button c-button--secondary c-button--back" href="{% url 'mypage' %}">戻る</a>
-          <a class="c-button c-button--primary" href="{% url 'appointment_edit_datetime' appointment.id %}">日時を変更する</a>
+          <a class="c-button c-button--primary js-appointment-change" href="{% url 'appointment_edit_datetime' appointment.id %}" appointment-dt="{{ appointment.appointment_dt|localtime|date:'c' }}">日時を変更する</a>
         </div>
       </div>
       <div>
@@ -47,7 +47,7 @@
         </dl>
         <div class="l-contents__button">
           <a class="c-button c-button--secondary c-button--back" href="{% url 'mypage' %}">戻る</a>
-          <a class="c-button c-button--primary" href="{% url 'appointment_edit_contact' appointment.id %}">連絡先を変更する</a>
+          <a class="c-button c-button--primary js-appointment-change" href="{% url 'appointment_edit_contact' appointment.id %}" appointment-dt="{{ appointment.appointment_dt|localtime|date:'c' }}">連絡先を変更する</a>
         </div>
       </div>
     </section>

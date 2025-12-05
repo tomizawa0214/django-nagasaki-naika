@@ -76,7 +76,7 @@
                     {% endif %}
                     <form class="c-button c-button--alert js-appointment-delete" method="post" action="{% url 'appointment_delete' appointment.id %}">
                       {% csrf_token %}
-                      <button type="submit" class="c-button c-button--alert" appointment-dt="{{ appointment.appointment_dt|localtime|date:'n月j日(D) G:i' }}〜">予約の取消</button>
+                      <button type="submit" class="c-button c-button--alert" appointment-dt="{{ appointment.appointment_dt|localtime|date:'c' }}">予約の取消</button>
                     </form>
                   </div>
                 </li>
