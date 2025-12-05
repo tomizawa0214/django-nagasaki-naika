@@ -1694,12 +1694,34 @@ img {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
   margin: 0 0 2rem;
 }
 @media screen and (max-width: 1023px) {
   .p-mypage__tablist {
-    gap: 5.3333333333vw;
+    position: relative;
+    gap: 4vw;
     margin: 0 0 5.3333333333vw;
+  }
+  .p-mypage__tablist::before {
+    position: absolute;
+    right: calc(100% - 0.5333333333vw);
+    bottom: 0;
+    width: 5.8666666667vw;
+    height: 0.5333333333vw;
+    content: "";
+    background-color: #62A045;
+  }
+  .p-mypage__tablist::after {
+    position: absolute;
+    bottom: 0;
+    left: calc(100% - 0.5333333333vw);
+    width: 5.8666666667vw;
+    height: 0.5333333333vw;
+    content: "";
+    background-color: #62A045;
   }
 }
 .p-mypage__tab-radio {
@@ -1707,15 +1729,16 @@ img {
   opacity: 0;
 }
 .p-mypage__tab-label {
-  padding: 0 0 1rem;
-  color: #CCC;
+  padding: 1.5rem 0;
+  color: #FFF;
   text-align: center;
-  border-bottom: 0.4rem solid #CCC;
+  background-color: #62A045;
+  border-radius: 1.5rem 1.5rem 0 0;
 }
 @media screen and (max-width: 1023px) {
   .p-mypage__tab-label {
-    padding: 0 0 2.6666666667vw;
-    border-bottom: 1.0666666667vw solid #CCC;
+    padding: 4vw 0;
+    border-radius: 4vw 4vw 0 0;
   }
 }
 .p-mypage #panel-schedule, .p-mypage #panel-done {
@@ -1725,24 +1748,70 @@ img {
   display: block;
 }
 .p-mypage:has(#tab-schedule:checked) #tab-schedule:checked + .p-mypage__tab-label {
+  position: relative;
+  padding: 2rem 0;
   color: #62A045;
-  border-bottom: 0.4rem solid #62A045;
+  background-color: #FFF;
+  border-top: 0.4rem solid #62A045;
+  border-right: 0.4rem solid #62A045;
+  border-left: 0.4rem solid #62A045;
 }
 @media screen and (max-width: 1023px) {
   .p-mypage:has(#tab-schedule:checked) #tab-schedule:checked + .p-mypage__tab-label {
-    border-bottom: 1.0666666667vw solid #62A045;
+    padding: 5.3333333333vw 0;
+    border-top: 0.5333333333vw solid #62A045;
+    border-right: 0.5333333333vw solid #62A045;
+    border-left: 0.5333333333vw solid #62A045;
+  }
+}
+.p-mypage:has(#tab-schedule:checked) #tab-schedule:checked + .p-mypage__tab-label::after {
+  position: absolute;
+  bottom: 0;
+  left: 100%;
+  width: 2.4rem;
+  height: 0.4rem;
+  content: "";
+  background-color: #62A045;
+}
+@media screen and (max-width: 1023px) {
+  .p-mypage:has(#tab-schedule:checked) #tab-schedule:checked + .p-mypage__tab-label::after {
+    width: 4.5333333333vw;
+    height: 0.5333333333vw;
   }
 }
 .p-mypage:has(#tab-done:checked) #panel-done {
   display: block;
 }
 .p-mypage:has(#tab-done:checked) #tab-done:checked + .p-mypage__tab-label {
+  position: relative;
+  padding: 2rem 0;
   color: #62A045;
-  border-bottom: 0.4rem solid #62A045;
+  background-color: #FFF;
+  border-top: 0.4rem solid #62A045;
+  border-right: 0.4rem solid #62A045;
+  border-left: 0.4rem solid #62A045;
 }
 @media screen and (max-width: 1023px) {
   .p-mypage:has(#tab-done:checked) #tab-done:checked + .p-mypage__tab-label {
-    border-bottom: 1.0666666667vw solid #62A045;
+    padding: 5.3333333333vw 0;
+    border-top: 0.5333333333vw solid #62A045;
+    border-right: 0.5333333333vw solid #62A045;
+    border-left: 0.5333333333vw solid #62A045;
+  }
+}
+.p-mypage:has(#tab-done:checked) #tab-done:checked + .p-mypage__tab-label::after {
+  position: absolute;
+  right: 100%;
+  bottom: 0;
+  width: 2.4rem;
+  height: 0.4rem;
+  content: "";
+  background-color: #62A045;
+}
+@media screen and (max-width: 1023px) {
+  .p-mypage:has(#tab-done:checked) #tab-done:checked + .p-mypage__tab-label::after {
+    width: 4.5333333333vw;
+    height: 0.5333333333vw;
   }
 }
 .p-mypage__card {
@@ -1821,7 +1890,7 @@ img {
 }
 @media screen and (max-width: 1023px) {
   .p-mypage__empty {
-    margin: 10.6666666667vw;
+    margin: 10.6666666667vw 0 0;
   }
 }
 
