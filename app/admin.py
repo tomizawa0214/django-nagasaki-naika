@@ -138,7 +138,7 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
             - model.birthdate.year
             - ((today.month, today.day) < (model.birthdate.month, model.birthdate.day))
         )
-        return f"{model.birthdate:%Y年%-m月%-d日}（{age}歳）"
+        return f"{model.birthdate.strftime('%Y年%-m月%-d日')}（{age}歳）"
 
     birthdate_with_age.short_description = "生年月日"
 
