@@ -1,0 +1,1 @@
+{% load tz %}【長﨑医院】明日{{ appointment_dt|localtime|date:'G:i' }}のご予約のお知らせ

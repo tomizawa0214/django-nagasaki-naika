@@ -68,10 +68,10 @@ class PasswordResetView(PasswordResetView):
     }
 
     # メール件名のテンプレートを指定
-    subject_template_name = "account/mail_template/subject/password_reset.txt"
+    subject_template_name = "mail_template/subject/password_reset.txt"
 
     # メール本文のテンプレートを指定
-    email_template_name = "account/mail_template/message/password_reset.txt"
+    email_template_name = "mail_template/message/password_reset.txt"
 
     # テンプレートを指定
     template_name = "account/password_reset.html"
@@ -267,8 +267,8 @@ class SignupConfirmView(View):
                 }
 
                 # メール設定
-                subject = render_to_string("account/mail_template/subject/signup.txt", context)
-                message = render_to_string("account/mail_template/message/signup.txt", context)
+                subject = render_to_string("mail_template/subject/signup.txt", context)
+                message = render_to_string("mail_template/message/signup.txt", context)
                 from_email = email.utils.formataddr((settings.SITE_NAME, settings.EMAIL_HOST_USER))
                 to_list = [user_data.email]
 
@@ -441,8 +441,8 @@ class EmailChangeView(LoginRequiredMixin, View):
             }
 
             # メール設定
-            subject = render_to_string("account/mail_template/subject/email_change.txt", context)
-            message = render_to_string("account/mail_template/message/email_change.txt", context)
+            subject = render_to_string("mail_template/subject/email_change.txt", context)
+            message = render_to_string("mail_template/message/email_change.txt", context)
             from_email = email.utils.formataddr((settings.SITE_NAME, settings.EMAIL_HOST_USER))
             to_list = [user_new_email]
 

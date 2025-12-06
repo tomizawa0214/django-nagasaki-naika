@@ -207,8 +207,8 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
             }
 
             # メール設定
-            subject = render_to_string("account/mail_template/subject/admin_appointment_dt_change.txt", context)
-            message = render_to_string("account/mail_template/message/admin_appointment_dt_change.txt", context)
+            subject = render_to_string("mail_template/subject/admin_appointment_dt_change.txt", context)
+            message = render_to_string("mail_template/message/admin_appointment_dt_change.txt", context)
             from_email = email.utils.formataddr((settings.SITE_NAME, settings.EMAIL_HOST_USER))
             to_list = [user_email]
 
@@ -254,8 +254,8 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
         }
 
         # メール設定
-        subject = render_to_string("account/mail_template/subject/admin_appointment_delete.txt", context)
-        message = render_to_string("account/mail_template/message/admin_appointment_delete.txt", context)
+        subject = render_to_string("mail_template/subject/admin_appointment_delete.txt", context)
+        message = render_to_string("mail_template/message/admin_appointment_delete.txt", context)
         from_email = email.utils.formataddr((settings.SITE_NAME, settings.EMAIL_HOST_USER))
         to_list = [user_email]
 
