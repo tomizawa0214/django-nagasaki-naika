@@ -270,9 +270,6 @@ try:
 except ImportError:
     pass
 
-# 既定のメール送信アドレス
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
@@ -285,6 +282,9 @@ if DEBUG:
     # メール送信
     # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+    # 既定のメール送信アドレス
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
     # ログ
     LOGGING = {
@@ -340,6 +340,9 @@ else:
     EMAIL_USE_TLS = env("EMAIL_USE_TLS")
     FROM_EMAIL = SITE_NAME + "<" + EMAIL_HOST_USER + ">"
     TO_EMAIL = env("TO_EMAIL")
+
+    # 既定のメール送信アドレス
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
     # reCAPTCHA
     RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY")
