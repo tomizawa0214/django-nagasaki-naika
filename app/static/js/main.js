@@ -367,3 +367,26 @@ $(function () {
     }
   })
 })
+
+// ===================================================
+// 多重送信を防ぐ
+// ===================================================
+$(function () {
+  // クリック時に無効化
+  $(document).on('click', '.js-submit-button', function () {
+    if ($(this).prop('disabled')) return true
+    $(this).prop('disabled', true)
+  })
+
+  // Enter送信も含めてフォーム送信時に無効化
+  $(document).on('submit', 'form', function () {
+    $(this).find('.js-submit-button').prop('disabled', true)
+  })
+
+  // ブラウザバック等で戻ったら再度有効化
+  $(window).on('pageshow', function (e) {
+    if (!e.originalEvent || e.originalEvent.persisted) {
+      $('.js-submit-button').prop('disabled', false)
+    }
+  })
+})

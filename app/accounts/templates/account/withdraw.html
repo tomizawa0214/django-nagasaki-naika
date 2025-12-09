@@ -20,7 +20,7 @@
       {% csrf_token %}
         <div class="l-contents__button l-contents__button--withdraw">
           <a class="c-button c-button--secondary" href="{% url 'mypage' %}">いいえ、退会しません</a>
-          <button class="c-button c-button--alert" type="submit" onclick="this.disabled = true; this.form.submit();">はい、退会します</button>
+          <button class="c-button c-button--alert js-submit-button" type="submit">はい、退会します</button>
         </div>
       </form>
     </section>
