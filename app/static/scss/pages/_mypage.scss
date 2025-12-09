@@ -53,6 +53,7 @@
   &__menu-link {
     display: flex;
     align-items: center;
+    width: 100%;
     transition: mix.$hover-transition;
     @include mix.mq('sp-tb') {
       position: relative;
