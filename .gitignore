@@ -6,5 +6,6 @@ __pycache__
 .DS_Store
 local_settings.py
 *.log
+logging
 .env
 backups

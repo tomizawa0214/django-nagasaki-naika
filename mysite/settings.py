@@ -368,7 +368,7 @@ else:
             # ファイルはINFO以上だけ残す
             "file": {
                 "class": "logging.handlers.TimedRotatingFileHandler",
-                "filename": "app.log",
+                "filename": BASE_DIR / "logging" / "app.log",
                 "when": "midnight",  # 毎日0時で切り替え
                 "backupCount": 14,  # 14日分だけ保持
                 "level": "INFO",
