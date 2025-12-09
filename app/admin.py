@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from django.db import transaction
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.html import format_html
 from rangefilter.filters import DateRangeFilterBuilder
@@ -410,7 +411,15 @@ class QuestionnaireCustomAdmin(admin.ModelAdmin):
         dt_now = timezone.localtime(timezone.now())
 
         # static ファイルのURLを取得
-        static_root_uri = Path(settings.STATIC_ROOT).as_uri().rstrip("/")
+        static_root = Path(settings.STATIC_ROOT)
+
+        # 本番環境 or 検品環境の場合
+        if static_root.exists():
+            static_base = static_root.as_uri().rstrip("/")
+
+        # 開発環境の場合
+        else:
+            static_base = request.build_absolute_uri(static("")).rstrip("/")
 
         # 1件ならそのまま返す
         if queryset.count() == 1:
@@ -422,12 +431,12 @@ class QuestionnaireCustomAdmin(admin.ModelAdmin):
             }
             html_str = render_to_string("questionnaire_write.html", context, request=request)
             html_str = (
-                html_str.replace('href="/static/', f'href="{static_root_uri}/')
-                .replace("href='/static/", f"href='{static_root_uri}/")
-                .replace('src="/static/', f'src="{static_root_uri}/')
-                .replace("src='/static/", f"src='{static_root_uri}/")
+                html_str.replace('href="/static/', f'href="{static_base}/')
+                .replace("href='/static/", f"href='{static_base}/")
+                .replace('src="/static/', f'src="{static_base}/')
+                .replace("src='/static/", f"src='{static_base}/")
             )
-            pdf = HTML(string=html_str, base_url=static_root_uri).write_pdf()
+            pdf = HTML(string=html_str, base_url=static_base).write_pdf()
 
             filename_utf8 = f"問診票_{dt_now.strftime("%Y%m%d%H%M")}.pdf"
             resp = HttpResponse(pdf, content_type="application/pdf")
@@ -447,12 +456,12 @@ class QuestionnaireCustomAdmin(admin.ModelAdmin):
                 }
                 html_str = render_to_string("questionnaire_write.html", context, request=request)
                 html_str = (
-                    html_str.replace('href="/static/', f'href="{static_root_uri}/')
-                    .replace("href='/static/", f"href='{static_root_uri}/")
-                    .replace('src="/static/', f'src="{static_root_uri}/')
-                    .replace("src='/static/", f"src='{static_root_uri}/")
+                    html_str.replace('href="/static/', f'href="{static_base}/')
+                    .replace("href='/static/", f"href='{static_base}/")
+                    .replace('src="/static/', f'src="{static_base}/')
+                    .replace("src='/static/", f"src='{static_base}/")
                 )
-                pdf_bytes = HTML(string=html_str, base_url=static_root_uri).write_pdf()
+                pdf_bytes = HTML(string=html_str, base_url=static_base).write_pdf()
                 filename = f"問診票_{i}.pdf"
                 zf.writestr(filename, pdf_bytes)
 
