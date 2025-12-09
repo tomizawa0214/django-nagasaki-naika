@@ -45,8 +45,8 @@
   }
 
   &--alert {
-    width: 15rem;
-    min-width: 15rem;
+    width: 20rem;
+    min-width: 20rem;
     color: #FFF;
     background-color: map.get(color.$theme-colors, 'alert');
     @include mix.mq('sp-tb') {
