@@ -138,19 +138,21 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
     def name_display(self, model):
         family_name = model.family_name or model.user.family_name
         first_name = model.first_name or model.user.first_name
-        return f"{family_name} {first_name}"
+        return f"{family_name} {first_name}" if (family_name or first_name) else "-"
 
     name_display.short_description = "お名前"
 
     # メールアドレスの表示形式を変更
     def email_display(self, model):
-        return model.email or model.user.email
+        email = model.email or model.user.email
+        return email if email else "-"
 
     email_display.short_description = "メールアドレス"
 
     # 電話番号の表示形式を変更
     def phone_display(self, model):
-        return model.phone or model.user.phone
+        phone = model.phone or model.user.phone
+        return phone if phone else "-"
 
     phone_display.short_description = "電話番号"
 
@@ -163,19 +165,21 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
             - birthdate.year
             - ((today.month, today.day) < (birthdate.month, birthdate.day))
         )
-        return f"{birthdate.strftime('%Y年%-m月%-d日')}（{age}歳）"
+        return f"{birthdate.strftime('%Y年%-m月%-d日')}（{age}歳）" if birthdate else "-"
 
     birthdate_with_age.short_description = "生年月日"
 
     # 性別の表示形式を変更
     def gender_display(self, model):
-        return model.get_gender_display() or model.user.get_gender_display()
+        gender = model.get_gender_display() or model.user.get_gender_display()
+        return gender if gender else "-"
 
     gender_display.short_description = "性別"
 
     # 診察券番号の表示形式を変更
     def card_number_display(self, model):
-        return model.card_number or model.user.card_number
+        card_number = model.card_number or model.user.card_number
+        return card_number if card_number else "-"
 
     card_number_display.short_description = "診察券番号"
 
