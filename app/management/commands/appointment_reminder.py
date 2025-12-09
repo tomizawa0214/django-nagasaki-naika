@@ -43,12 +43,7 @@ class Command(BaseCommand):
             user = appointment.user
             context = {
                 "appointment_dt": timezone.localtime(appointment.appointment_dt),
-                "user_name": " ".join(
-                    filter("", [
-                        appointment.family_name or getattr(user, "family_name", ""),
-                        appointment.first_name or getattr(user, "first_name", ""),
-                    ])
-                ) or "-",
+                "user_name": f"{appointment.family_name or getattr(user, "family_name", "")} {appointment.first_name or getattr(user, "first_name", "")}",
                 "user_email": appointment.email or getattr(user, "email", ""),
                 "user_phone": appointment.phone or getattr(user, "phone", ""),
                 "birthdate": appointment.birthdate or getattr(user, "birthdate", ""),
