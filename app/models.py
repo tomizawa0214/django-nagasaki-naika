@@ -24,11 +24,16 @@ class Appointment(models.Model):
     updated_at = models.DateTimeField("予約更新日時", auto_now=True)
 
     def __str__(self):
-        family_name = self.user.family_name
-        first_name = self.user.first_name
+        user = self.user
+        family_name = self.family_name or getattr(user, "family_name", None)
+        first_name = self.first_name or getattr(user, "first_name", None)
         dt = timezone.localtime(self.appointment_dt)
         weekday = settings.WEEKDAYS[dt.weekday()]
-        return f"{family_name} {first_name} 【{dt.strftime('%Y年%-m月%-d日')}({weekday}) {dt.strftime('%H:%M')}】"
+        return (
+            f"{family_name} {first_name} 【{dt.strftime('%Y年%-m月%-d日')}({weekday}) {dt.strftime('%H:%M')}】"
+            if (family_name or first_name)
+            else f"【{dt.strftime('%Y年%-m月%-d日')}({weekday}) {dt.strftime('%H:%M')}】"
+        )
 
     class Meta:
         verbose_name = "診察予約"

@@ -40,14 +40,20 @@ class Command(BaseCommand):
             user_email = appointment.email or appointment.user.email
 
             # メールに使用する変数
+            user = appointment.user
             context = {
                 "appointment_dt": timezone.localtime(appointment.appointment_dt),
-                "user_name": f"{appointment.family_name or appointment.user.family_name} {appointment.first_name or appointment.user.first_name}",
-                "user_email": user_email,
-                "user_phone": appointment.phone or appointment.user.phone,
-                "birthdate": appointment.birthdate or appointment.user.birthdate,
-                "gender": appointment.get_gender_display() or appointment.user.get_gender_display(),
-                "card_number": appointment.card_number or appointment.user.card_number,
+                "user_name": " ".join(
+                    filter("", [
+                        appointment.family_name or getattr(user, "family_name", ""),
+                        appointment.first_name or getattr(user, "first_name", ""),
+                    ])
+                ) or "-",
+                "user_email": appointment.email or getattr(user, "email", ""),
+                "user_phone": appointment.phone or getattr(user, "phone", ""),
+                "birthdate": appointment.birthdate or getattr(user, "birthdate", ""),
+                "gender": appointment.get_gender_display() or (user.get_gender_display() if user else ""),
+                "card_number": appointment.card_number or getattr(user, "card_number", ""),
                 "created_at": timezone.localtime(appointment.created_at),
             }
 

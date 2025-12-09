@@ -136,22 +136,25 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
 
     # お名前の表示形式を変更
     def name_display(self, model):
-        family_name = model.family_name or model.user.family_name
-        first_name = model.first_name or model.user.first_name
+        user = model.user
+        family_name = model.family_name or getattr(user, "family_name", None)
+        first_name = model.first_name or getattr(user, "first_name", None)
         return f"{family_name} {first_name}" if (family_name or first_name) else "-"
 
     name_display.short_description = "お名前"
 
     # メールアドレスの表示形式を変更
     def email_display(self, model):
-        email = model.email or model.user.email
+        user = model.user
+        email = model.email or getattr(user, "email", None)
         return email if email else "-"
 
     email_display.short_description = "メールアドレス"
 
     # 電話番号の表示形式を変更
     def phone_display(self, model):
-        phone = model.phone or model.user.phone
+        user = model.user
+        phone = model.phone or getattr(user, "phone", None)
         return phone if phone else "-"
 
     phone_display.short_description = "電話番号"
@@ -159,26 +162,26 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
     # 生年月日の表示形式を変更
     def birthdate_with_age(self, model):
         today = datetime.date.today()
-        birthdate = model.birthdate or model.user.birthdate
-        age = (
-            today.year
-            - birthdate.year
-            - ((today.month, today.day) < (birthdate.month, birthdate.day))
-        )
+        user = model.user
+        birthdate = model.birthdate or getattr(user, "birthdate", None)
+        if birthdate:
+            age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
         return f"{birthdate.strftime('%Y年%-m月%-d日')}（{age}歳）" if birthdate else "-"
 
     birthdate_with_age.short_description = "生年月日"
 
     # 性別の表示形式を変更
     def gender_display(self, model):
-        gender = model.get_gender_display() or model.user.get_gender_display()
+        user = model.user
+        gender = model.get_gender_display() or (user.get_gender_display() if user else None)
         return gender if gender else "-"
 
     gender_display.short_description = "性別"
 
     # 診察券番号の表示形式を変更
     def card_number_display(self, model):
-        card_number = model.card_number or model.user.card_number
+        user = model.user
+        card_number = model.card_number or getattr(user, "card_number", None)
         return card_number if card_number else "-"
 
     card_number_display.short_description = "診察券番号"
@@ -225,13 +228,14 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
 
             # 変更後の値を取得
             after_appointment_dt = timezone.localtime(model.appointment_dt)
-            user_family_name = model.family_name or model.user.family_name
-            user_first_name = model.first_name or model.user.first_name
-            user_email = model.email or model.user.email
-            user_phone = model.phone or model.user.phone
-            birthdate = model.birthdate or model.user.birthdate
-            gender = model.get_gender_display() or model.user.get_gender_display()
-            card_number = model.card_number or model.user.card_number
+            user = model.user
+            user_family_name = model.family_name or getattr(user, "family_name", "")
+            user_first_name = model.first_name or getattr(user, "first_name", "")
+            user_email = model.email or getattr(user, "email", "")
+            user_phone = model.phone or getattr(user, "phone", "")
+            birthdate = model.birthdate or getattr(user, "birthdate", "")
+            gender = model.get_gender_display() or (user.get_gender_display() if user else "")
+            card_number = model.card_number or getattr(user, "card_number", "")
             created_at = timezone.localtime(model.created_at)
 
             # メールに使用する変数
@@ -273,13 +277,15 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
 
         # 該当の予約データを取得
         appointment_dt = timezone.localtime(snapshot.appointment_dt)
-        user_family_name = snapshot.family_name or snapshot.user.family_name
-        user_first_name = snapshot.first_name or snapshot.user.first_name
-        user_email = snapshot.email or snapshot.user.email
-        user_phone = snapshot.phone or snapshot.user.phone
-        birthdate = snapshot.birthdate or snapshot.user.birthdate
-        gender = snapshot.get_gender_display() or snapshot.user.get_gender_display()
-        card_number = snapshot.card_number or snapshot.user.card_number
+        user = snapshot.user
+
+        user_family_name = snapshot.family_name or getattr(user, "family_name", "")
+        user_first_name = snapshot.first_name or getattr(user, "first_name", "")
+        user_email = snapshot.email or getattr(user, "email", "")
+        user_phone = snapshot.phone or getattr(user, "phone", "")
+        birthdate = snapshot.birthdate or getattr(user, "birthdate", "")
+        gender = snapshot.get_gender_display() or (user.get_gender_display() if user else "")
+        card_number = snapshot.card_number or getattr(user, "card_number", "")
         created_at = timezone.localtime(snapshot.created_at)
 
         # メールに使用する変数

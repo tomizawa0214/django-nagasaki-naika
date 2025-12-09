@@ -824,14 +824,15 @@ class AppointmentContactEditView(LoginRequiredMixin, View):
         appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
 
         # フォームの初期値を定義
+        user = appointment.user
         initial = {
-            "user_family_name": appointment.family_name or appointment.user.family_name,
-            "user_first_name": appointment.first_name or appointment.user.first_name,
-            "email": appointment.email or appointment.user.email,
-            "phone": appointment.phone or appointment.user.phone,
-            "birthdate": appointment.birthdate or appointment.user.birthdate,
-            "gender": appointment.gender or appointment.user.gender,
-            "card_number": appointment.card_number or appointment.user.card_number,
+            "user_family_name": appointment.family_name or getattr(user, "family_name", None),
+            "user_first_name": appointment.first_name or getattr(user, "first_name", None),
+            "email": appointment.email or getattr(user, "email", None),
+            "phone": appointment.phone or getattr(user, "phone", None),
+            "birthdate": appointment.birthdate or getattr(user, "birthdate", None),
+            "gender": appointment.gender or getattr(user, "gender", None),
+            "card_number": appointment.card_number or getattr(user, "card_number", None),
             "privacy": True,
         }
 
