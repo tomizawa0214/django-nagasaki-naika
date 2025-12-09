@@ -39,17 +39,17 @@
             <dt class="c-text">来院日時</dt>
             <dd class="c-text">{{ questionnaire.appointment.appointment_dt|localtime|date:"Y年n月j日(D) G:i～" }}</dd>
             <dt class="c-text">お名前</dt>
-            <dd class="c-text">{{ questionnaire.appointment.family_name }} {{ questionnaire.appointment.first_name }} 様</dd>
+            <dd class="c-text">{{ questionnaire.appointment.family_name|default:questionnaire.appointment.user.family_name }} {{ questionnaire.appointment.first_name|default:questionnaire.appointment.user.first_name }} 様</dd>
             <dt class="c-text">メールアドレス</dt>
-            <dd class="c-text">{{ questionnaire.appointment.email }}</dd>
+            <dd class="c-text">{{ questionnaire.appointment.email|default:questionnaire.appointment.user.email }}</dd>
             <dt class="c-text">電話番号</dt>
-            <dd class="c-text">{{ questionnaire.appointment.phone }}</dd>
+            <dd class="c-text">{{ questionnaire.appointment.phone|default:questionnaire.appointment.user.phone }}</dd>
             <dt class="c-text">生年月日</dt>
-            <dd class="c-text">{{ questionnaire.appointment.birthdate|date:'Y年n月j日' }}</dd>
+            <dd class="c-text">{{ questionnaire.appointment.birthdate|default:questionnaire.appointment.user.birthdate|date:'Y年n月j日' }}</dd>
             <dt class="c-text">性別</dt>
-            <dd class="c-text">{{ questionnaire.appointment.gender|gender_display }}</dd>
+            <dd class="c-text">{{ questionnaire.appointment.get_gender_display|default:questionnaire.appointment.user.get_gender_display }}</dd>
             <dt class="c-text">診察券番号</dt>
-            <dd class="c-text">{{ questionnaire.appointment.card_number|default:"なし" }}</dd>
+            <dd class="c-text">{{ questionnaire.appointment.card_number|default:questionnaire.appointment.user.card_number|default:"なし" }}</dd>
           </dl>
           {# 問診票 #}
           <dl class="p-pdf__q">
