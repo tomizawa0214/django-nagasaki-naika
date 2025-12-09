@@ -66,15 +66,14 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
 
     # 一覧画面: 表示項目
     list_display = (
-        "user",
+        "name_display",
         "appointment_dt_display",
         "visit",
-        "name_display",
-        "email",
-        "phone",
+        "email_display",
+        "phone_display",
         "birthdate_with_age",
-        "gender",
-        "card_number",
+        "gender_display",
+        "card_number_display",
         "created_at_display",
     )
 
@@ -82,7 +81,18 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
     ordering = ("-appointment_dt",)
 
     # 一覧画面: 検索項目
-    search_fields = ("family_name", "first_name", "email", "phone", "card_number")
+    search_fields = (
+        "family_name",
+        "first_name",
+        "email",
+        "phone",
+        "card_number",
+        "user__family_name",
+        "user__first_name",
+        "user__email",
+        "user__phone",
+        "user__card_number",
+    )
 
     # 一覧画面: 絞り込み項目
     list_filter = (
@@ -126,23 +136,48 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
 
     # お名前の表示形式を変更
     def name_display(self, model):
-        if not (model.family_name or model.first_name):
-            return "-"
-        return f"{model.family_name} {model.first_name}"
+        family_name = model.family_name or model.user.family_name
+        first_name = model.first_name or model.user.first_name
+        return f"{family_name} {first_name}"
 
     name_display.short_description = "お名前"
+
+    # メールアドレスの表示形式を変更
+    def email_display(self, model):
+        return model.email or model.user.email
+
+    email_display.short_description = "メールアドレス"
+
+    # 電話番号の表示形式を変更
+    def phone_display(self, model):
+        return model.phone or model.user.phone
+
+    phone_display.short_description = "電話番号"
 
     # 生年月日の表示形式を変更
     def birthdate_with_age(self, model):
         today = datetime.date.today()
+        birthdate = model.birthdate or model.user.birthdate
         age = (
             today.year
-            - model.birthdate.year
-            - ((today.month, today.day) < (model.birthdate.month, model.birthdate.day))
+            - birthdate.year
+            - ((today.month, today.day) < (birthdate.month, birthdate.day))
         )
-        return f"{model.birthdate.strftime('%Y年%-m月%-d日')}（{age}歳）"
+        return f"{birthdate.strftime('%Y年%-m月%-d日')}（{age}歳）"
 
     birthdate_with_age.short_description = "生年月日"
+
+    # 性別の表示形式を変更
+    def gender_display(self, model):
+        return model.get_gender_display() or model.user.get_gender_display()
+
+    gender_display.short_description = "性別"
+
+    # 診察券番号の表示形式を変更
+    def card_number_display(self, model):
+        return model.card_number or model.user.card_number
+
+    card_number_display.short_description = "診察券番号"
 
     # 来院日時の表示形式を変更
     def appointment_dt_display(self, model):
@@ -304,13 +339,23 @@ class QuestionnaireCustomAdmin(admin.ModelAdmin):
     )
 
     # 一覧画面: 並び順
-    ordering = ("-created_at",)
+    ordering = ("-appointment__appointment_dt",)
 
     # 一覧画面: 絞り込み項目
-    list_filter = (SymptomFilter,)
+    list_filter = (
+        (
+            "appointment__appointment_dt",
+            DateRangeFilterBuilder(
+                title="来院日",
+                default_start=datetime.datetime.now(),
+                default_end=datetime.datetime.now(),
+            ),
+        ),
+        SymptomFilter,
+    )
 
     # 一覧画面: 日付階層ナビゲーション
-    date_hierarchy = "created_at"
+    date_hierarchy = "appointment__appointment_dt"
 
     # 一覧画面: 1ページあたりの表示件数
     list_per_page = 10000
