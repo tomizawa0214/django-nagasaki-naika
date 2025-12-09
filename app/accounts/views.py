@@ -76,6 +76,9 @@ class PasswordResetView(PasswordResetView):
     # テンプレートを指定
     template_name = "account/password_reset.html"
 
+    # 送信者名を指定
+    from_email = email.utils.formataddr((settings.SITE_NAME, settings.EMAIL_HOST_USER))
+
     # フォームを指定
     form_class = CustomPasswordResetForm
 

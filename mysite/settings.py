@@ -283,9 +283,6 @@ if DEBUG:
     # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-    # 既定のメール送信アドレス
-    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
     # ログ
     LOGGING = {
         "version": 1,
@@ -340,9 +337,6 @@ else:
     EMAIL_USE_TLS = env("EMAIL_USE_TLS")
     FROM_EMAIL = SITE_NAME + "<" + EMAIL_HOST_USER + ">"
     TO_EMAIL = env("TO_EMAIL")
-
-    # 既定のメール送信アドレス
-    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
     # reCAPTCHA
     RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY")
