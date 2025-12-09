@@ -3,6 +3,7 @@ import email.utils
 import io
 import logging
 import zipfile
+from pathlib import Path
 from urllib.parse import quote
 
 from django.conf import settings
@@ -408,6 +409,9 @@ class QuestionnaireCustomAdmin(admin.ModelAdmin):
         # 現在日時を取得
         dt_now = timezone.localtime(timezone.now())
 
+        # static ファイルのURLを取得
+        static_root_uri = Path(settings.STATIC_ROOT).as_uri().rstrip("/")
+
         # 1件ならそのまま返す
         if queryset.count() == 1:
             q = queryset.first()
@@ -417,7 +421,13 @@ class QuestionnaireCustomAdmin(admin.ModelAdmin):
                 "dt_now": dt_now,
             }
             html_str = render_to_string("questionnaire_write.html", context, request=request)
-            pdf = HTML(string=html_str, base_url=request.build_absolute_uri("/")).write_pdf()
+            html_str = (
+                html_str.replace('href="/static/', f'href="{static_root_uri}/')
+                .replace("href='/static/", f"href='{static_root_uri}/")
+                .replace('src="/static/', f'src="{static_root_uri}/')
+                .replace("src='/static/", f"src='{static_root_uri}/")
+            )
+            pdf = HTML(string=html_str, base_url=static_root_uri).write_pdf()
 
             filename_utf8 = f"問診票_{dt_now.strftime("%Y%m%d%H%M")}.pdf"
             resp = HttpResponse(pdf, content_type="application/pdf")
@@ -436,7 +446,13 @@ class QuestionnaireCustomAdmin(admin.ModelAdmin):
                     "dt_now": dt_now,
                 }
                 html_str = render_to_string("questionnaire_write.html", context, request=request)
-                pdf_bytes = HTML(string=html_str, base_url=request.build_absolute_uri("/")).write_pdf()
+                html_str = (
+                    html_str.replace('href="/static/', f'href="{static_root_uri}/')
+                    .replace("href='/static/", f"href='{static_root_uri}/")
+                    .replace('src="/static/', f'src="{static_root_uri}/')
+                    .replace("src='/static/", f"src='{static_root_uri}/")
+                )
+                pdf_bytes = HTML(string=html_str, base_url=static_root_uri).write_pdf()
                 filename = f"問診票_{i}.pdf"
                 zf.writestr(filename, pdf_bytes)
 
