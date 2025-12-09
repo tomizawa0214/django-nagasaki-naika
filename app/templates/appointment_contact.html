@@ -112,7 +112,7 @@
         </div>
         {# 診察券番号 #}
         <div class="l-form__group">
-          <label class="c-text c-label" for="card-number"><span class="c-optional">任意</span>診察券番号</label>
+          <label class="c-text c-label" for="card-number"><span class="c-optional">任意</span>診察券番号<span class="c-text--help c-text--help--row">診察券をお持ちでない方は空欄で構いません。</span></label>
           {% render_field form.card_number %}
           {# エラーメッセージ #}
           {% if form.card_number.errors %}
