@@ -276,8 +276,12 @@ class CustomSignupForm(BaseContactFieldsMixin, SignupForm):
         return email
 
     # 属性値とエラーメッセージをカスタマイズ
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, recaptcha=True, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # reCAPTCHAを外す
+        if not recaptcha:
+            self.fields.pop("recaptcha", None)
 
         # メールアドレス
         email = self.fields["email"]

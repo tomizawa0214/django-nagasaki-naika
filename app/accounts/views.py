@@ -229,7 +229,7 @@ class SignupConfirmView(View):
             return redirect("account_signup")
 
         # フォームを取得
-        form = CustomSignupForm(signup_data)
+        form = CustomSignupForm(signup_data, recaptcha=False)
 
         # バリデーションを実行
         if form.is_valid():
