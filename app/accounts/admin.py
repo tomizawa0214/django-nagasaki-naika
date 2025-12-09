@@ -77,20 +77,31 @@ class CustomUserAdmin(UserAdmin):
     list_per_page = 10000
 
     # 表示項目の定数
-    account = ("family_name", "first_name", "email", "phone", "password", "birthdate", "gender", "card_number")
+    account_add = (
+        "family_name",
+        "first_name",
+        "email",
+        "phone",
+        "password1",
+        "password2",
+        "birthdate",
+        "gender",
+        "card_number",
+    )
+    account_edit = ("family_name", "first_name", "email", "phone", "password", "birthdate", "gender", "card_number")
     auth = ("is_active",)
     access = ("last_login_display", "created_at_display", "updated_at_display")
 
     # 編集画面: 表示項目
     fieldsets = (
-        ("登録情報", {"fields": account}),
+        ("登録情報", {"fields": account_edit}),
         ("権限管理", {"fields": auth}),
         ("アクセス", {"fields": access}),
     )
 
     # 新規登録画面: 表示項目
     add_fieldsets = (
-        ("登録情報", {"fields": account}),
+        ("登録情報", {"fields": account_add}),
         ("権限管理", {"fields": auth}),
         ("アクセス", {"fields": access}),
     )
