@@ -779,6 +779,7 @@ img {
   padding: 1rem 1em;
   font-size: 1.8rem;
   line-height: 1.8;
+  letter-spacing: 0.05em;
   background-color: #FFF;
   border: 0.1rem solid #CCC;
   border-radius: 0.4rem;
@@ -889,6 +890,7 @@ img {
   padding: 1rem 1em;
   font-size: 1.8rem;
   line-height: 1.8;
+  letter-spacing: 0.05em;
   resize: vertical;
   background-color: #FFF;
   border: 0.1rem solid #CCC;
@@ -951,6 +953,7 @@ img {
   padding: 1rem 5.1rem 1rem 1em;
   font-size: 1.8rem;
   line-height: 1.8;
+  letter-spacing: 0.05em;
   background-color: #FFF;
   border: 0.1rem solid #CCC;
   border-radius: 0.4rem;

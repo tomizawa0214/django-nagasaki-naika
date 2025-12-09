@@ -22,6 +22,7 @@
   padding: 1rem 1em;
   font-size: map.get(map.get(font.$font-sizes, 'pc'), 'base');
   line-height: map.get(font.$line-heights, 'base');
+  letter-spacing: map.get(font.$letter-spacings, 'base');
   background-color: #FFF;
   border: 0.1rem solid map.get(color.$theme-colors, 'border');
   border-radius: 0.4rem;
@@ -128,6 +129,7 @@
   padding: 1rem 1em;
   font-size: map.get(map.get(font.$font-sizes, 'pc'), 'base');
   line-height: map.get(font.$line-heights, 'base');
+  letter-spacing: map.get(font.$letter-spacings, 'base');
   resize: vertical;
   background-color: #FFF;
   border: 0.1rem solid map.get(color.$theme-colors, 'border');
@@ -185,6 +187,7 @@
   padding: 1rem 5.1rem 1rem 1em;
   font-size: map.get(map.get(font.$font-sizes, 'pc'), 'base');
   line-height: map.get(font.$line-heights, 'base');
+  letter-spacing: map.get(font.$letter-spacings, 'base');
   background-color: #FFF;
   border: 0.1rem solid map.get(color.$theme-colors, 'border');
   border-radius: 0.4rem;
