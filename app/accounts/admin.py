@@ -78,7 +78,7 @@ class CustomUserAdmin(UserAdmin):
 
     # 表示項目の定数
     account = ("family_name", "first_name", "email", "phone", "password", "birthdate", "gender", "card_number")
-    auth = ("is_active", "is_staff")
+    auth = ("is_active",)
     access = ("last_login_display", "created_at_display", "updated_at_display")
 
     # 編集画面: 表示項目
