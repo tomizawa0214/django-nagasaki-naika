@@ -19,7 +19,7 @@ class Appointment(models.Model):
     phone = models.CharField("電話番号", max_length=13, blank=True, null=True)
     birthdate = models.DateField("生年月日", blank=True, null=True)
     gender = models.CharField("性別", max_length=10, choices=settings.GENDER_CHOICES, blank=True, null=True)
-    card_number = models.CharField("診察券番号", max_length=10, blank=True, null=True)
+    card_number = models.CharField("診察券番号", max_length=5, blank=True, null=True)
     created_at = models.DateTimeField("予約受付日時", default=timezone.now)
     updated_at = models.DateTimeField("予約更新日時", auto_now=True)
 

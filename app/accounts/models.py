@@ -33,7 +33,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField("電話番号", max_length=13)
     birthdate = models.DateField("生年月日")
     gender = models.CharField("性別", max_length=10, choices=settings.GENDER_CHOICES)
-    card_number = models.CharField("診察券番号", max_length=10, blank=True, null=True)
+    card_number = models.CharField("診察券番号", max_length=5, blank=True, null=True)
     is_active = models.BooleanField(
         "ログイン権限",
         default=True,

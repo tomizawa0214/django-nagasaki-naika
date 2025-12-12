@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('phone', models.CharField(max_length=13, verbose_name='電話番号')),
                 ('birthdate', models.DateField(verbose_name='生年月日')),
                 ('gender', models.CharField(choices=[('female', '女性'), ('male', '男性')], max_length=10, verbose_name='性別')),
-                ('card_number', models.CharField(blank=True, max_length=10, null=True, verbose_name='診察券番号')),
+                ('card_number', models.CharField(blank=True, max_length=5, null=True, verbose_name='診察券番号')),
                 ('is_active', models.BooleanField(default=True, help_text='※Web予約システムにログインできるかを指定します。\n※退会の場合は選択を解除します。', verbose_name='予約システムのログイン権限')),
                 ('is_staff', models.BooleanField(default=False, help_text='※この管理画面にログインできるかを指定します。', verbose_name='管理画面のアクセス権限')),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now, verbose_name='登録日時')),

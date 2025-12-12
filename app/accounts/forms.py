@@ -90,7 +90,7 @@ class BaseContactFieldsMixin(forms.Form):
     )
     card_number = forms.CharField(
         label="診察券番号",
-        max_length=10,
+        max_length=5,
         widget=forms.TextInput(
             attrs={
                 "class": "c-text c-input",
@@ -165,8 +165,8 @@ class BaseContactFieldsMixin(forms.Form):
 
         if not re.search(r"[0-9０-９]", value):
             raise forms.ValidationError("診察券番号には数字を入力ください。")
-        if len(card_number_data) > 10:
-            raise forms.ValidationError("診察券番号は10桁以下で入力してください。")
+        if len(card_number_data) > 5:
+            raise forms.ValidationError("診察券番号は5桁以下で入力してください。")
 
         return card_number_data
 

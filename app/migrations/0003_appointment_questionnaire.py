@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('phone', models.CharField(blank=True, max_length=13, null=True, verbose_name='電話番号')),
                 ('birthdate', models.DateField(blank=True, null=True, verbose_name='生年月日')),
                 ('gender', models.CharField(blank=True, choices=[('female', '女性'), ('male', '男性')], max_length=10, null=True, verbose_name='性別')),
-                ('card_number', models.CharField(blank=True, max_length=10, null=True, verbose_name='診察券番号')),
+                ('card_number', models.CharField(blank=True, max_length=5, null=True, verbose_name='診察券番号')),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now, verbose_name='受付日時')),
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='更新日時')),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
