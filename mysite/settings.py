@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "widget_tweaks",
     "django_recaptcha",
+    "django.contrib.sitemaps",
 ]
 
 MIDDLEWARE = [

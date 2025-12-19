@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /management/
+Sitemap: https://yoyaku.nagasaki-naika.com/sitemap.xml
