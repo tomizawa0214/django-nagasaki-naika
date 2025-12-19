@@ -1370,7 +1370,7 @@ def handler403_view(request, exception=None):
 def handler404_view(request, exception=None):
 
     # ログに記録
-    logger.exception("status 404: %s", exception)
+    logger.warning("status 404: %s", exception)
 
     # メタタグにURLを追加
     meta = {
