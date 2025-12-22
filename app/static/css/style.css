@@ -400,6 +400,9 @@ img {
     gap: 2.6666666667vw;
   }
 }
+.l-form__smoking span.c-text, .l-form__alcohol span.c-text {
+  white-space: nowrap;
+}
 .l-form__smoking--vertical, .l-form__alcohol--vertical {
   display: grid;
   gap: 1.5rem;
