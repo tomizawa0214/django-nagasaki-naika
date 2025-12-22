@@ -45,11 +45,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700&display=swap">
   {# CSS #}
-  <link rel="stylesheet" href="{% static 'css/destyle.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/style.min.css' %}">
+  <link rel="stylesheet" href="{% static_version 'css/destyle.min.css' %}">
+  <link rel="stylesheet" href="{% static_version 'css/style.min.css' %}">
   {# JS #}
-  <script src="{% static 'js/jquery-3.7.1.min.js' %}" defer></script>
-  <script src="{% static 'js/main.min.js' %}" defer></script>
+  <script src="{% static_version 'js/jquery-3.7.1.min.js' %}" defer></script>
+  <script src="{% static_version 'js/main.min.js' %}" defer></script>
   {% if recaptcha %}
     <script src="https://www.google.com/recaptcha/api.js" defer></script>
   {% endif %}
