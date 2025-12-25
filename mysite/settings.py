@@ -262,10 +262,6 @@ MODEL_WEEKDAY_MAP = {
 # セッションの有効期限
 SESSION_AGE_TIME = 60
 
-# RECAPTCHA設定
-RECAPTCHA_PRIVATE_KEY = "シークレットキー値を入力"
-RECAPTCHA_PUBLIC_KEY = "サイトキー値を入力"
-
 try:
     from .local_settings import *
 except ImportError:
