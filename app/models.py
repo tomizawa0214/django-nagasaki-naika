@@ -81,8 +81,9 @@ class Questionnaire(models.Model):
     updated_at = models.DateTimeField("更新日時", auto_now=True)
 
     def __str__(self):
-        family_name = self.appointment.user.family_name
-        first_name = self.appointment.user.first_name
+        user = self.appointment.user
+        family_name = self.appointment.family_name or (user.family_name if user else None)
+        first_name = self.appointment.first_name or (user.first_name if user else None)
         dt = timezone.localtime(self.appointment.appointment_dt)
         weekday = settings.WEEKDAYS[dt.weekday()]
         return f"{family_name} {first_name} 【{dt.strftime('%Y年%-m月%-d日')}({weekday}) {dt.strftime('%H:%M')}】"
