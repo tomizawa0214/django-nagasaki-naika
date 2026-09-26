@@ -164,7 +164,7 @@ def status_check(date_obj, time_str, closing_map, reservation_map):
             elif closing["closed_hours"] == "afternoon" and not is_morning:
                 status = "closed"
 
-    # 予約枠の残数を確認（30分枠に対して最大3件）
+    # 予約枠の残数を確認（30分枠に対して最大 APPOINTMENT_SLOT_CAPACITY 件）
     if status == "open":
         target_time = datetime.time.fromisoformat(time_str)
 
@@ -172,12 +172,8 @@ def status_check(date_obj, time_str, closing_map, reservation_map):
         reserved_count = reservation_map.get((date_obj, target_time), 0)
 
         # 予約不可
-        if reserved_count >= 3:
+        if reserved_count >= settings.APPOINTMENT_SLOT_CAPACITY:
             status = "closed"
-
-        # 残りわずか
-        elif reserved_count >= 1:
-            status = "limited"
 
     return status
 
