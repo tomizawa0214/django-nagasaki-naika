@@ -94,6 +94,10 @@ def status_check(date_obj, time_str, closing_map, reservation_map):
     if date_obj < datetime.date.today() + timedelta(days=1):
         status = "closed"
 
+    # 予約受付停止中の時間帯は常に予約不可
+    if time_str in settings.UNAVAILABLE_TIME_LIST:
+        status = "closed"
+
     # 休診日（時間帯設定を考慮）
     if status == "open":
 
