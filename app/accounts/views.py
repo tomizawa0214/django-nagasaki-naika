@@ -340,8 +340,15 @@ class SignupCompleteView(View):
             # ユーザーを取得
             user_data = User.objects.filter(pk=user_data_pk).first()
 
+            # 再登録で削除済み または 退会済み（ログイン履歴あり）のユーザーは無効なリンクとして扱う
+            if user_data is None or (not user_data.is_active and user_data.last_login is not None):
+                logger.warning("signup register failed: user not found or withdrawn (pk=%s)", user_data_pk)
+                return render(
+                    request, "account/signup_complete.html", {**meta_signup_failed, "validlink": validlink}
+                )
+
             # ユーザー本登録
-            if not user_data is None and not user_data.is_active:
+            if not user_data.is_active:
                 user_data.is_active = True
                 user_data.save()
 

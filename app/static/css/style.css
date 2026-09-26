@@ -1022,6 +1022,22 @@ img {
   background-color: #F8D7DA;
 }
 
+.c-form-alert {
+  padding: 1rem 1em;
+  margin: 0 0 4rem;
+  background-color: #F8D7DA;
+  border: 0.2rem solid #DC3545;
+  border-radius: 0.4rem;
+}
+@media screen and (max-width: 1023px) {
+  .c-form-alert {
+    padding: 2.6666666667vw 1em;
+    margin: 0 0 10.6666666667vw;
+    border: 0.5333333333vw solid #DC3545;
+    border-radius: 1.0666666667vw;
+  }
+}
+
 .c-button {
   display: -webkit-box;
   display: -ms-flexbox;

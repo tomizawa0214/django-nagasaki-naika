@@ -14,6 +14,10 @@
     <section class="l-contents__inner">
       <h1 class="l-contents__page-title c-title">ご利用登録</h1>
       <p class="l-contents__lead c-text">以下の情報を入力してください。</p>
+      {# reCAPTCHAのエラーメッセージ（対応する入力欄が無いためリード文の下に表示） #}
+      {% if form.recaptcha.errors %}
+        <p class="c-form-alert c-text c-text--sm c-text--alert c-text--center">通信エラーが発生しました。<br class="only-sp">時間をおいて再度お試しください。</p>
+      {% endif %}
       <form class="l-form" action="" method="post">
       {% csrf_token %}
         {# お名前 #}
