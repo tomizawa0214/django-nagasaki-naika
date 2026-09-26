@@ -19,6 +19,7 @@ from rangefilter.filters import DateRangeFilterBuilder
 from weasyprint import HTML
 
 from .admin_forms import *
+from .functions import is_staff_block
 from .models import *
 
 # =====================================================================================================
@@ -220,6 +221,10 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
                 model.__class__.objects.only("appointment_dt").get(pk=model.pk).appointment_dt
             )
 
+            # 変更前の来院日時を過ぎた予約 または スタッフアカウントで埋めた予約枠は通知対象外
+            if before_appointment_dt <= timezone.now() or (model.user and is_staff_block(model.user)):
+                run = False
+
         # 変更を保存
         super().save_model(request, model, form, change)
 
@@ -274,6 +279,10 @@ class AppointmentCustomAdmin(admin.ModelAdmin):
 
     # 管理画面から手動で削除の場合はメールで通知
     def send_delete_mail(self, snapshot):
+
+        # 来院日時を過ぎた予約 または スタッフアカウントで埋めた予約枠は通知対象外
+        if snapshot.appointment_dt <= timezone.now() or (snapshot.user and is_staff_block(snapshot.user)):
+            return
 
         # 該当の予約データを取得
         appointment_dt = timezone.localtime(snapshot.appointment_dt)
