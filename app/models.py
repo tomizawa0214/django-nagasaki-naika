@@ -125,10 +125,10 @@ class SummerClosing(models.Model):
     def __str__(self):
         return f"{self.start_date.strftime("%Y年%-m月%-d日")}～{self.end_date.strftime("%-m月%-d日")}"
 
-    # バリデーション
+    # バリデーション（未入力・形式不正はフィールドの検証に任せ、両方ある場合のみ前後関係を確認）
     def clean(self):
         super().clean()
-        if self.end_date <= self.start_date:
+        if self.start_date and self.end_date and self.end_date <= self.start_date:
             raise ValidationError({"end_date": "終了日は開始日より後の日付にしてください。"})
 
     class Meta:
@@ -147,10 +147,10 @@ class NewYearClosing(models.Model):
     def __str__(self):
         return f"{self.start_date.strftime("%Y年%-m月%-d日")}～{self.end_date.strftime("%-m月%-d日")}"
 
-    # バリデーション
+    # バリデーション（未入力・形式不正はフィールドの検証に任せ、両方ある場合のみ前後関係を確認）
     def clean(self):
         super().clean()
-        if self.end_date <= self.start_date:
+        if self.start_date and self.end_date and self.end_date <= self.start_date:
             raise ValidationError({"end_date": "終了日は開始日より後の日付にしてください。"})
 
     class Meta:
