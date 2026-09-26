@@ -5,6 +5,7 @@ from allauth.account import views
 from django.conf import settings
 from django.contrib.auth import get_user_model, logout
 from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import (
     PasswordChangeDoneView,
@@ -173,8 +174,8 @@ class SignupView(views.SignupView):
                 "user_first_name": form.cleaned_data.get("user_first_name"),
                 "email": form.cleaned_data.get("email"),
                 "phone": form.cleaned_data.get("phone"),
-                "password1": form.cleaned_data.get("password1"),
-                "password2": form.cleaned_data.get("password1"),
+                # パスワードは平文でセッション（DB）に残さないようハッシュ化して保存
+                "password_hash": make_password(form.cleaned_data.get("password1")),
                 "birthdate": form.cleaned_data.get("birthdate").isoformat(),
                 "gender": form.cleaned_data.get("gender"),
                 "card_number": form.cleaned_data.get("card_number") or None,
@@ -208,8 +209,8 @@ class SignupConfirmView(View):
         # セッションを取得
         signup_data = session_check(request, session_key=SESSION_KEY_SIGNUP)
 
-        # セッション判定
-        if signup_data is None:
+        # セッション判定（ハッシュ化済みパスワードの無い旧形式のセッションも入力ページへ戻す）
+        if signup_data is None or not signup_data.get("password_hash"):
             return redirect("account_signup")
 
         # テンプレートを描画
@@ -227,12 +228,12 @@ class SignupConfirmView(View):
         # セッションを取得
         signup_data = session_check(request, session_key=SESSION_KEY_SIGNUP)
 
-        # セッション判定
-        if signup_data is None:
+        # セッション判定（ハッシュ化済みパスワードの無い旧形式のセッションも入力ページへ戻す）
+        if signup_data is None or not signup_data.get("password_hash"):
             return redirect("account_signup")
 
-        # フォームを取得
-        form = CustomSignupForm(signup_data, recaptcha=False)
+        # フォームを取得（パスワードは入力ページで検証済みのため外す）
+        form = CustomSignupForm(signup_data, recaptcha=False, password_field=False)
 
         # バリデーションを実行
         if form.is_valid():
@@ -256,8 +257,8 @@ class SignupConfirmView(View):
                     is_active=False,
                 )
 
-                # パスワード登録処理
-                user_data.set_password(form.cleaned_data.get("password1"))
+                # パスワード登録処理（入力ページでハッシュ化済みの値をそのまま登録）
+                user_data.password = signup_data.get("password_hash")
 
                 # 登録処理
                 user_data.save()

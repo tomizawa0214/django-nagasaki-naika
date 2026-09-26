@@ -276,7 +276,7 @@ class CustomSignupForm(BaseContactFieldsMixin, SignupForm):
         return email
 
     # 属性値とエラーメッセージをカスタマイズ
-    def __init__(self, *args, recaptcha=True, **kwargs):
+    def __init__(self, *args, recaptcha=True, password_field=True, **kwargs):
         super().__init__(*args, **kwargs)
 
         # reCAPTCHAを外す
@@ -316,6 +316,11 @@ class CustomSignupForm(BaseContactFieldsMixin, SignupForm):
                 "required": "パスワードを入力してください。",
             }
         )
+
+        # パスワードを外す（確認画面ではセッションのハッシュ化済みパスワードを使うため）
+        if not password_field:
+            self.fields.pop("password1", None)
+            self.fields.pop("password2", None)
 
 
 # =====================================================================================================
