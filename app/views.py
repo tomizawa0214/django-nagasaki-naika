@@ -904,8 +904,8 @@ class AppointmentContactEditView(LoginRequiredMixin, View):
             "privacy": True,
         }
 
-        # セッションの選択を初期値に設定（戻る操作時に対応）
-        if appointment_edit:
+        # セッションの選択を初期値に設定（戻る操作時に対応、別の予約のセッションは使わない）
+        if appointment_edit and appointment_edit.get("pk") == pk:
             initial = {
                 "user_family_name": appointment_edit.get("user_family_name"),
                 "user_first_name": appointment_edit.get("user_first_name"),
@@ -957,8 +957,9 @@ class AppointmentContactEditView(LoginRequiredMixin, View):
             # 現在日時を取得
             created_at = timezone.localtime(timezone.now())
 
-            # 入力値を辞書に格納
+            # 入力値を辞書に格納（どの予約の変更かを判定するためpkも保存）
             appointment_edit = {
+                "pk": pk,
                 "user_family_name": form.cleaned_data.get("user_family_name"),
                 "user_first_name": form.cleaned_data.get("user_first_name"),
                 "email": form.cleaned_data.get("email"),
@@ -997,8 +998,8 @@ class AppointmentContactEditConfirmView(LoginRequiredMixin, View):
         # セッションを取得
         appointment_edit = session_check(request, session_key=SESSION_KEY_APPOINTMENT_EDIT)
 
-        # セッション判定
-        if appointment_edit is None:
+        # セッション判定（別の予約のセッションの場合も予約確認ページへ戻す）
+        if appointment_edit is None or appointment_edit.get("pk") != pk:
             return redirect("appointment_detail", pk=pk)
 
         # メタタグにURLを追加
@@ -1023,8 +1024,8 @@ class AppointmentContactEditConfirmView(LoginRequiredMixin, View):
         # セッションを取得
         appointment_edit = session_check(request, session_key=SESSION_KEY_APPOINTMENT_EDIT)
 
-        # セッション判定
-        if appointment_edit is None:
+        # セッション判定（別の予約のセッションの場合も予約確認ページへ戻す）
+        if appointment_edit is None or appointment_edit.get("pk") != pk:
             return redirect("appointment_detail", pk=pk)
 
         # フォームを取得
@@ -1147,8 +1148,8 @@ class AppointmentQuestionnaireEditView(LoginRequiredMixin, View):
             "especially": questionnaire.especially,
         }
 
-        # セッションの選択を初期値に設定（戻る操作時に対応）
-        if questionnaire_edit:
+        # セッションの選択を初期値に設定（戻る操作時に対応、別の予約のセッションは使わない）
+        if questionnaire_edit and questionnaire_edit.get("pk") == pk:
             initial = {
                 "symptom": questionnaire_edit.get("symptom"),
                 "symptom_other": questionnaire_edit.get("symptom_other") or None,
@@ -1203,8 +1204,9 @@ class AppointmentQuestionnaireEditView(LoginRequiredMixin, View):
             # 現在日時を取得
             created_at = timezone.localtime(timezone.now())
 
-            # 入力値を辞書に格納
+            # 入力値を辞書に格納（どの予約の変更かを判定するためpkも保存）
             questionnaire_edit = {
+                "pk": pk,
                 "symptom": form.cleaned_data.get("symptom"),
                 "symptom_other": form.cleaned_data.get("symptom_other") or None,
                 "symptom_start": form.cleaned_data.get("symptom_start"),
@@ -1257,8 +1259,8 @@ class AppointmentQuestionnaireEditConfirmView(LoginRequiredMixin, View):
         # セッションを取得
         questionnaire_edit = session_check(request, session_key=SESSION_KEY_QUESTIONNAIRE_EDIT)
 
-        # セッション判定
-        if questionnaire_edit is None:
+        # セッション判定（別の予約のセッションの場合も問診票の確認ページへ戻す）
+        if questionnaire_edit is None or questionnaire_edit.get("pk") != pk:
             return redirect("appointment_questionnaire_detail", pk=pk)
 
         # メタタグにURLを追加
@@ -1283,8 +1285,8 @@ class AppointmentQuestionnaireEditConfirmView(LoginRequiredMixin, View):
         # セッションを取得
         questionnaire_edit = session_check(request, session_key=SESSION_KEY_QUESTIONNAIRE_EDIT)
 
-        # セッション判定
-        if questionnaire_edit is None:
+        # セッション判定（別の予約のセッションの場合も問診票の確認ページへ戻す）
+        if questionnaire_edit is None or questionnaire_edit.get("pk") != pk:
             return redirect("appointment_questionnaire_detail", pk=pk)
 
         # フォームを取得
