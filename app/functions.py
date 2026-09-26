@@ -253,6 +253,21 @@ def build_calendar(request, session_key):
     # 今週の月曜日
     this_monday = today - timedelta(days=today.weekday())
 
+    # 2ヶ月後の年月を取得
+    year = today.year + (today.month - 1 + 2) // 12
+    month = (today.month - 1 + 2) % 12 + 1
+
+    # 2ヶ月後の月の最終日を取得（28日 → +4日 → 翌月に進んだ日付から日数を引く）
+    tmp = datetime.date(year, month, 28) + datetime.timedelta(days=4)
+    last_day = tmp - datetime.timedelta(days=tmp.day)
+
+    # 存在しない日付は月末に丸めて2ヶ月後の日付を取得
+    day = min(today.day, last_day.day)
+    two_months_later = datetime.date(year, month, day)
+
+    # 2ヶ月後の6日前
+    last_month_start_date = two_months_later - datetime.timedelta(days=6)
+
     # セッションからカレンダーの開始日を取得（セッションが無ければ今週の月曜日を開始日に設定）
     session_data = request.session.get(session_key, {})
     session_start_date = session_data.get("start_date")
@@ -279,9 +294,16 @@ def build_calendar(request, session_key):
         if month_first_date == this_month.isoformat():
             start_date = this_monday
 
-        # 選択された表示月が今月以外の場合はその月の初日を開始日に設定
+        # 選択された表示月が今月以外の場合はその月の初日を開始日に設定（日付として不正な値は無視）
         else:
-            start_date = datetime.date.fromisoformat(month_first_date)
+            try:
+                start_date = datetime.date.fromisoformat(month_first_date)
+            except ValueError:
+                pass
+
+    # 開始日が表示可能な範囲（今日を含む週 〜 2ヶ月後）外の場合は今週の月曜日に戻す（POST値の改ざん・古いセッション対策）
+    if not (today - timedelta(days=6) <= start_date <= two_months_later):
+        start_date = this_monday
 
     # 開始日をセッションに保存
     session_data.update({"start_date": start_date.isoformat()})
@@ -353,21 +375,6 @@ def build_calendar(request, session_key):
                 "month_display": month_first.strftime("%Y年%-m月"),
             }
         )
-
-    # 2ヶ月後の年月を取得
-    year = today.year + (today.month - 1 + 2) // 12
-    month = (today.month - 1 + 2) % 12 + 1
-
-    # 2ヶ月後の月の最終日を取得（28日 → +4日 → 翌月に進んだ日付から日数を引く）
-    tmp = datetime.date(year, month, 28) + datetime.timedelta(days=4)
-    last_day = tmp - datetime.timedelta(days=tmp.day)
-
-    # 存在しない日付は月末に丸めて2ヶ月後の日付を取得
-    day = min(today.day, last_day.day)
-    two_months_later = datetime.date(year, month, day)
-
-    # 2ヶ月後の6日前
-    last_month_start_date = two_months_later - datetime.timedelta(days=6)
 
     return {
         "start_date": start_date,
