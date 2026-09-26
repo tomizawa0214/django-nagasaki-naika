@@ -1,14 +1,12 @@
-Django~=5.2.8                    # LTS版
-django-environ~=0.12.0           # 環境変数
-gunicorn~=23.0.0                 # アプリケーションサーバー
+Django~=5.2.17                   # LTS版
+django-environ~=0.14.0           # 環境変数
+gunicorn~=26.2.0                 # アプリケーションサーバー
 jpholiday~=1.0.2                 # 祝日を取得
-psycopg~=3.2.12                  # PostgreSQLへ接続するためのライブラリ
-pytz~=2025.2                     # タイムゾーンを扱う
-isort~=7.0.0                     # import文の自動整形
-django-admin-rangefilter~=0.13.3 # 管理画面の期間絞り込み機能
-django-allauth~=65.13.0          # ログイン認証機能
+psycopg~=3.3.6                   # PostgreSQLへ接続するためのライブラリ
+pytz~=2026.4                     # タイムゾーンを扱う
+isort~=9.0.1                     # import文の自動整形
+django-admin-rangefilter~=0.15.0 # 管理画面の期間絞り込み機能
+django-allauth~=65.19.4          # ログイン認証機能
 django-recaptcha~=4.1.0          # reCAPTCHA
-weasyprint~=67.0                 # HTML/CSSをPDF化
-
-# GitHubから最新バージョンを取得（pipの最新は1.5.0のため）
-django-widget-tweaks @ git+https://github.com/jazzband/django-widget-tweaks.git@1.5.1
+weasyprint~=70.0                 # HTML/CSSをPDF化
+django-widget-tweaks~=1.5.1      # フォーム部品のCSSクラスやHTML属性をテンプレート変更できるようにする
