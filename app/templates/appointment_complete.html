@@ -2,6 +2,7 @@
 
 {% block content %}
   <main class="l-contents">
+    {% if not is_staff_block %}
     <div class="l-step">
       <ol class="l-step__inner">
         <li class="c-step done">初診 /<br class="only-sp"> 再診</li>
@@ -12,12 +13,22 @@
         <li class="c-step done current">完了</li>
       </ol>
     </div>
+    {% endif %}
     <section class="l-contents__inner">
-      <h1 class="l-contents__page-title c-title">予約完了</h1>
-      <p class="l-contents__lead c-text">診察予約が完了しました。<br>ご来院をお待ちしております。</p>
-      <div class="l-contents__button">
-        <a class="c-button c-button--primary" href="{% url 'mypage' %}">マイページに戻る</a>
-      </div>
+      {% if is_staff_block %}
+        <h1 class="l-contents__page-title c-title">登録完了</h1>
+        <p class="l-contents__lead c-text">選択した日時を予約枠として登録しました。</p>
+        <div class="l-contents__button">
+          <a class="c-button c-button--secondary" href="{% url 'mypage' %}">マイページに戻る</a>
+          <a class="c-button c-button--primary" href="{% url 'appointment' %}">続けて登録する</a>
+        </div>
+      {% else %}
+        <h1 class="l-contents__page-title c-title">予約完了</h1>
+        <p class="l-contents__lead c-text">診察予約が完了しました。<br>ご来院をお待ちしております。</p>
+        <div class="l-contents__button">
+          <a class="c-button c-button--primary" href="{% url 'mypage' %}">マイページに戻る</a>
+        </div>
+      {% endif %}
     </section>
   </main>
 {% endblock %}

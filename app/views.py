@@ -75,6 +75,18 @@ class AppointmentView(LoginRequiredMixin, View):
         # セッションを取得
         appointment_data = session_check(request, session_key=SESSION_KEY_APPOINTMENT) or {}
 
+        # スタッフアカウントの場合は再診扱いで日時選択ページへリダイレクト
+        if is_staff_block(request.user):
+
+            # 現在日時を取得
+            created_at = timezone.localtime(timezone.now())
+
+            # セッションに保存
+            request.session[SESSION_KEY_APPOINTMENT] = {"visit": "return", "updated_at": created_at.isoformat()}
+
+            # 日時選択ページへリダイレクト
+            return redirect("appointment_datetime")
+
         # 初期値を初期化（ラジオボタンの初期値設定がある場合）
         initial = {}
 
@@ -253,6 +265,12 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
         # ボタンテキストを定義
         next_button_text = "次へ"
 
+        # スタッフアカウントの場合の戻るボタンとボタンテキスト
+        staff_block = is_staff_block(request.user)
+        if staff_block:
+            back_url = "mypage"
+            next_button_text = "登録する"
+
         # カレンダーを取得
         calendar_data = build_calendar(request, session_key=SESSION_KEY_CALENDAR_APPOINTMENT)
 
@@ -284,6 +302,7 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
                 **calendar_data,
                 "back_url": back_url,
                 "next_button_text": next_button_text,
+                "is_staff_block": staff_block,
                 "form": form,
             },
         )
@@ -311,6 +330,12 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
         # ボタンテキストを定義
         next_button_text = "次へ"
 
+        # スタッフアカウントの場合の戻るボタンとボタンテキスト
+        staff_block = is_staff_block(request.user)
+        if staff_block:
+            back_url = "mypage"
+            next_button_text = "登録する"
+
         # カレンダーを取得
         calendar_data = build_calendar(request, session_key=SESSION_KEY_CALENDAR_APPOINTMENT)
 
@@ -331,6 +356,31 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
 
         # バリデーションを実行
         if form.is_valid():
+
+            # スタッフアカウントの場合は連絡先入力・確認を省いて登録
+            if staff_block:
+
+                # 入力値を取得
+                appointment_dt = timezone.make_aware(
+                    datetime.datetime.fromisoformat(form.cleaned_data.get("appointment_dt")),
+                    timezone.get_current_timezone(),
+                )
+
+                # トランザクション内でまとめて処理
+                with transaction.atomic():
+
+                    # 登録処理（連絡先はスタッフアカウントの登録情報を参照するため保存しない）
+                    Appointment.objects.create(
+                        user=request.user,
+                        visit="return",
+                        appointment_dt=appointment_dt,
+                    )
+
+                    # セッションを削除（続けて枠を埋められるようカレンダーの表示週は残す）
+                    request.session.pop(SESSION_KEY_APPOINTMENT, None)
+
+                # 完了ページへリダイレクト
+                return redirect("appointment_complete")
 
             # 入力値を辞書に格納
             appointment_data.update(
@@ -354,6 +404,7 @@ class AppointmentDatetimeView(LoginRequiredMixin, View):
                 **calendar_data,
                 "back_url": back_url,
                 "next_button_text": next_button_text,
+                "is_staff_block": staff_block,
                 "form": form,
             },
         )
@@ -649,6 +700,7 @@ class AppointmentCompleteView(LoginRequiredMixin, View):
             "appointment_complete.html",
             {
                 **meta_appointment_complete,
+                "is_staff_block": is_staff_block(request.user),
             },
         )
 

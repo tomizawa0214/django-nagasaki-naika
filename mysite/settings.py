@@ -251,6 +251,9 @@ UNAVAILABLE_TIME_LIST = ["09:30"]
 # 30分枠あたりの予約上限件数
 APPOINTMENT_SLOT_CAPACITY = 1
 
+# 予約枠を埋める専用のスタッフアカウント（日時選択のみで予約を登録する）
+STAFF_BLOCK_EMAILS = ["sansuikai.nagasaki@gmail.com"]
+
 # 曜日を日本語の略称で定義
 WEEKDAYS = ["月", "火", "水", "木", "金", "土", "日"]
 

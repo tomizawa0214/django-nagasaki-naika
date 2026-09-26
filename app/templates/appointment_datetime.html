@@ -3,6 +3,7 @@
 
 {% block content %}
   <main class="l-contents">
+    {% if not is_staff_block %}
     <div class="l-step">
       <ol class="l-step__inner">
         <li class="c-step done">初診 /<br class="only-sp"> 再診</li>
@@ -13,9 +14,14 @@
         <li class="c-step">完了</li>
       </ol>
     </div>
+    {% endif %}
     <section class="l-contents__inner">
       <h1 class="l-contents__page-title c-title">診察予約</h1>
-      <p class="l-contents__lead c-text">ご来院の日時をお選びください。</p>
+      {% if is_staff_block %}
+        <p class="l-contents__lead c-text">枠を埋める日時を選んでください。</p>
+      {% else %}
+        <p class="l-contents__lead c-text">ご来院の日時をお選びください。</p>
+      {% endif %}
       {# カレンダー表示 #}
       {% include "include/_calendar.html" %}
     </section>
