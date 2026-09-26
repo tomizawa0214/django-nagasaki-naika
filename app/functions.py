@@ -104,10 +104,16 @@ def closing_map():
 # =====================================================================================================
 # 予約済み枠の取得
 # =====================================================================================================
-def reservation_map():
+def reservation_map(start_date=None, end_date=None):
 
     # 来院日時のみをリストで取得
     reservation_appointment_dt = Appointment.objects.values_list("appointment_dt", flat=True)
+
+    # 期間の指定がある場合は期間内の予約のみ取得（カレンダーの表示週など）
+    if start_date and end_date:
+        reservation_appointment_dt = reservation_appointment_dt.filter(
+            appointment_dt__date__range=(start_date, end_date)
+        )
 
     # 予約枠ごとの件数を格納する辞書を定義
     reservation_map = {}
@@ -284,6 +290,10 @@ def build_calendar(request, session_key):
     # 開始日の月の初日を取得
     current_month = start_date.replace(day=1)
 
+    # 休診設定と表示週の予約済み枠を取得（ループ内で毎回DBを参照しないよう先に1回だけ取得）
+    closing_data = closing_map()
+    reservation_data = reservation_map(start_date, start_date + timedelta(days=6))
+
     # 開始日から1週間分を取得してリストに格納
     appointment_dt_list = []
     for i in range(7):
@@ -316,8 +326,8 @@ def build_calendar(request, session_key):
             oneday[time_str] = status_check(
                 date_obj=date_obj,
                 time_str=time_str,
-                closing_map=closing_map(),
-                reservation_map=reservation_map(),
+                closing_map=closing_data,
+                reservation_map=reservation_data,
             )
 
         # 予約状況のリストに追加
