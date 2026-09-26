@@ -522,6 +522,14 @@ class AppointmentConfirmView(LoginRequiredMixin, View):
         if appointment_data is None:
             return redirect("appointment")
 
+        # 途中のステップが未入力の場合は最初からやり直し（URL直アクセス時に対応）
+        if (
+            "appointment_dt" not in appointment_data
+            or "privacy" not in appointment_data
+            or (appointment_data.get("visit") == "first" and "pregnancy" not in appointment_data)
+        ):
+            return redirect("appointment")
+
         # テンプレートを描画
         return render(
             request,
@@ -539,6 +547,14 @@ class AppointmentConfirmView(LoginRequiredMixin, View):
 
         # セッション判定
         if appointment_data is None:
+            return redirect("appointment")
+
+        # 途中のステップが未入力の場合は最初からやり直し（URL直アクセス時に対応）
+        if (
+            "appointment_dt" not in appointment_data
+            or "privacy" not in appointment_data
+            or (appointment_data.get("visit") == "first" and "pregnancy" not in appointment_data)
+        ):
             return redirect("appointment")
 
         # フォームを取得
