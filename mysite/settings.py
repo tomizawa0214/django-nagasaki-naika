@@ -64,14 +64,10 @@ TEMPLATES = [
         "DIRS": [
             os.path.join(BASE_DIR, "admin", "templates"),
         ],
-        "OPTIONS": {
-            "context_processors": [
-                "app.context_processors.settings_context",  # 追加
-            ],
-        },
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
+                "app.context_processors.settings_context",  # 追加
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
