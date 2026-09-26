@@ -39,17 +39,18 @@
             <dt class="c-text">来院日時</dt>
             <dd class="c-text">{{ questionnaire.appointment.appointment_dt|localtime|date:"Y年n月j日(D) G:i～" }}</dd>
             <dt class="c-text">お名前</dt>
-            <dd class="c-text">{{ questionnaire.appointment.family_name|default:questionnaire.appointment.user.family_name }} {{ questionnaire.appointment.first_name|default:questionnaire.appointment.user.first_name }} 様</dd>
+            {# 予約の連絡先 → 登録ユーザーの順で表示（ユーザー削除済みで user が無い予約でもエラーにしないため default フィルタの引数でユーザーを参照しない） #}
+            <dd class="c-text">{% if questionnaire.appointment.family_name %}{{ questionnaire.appointment.family_name }}{% else %}{{ questionnaire.appointment.user.family_name }}{% endif %} {% if questionnaire.appointment.first_name %}{{ questionnaire.appointment.first_name }}{% else %}{{ questionnaire.appointment.user.first_name }}{% endif %} 様</dd>
             <dt class="c-text">メールアドレス</dt>
-            <dd class="c-text">{{ questionnaire.appointment.email|default:questionnaire.appointment.user.email }}</dd>
+            <dd class="c-text">{% if questionnaire.appointment.email %}{{ questionnaire.appointment.email }}{% else %}{{ questionnaire.appointment.user.email }}{% endif %}</dd>
             <dt class="c-text">電話番号</dt>
-            <dd class="c-text">{{ questionnaire.appointment.phone|default:questionnaire.appointment.user.phone }}</dd>
+            <dd class="c-text">{% if questionnaire.appointment.phone %}{{ questionnaire.appointment.phone }}{% else %}{{ questionnaire.appointment.user.phone }}{% endif %}</dd>
             <dt class="c-text">生年月日</dt>
-            <dd class="c-text">{{ questionnaire.appointment.birthdate|default:questionnaire.appointment.user.birthdate|date:'Y年n月j日' }}</dd>
+            <dd class="c-text">{% if questionnaire.appointment.birthdate %}{{ questionnaire.appointment.birthdate|date:'Y年n月j日' }}{% else %}{{ questionnaire.appointment.user.birthdate|date:'Y年n月j日' }}{% endif %}</dd>
             <dt class="c-text">性別</dt>
-            <dd class="c-text">{{ questionnaire.appointment.get_gender_display|default:questionnaire.appointment.user.get_gender_display }}</dd>
+            <dd class="c-text">{% if questionnaire.appointment.get_gender_display %}{{ questionnaire.appointment.get_gender_display }}{% else %}{{ questionnaire.appointment.user.get_gender_display }}{% endif %}</dd>
             <dt class="c-text">診察券番号</dt>
-            <dd class="c-text">{{ questionnaire.appointment.card_number|default:questionnaire.appointment.user.card_number|default:"なし" }}</dd>
+            <dd class="c-text">{% if questionnaire.appointment.card_number %}{{ questionnaire.appointment.card_number }}{% elif questionnaire.appointment.user.card_number %}{{ questionnaire.appointment.user.card_number }}{% else %}なし{% endif %}</dd>
           </dl>
           {# 問診票 #}
           <dl class="p-pdf__q">
