@@ -747,6 +747,11 @@ class AppointmentDetailView(LoginRequiredMixin, View):
 class AppointmentDatetimeEditView(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
 
+        # 当日以前の予約は変更不可（URL直アクセス時に対応）
+        appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
+        if is_appointment_locked(appointment):
+            return redirect("mypage")
+
         # カレンダーを取得
         calendar_data = build_calendar(request, session_key=SESSION_KEY_CALENDAR_APPOINTMENT_EDIT)
 
@@ -792,6 +797,11 @@ class AppointmentDatetimeEditView(LoginRequiredMixin, View):
         )
 
     def post(self, request, pk, *args, **kwargs):
+
+        # 当日以前の予約は変更不可（URL直アクセス時に対応）
+        appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
+        if is_appointment_locked(appointment):
+            return redirect("mypage")
 
         # カレンダーを取得
         calendar_data = build_calendar(request, session_key=SESSION_KEY_CALENDAR_APPOINTMENT_EDIT)
@@ -891,6 +901,10 @@ class AppointmentContactEditView(LoginRequiredMixin, View):
         # ログインユーザーの当該予約データを取得
         appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
 
+        # 当日以前の予約は変更不可（URL直アクセス時に対応）
+        if is_appointment_locked(appointment):
+            return redirect("mypage")
+
         # フォームの初期値を定義
         user = appointment.user
         initial = {
@@ -941,6 +955,11 @@ class AppointmentContactEditView(LoginRequiredMixin, View):
         )
 
     def post(self, request, pk, *args, **kwargs):
+
+        # 当日以前の予約は変更不可（URL直アクセス時に対応）
+        appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
+        if is_appointment_locked(appointment):
+            return redirect("mypage")
 
         # フォームを取得
         form = AppointmentContactForm(request.POST or None)
@@ -1002,6 +1021,11 @@ class AppointmentContactEditConfirmView(LoginRequiredMixin, View):
         if appointment_edit is None or appointment_edit.get("pk") != pk:
             return redirect("appointment_detail", pk=pk)
 
+        # 当日以前の予約は変更不可（URL直アクセス時に対応）
+        appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
+        if is_appointment_locked(appointment):
+            return redirect("mypage")
+
         # メタタグにURLを追加
         meta = {
             **meta_appointment_contact_edit_confirm,
@@ -1027,6 +1051,11 @@ class AppointmentContactEditConfirmView(LoginRequiredMixin, View):
         # セッション判定（別の予約のセッションの場合も予約確認ページへ戻す）
         if appointment_edit is None or appointment_edit.get("pk") != pk:
             return redirect("appointment_detail", pk=pk)
+
+        # 当日以前の予約は変更不可（URL直アクセス時に対応）
+        appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
+        if is_appointment_locked(appointment):
+            return redirect("mypage")
 
         # フォームを取得
         form = AppointmentContactForm(appointment_edit)
@@ -1122,6 +1151,10 @@ class AppointmentQuestionnaireEditView(LoginRequiredMixin, View):
         # ログインユーザーの当該予約データに紐づく問診票データを取得
         questionnaire = get_object_or_404(Questionnaire, appointment__pk=pk, appointment__user=request.user)
 
+        # 来院日時を過ぎた予約は変更不可（URL直アクセス時に対応）
+        if is_questionnaire_locked(questionnaire.appointment):
+            return redirect("mypage")
+
         # フォームの初期値を定義
         initial = {
             "symptom": questionnaire.symptom,
@@ -1188,6 +1221,11 @@ class AppointmentQuestionnaireEditView(LoginRequiredMixin, View):
         return render(request, "appointment_edit_questionnaire.html", {**meta, "pk": pk, "form": form})
 
     def post(self, request, pk, *args, **kwargs):
+
+        # 来院日時を過ぎた予約は変更不可（URL直アクセス時に対応）
+        appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
+        if is_questionnaire_locked(appointment):
+            return redirect("mypage")
 
         # フォームを取得
         form = AppointmentQuestionnaireForm(request.POST or None)
@@ -1263,6 +1301,11 @@ class AppointmentQuestionnaireEditConfirmView(LoginRequiredMixin, View):
         if questionnaire_edit is None or questionnaire_edit.get("pk") != pk:
             return redirect("appointment_questionnaire_detail", pk=pk)
 
+        # 来院日時を過ぎた予約は変更不可（URL直アクセス時に対応）
+        appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
+        if is_questionnaire_locked(appointment):
+            return redirect("mypage")
+
         # メタタグにURLを追加
         meta = {
             **meta_appointment_questionnaire_edit_confirm,
@@ -1288,6 +1331,11 @@ class AppointmentQuestionnaireEditConfirmView(LoginRequiredMixin, View):
         # セッション判定（別の予約のセッションの場合も問診票の確認ページへ戻す）
         if questionnaire_edit is None or questionnaire_edit.get("pk") != pk:
             return redirect("appointment_questionnaire_detail", pk=pk)
+
+        # 来院日時を過ぎた予約は変更不可（URL直アクセス時に対応）
+        appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
+        if is_questionnaire_locked(appointment):
+            return redirect("mypage")
 
         # フォームを取得
         form = AppointmentQuestionnaireForm(questionnaire_edit)
@@ -1367,6 +1415,10 @@ class AppointmentDeleteView(LoginRequiredMixin, View):
 
         # 予約データを取得
         appointment = get_object_or_404(Appointment, pk=pk, user=request.user)
+
+        # 当日以前の予約は取消不可（URL直アクセス時に対応）
+        if is_appointment_locked(appointment):
+            return redirect("mypage")
 
         # 予約データの来院日時を取得
         appointment_dt = timezone.localtime(appointment.appointment_dt)
