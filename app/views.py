@@ -1159,7 +1159,7 @@ class AppointmentQuestionnaireEditView(LoginRequiredMixin, View):
         initial = {
             "symptom": questionnaire.symptom,
             "symptom_other": questionnaire.symptom_other,
-            "symptom_start": questionnaire.symptom_start,
+            "symptom_start": symptom_start_choice(questionnaire.symptom_start),
             "medical_history": questionnaire.medical_history,
             "has_medical_history": questionnaire.has_medical_history,
             "under_treatment": questionnaire.under_treatment,
@@ -1306,6 +1306,14 @@ class AppointmentQuestionnaireEditConfirmView(LoginRequiredMixin, View):
         if is_questionnaire_locked(appointment):
             return redirect("mypage")
 
+        # ログインユーザーの当該予約データに紐づく問診票データを取得
+        questionnaire = get_object_or_404(Questionnaire, appointment__pk=pk, appointment__user=request.user)
+
+        # 保存済みの日付を当てはめた選択肢から変更が無ければ元の日付を表示（確定時に元の日付を残すため）
+        symptom_start = questionnaire_edit.get("symptom_start")
+        if symptom_start == symptom_start_choice(questionnaire.symptom_start):
+            symptom_start = questionnaire.symptom_start.isoformat()
+
         # メタタグにURLを追加
         meta = {
             **meta_appointment_questionnaire_edit_confirm,
@@ -1320,6 +1328,7 @@ class AppointmentQuestionnaireEditConfirmView(LoginRequiredMixin, View):
                 **meta,
                 "pk": pk,
                 **questionnaire_edit,
+                "symptom_start": symptom_start,
             },
         )
 
@@ -1352,7 +1361,10 @@ class AppointmentQuestionnaireEditConfirmView(LoginRequiredMixin, View):
                 # 入力値を取得
                 questionnaire.symptom = form.cleaned_data.get("symptom")
                 questionnaire.symptom_other = form.cleaned_data.get("symptom_other") or None
-                questionnaire.symptom_start = datetime.date.fromisoformat(form.cleaned_data.get("symptom_start"))
+                # 保存済みの日付を当てはめた選択肢から変更が無ければ元の日付を残す
+                symptom_start = form.cleaned_data.get("symptom_start")
+                if symptom_start != symptom_start_choice(questionnaire.symptom_start):
+                    questionnaire.symptom_start = datetime.date.fromisoformat(symptom_start)
                 questionnaire.medical_history = form.cleaned_data.get("medical_history")
                 questionnaire.has_medical_history = form.cleaned_data.get("has_medical_history") or None
                 questionnaire.under_treatment = form.cleaned_data.get("under_treatment")
