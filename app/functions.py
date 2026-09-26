@@ -58,13 +58,6 @@ def closing_map():
         "summer": list(SummerClosing.objects.values("start_date", "end_date")),
         "new_year": list(NewYearClosing.objects.values("start_date", "end_date")),
         "temp": list(TempClosing.objects.values("date", "closed_hours")),
-        "holiday": [
-            date
-            for date, _ in jpholiday.between(
-                datetime.date.today(),
-                datetime.date.today() + timedelta(days=60),
-            )
-        ],
     }
 
 # =====================================================================================================
@@ -123,7 +116,7 @@ def status_check(date_obj, time_str, closing_map, reservation_map):
 
             # 休診日の曜日一致 または 休診日の祝日一致かつ祝日の場合
             if closing["weekday"] == weekday_key or (
-                closing["weekday"] == "holiday" and date_obj in closing_map.get("holiday")
+                closing["weekday"] == "holiday" and jpholiday.is_holiday(date_obj)
             ):
 
                 # 終日休診の場合は予約不可に設定
@@ -261,7 +254,7 @@ def build_calendar(request, session_key):
         weekday_index = date_obj.weekday()
 
         # 日付と曜日のクラス名を定義
-        if date_obj in closing_map().get("holiday"):
+        if jpholiday.is_holiday(date_obj):
             class_name = "c-calendar__text c-text--holiday"
         elif weekday_index == 5:
             class_name = "c-calendar__text c-text--saturday"
