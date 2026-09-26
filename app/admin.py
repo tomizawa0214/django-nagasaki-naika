@@ -11,10 +11,10 @@ from django.contrib import admin
 from django.core.mail import send_mail
 from django.db import transaction
 from django.http import HttpResponse
+from django.template.defaultfilters import linebreaksbr
 from django.template.loader import render_to_string
 from django.templatetags.static import static
 from django.utils import timezone
-from django.utils.html import format_html
 from rangefilter.filters import DateRangeFilterBuilder
 from weasyprint import HTML
 
@@ -447,7 +447,8 @@ class QuestionnaireCustomAdmin(admin.ModelAdmin):
     # 特に調べてほしいことの表示を改行ありに変更
     def especially_display(self, model):
         if model.especially:
-            return format_html(model.especially.replace("\n", "<br>"))
+            # 患者の入力値のためHTMLをエスケープしてから改行のみ<br>に変換
+            return linebreaksbr(model.especially, autoescape=True)
         return ""
 
     especially_display.short_description = "特に調べてほしいこと等"
